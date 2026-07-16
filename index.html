@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stellar Aberration — Predictions, Air vs Water</title>
+<link rel="icon" href="assets/acrg-logo.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Scene: everything is drawn here -->
+<canvas id="scene"></canvas>
+
+<!-- Left control panel -->
+<section id="controls" class="panel">
+  <h2>Stellar Aberration</h2>
+
+  <label class="sel">Theory / prediction
+    <select id="theory"></select>
+  </label>
+  <p id="desc"></p>
+
+  <!-- Frame toggle: helio/geo (sky) or water rest/moving (transform theories) -->
+  <div id="frame-wrap">
+    <div class="toggle" role="tablist">
+      <button id="btn-frameA" class="active"></button>
+      <button id="btn-frameB"></button>
+    </div>
+  </div>
+
+  <label id="row-lat">Star latitude: <b id="v-lat">45° N</b>
+    <input id="lat" type="range" min="-90" max="90" step="1" value="45">
+  </label>
+  <label id="row-phase">Orbital phase (months): <b id="v-phase">5.43</b>
+    <input id="phase" type="range" min="0" max="12" step="0.01" value="5.43">
+  </label>
+  <label id="row-exagg">Aberration exaggeration: <b id="v-exagg">3500&times;</b>
+    <input id="exagg" type="range" min="1" max="6000" step="1" value="3500">
+  </label>
+  <label class="check"><input id="animate" type="checkbox" checked> Animate</label>
+
+  <ul class="key">
+    <li><span class="dot star"></span>True star / incoming</li>
+    <li><span class="dot app"></span>Apparent / refracted</li>
+    <li><span class="dot vel"></span><span id="k-vel">Earth velocity</span></li>
+  </ul>
+</section>
+
+<!-- Live math legend -->
+<section id="math" class="panel">
+  <h2 id="m-title">Math in use</h2>
+  <div id="m-formula" class="formula"></div>
+  <div id="m-rows"></div>
+  <div id="m-verdict" class="equal"></div>
+  <p id="m-note" class="note"></p>
+</section>
+
+<!-- Brand -->
+<footer id="brand">
+  <img src="assets/acrg-logo.png" alt="Aether Cosmology Research Group">
+  <span>Aether Cosmology Research Group</span>
+</footer>
+
+<script src="js/util.js"></script>
+<script src="js/theories.js"></script>
+<script src="js/sky.js"></script>
+<script src="js/tube.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
