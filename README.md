@@ -28,11 +28,11 @@ moves at the light speed the theory needs in the water.
 | Emission | 15.45″ | 20.55″ | 1.33 c | angle ✓, speed ✗ (Foucault: 0.75 c) |
 | Klinkerfues 1867 | 27.33″ | 36.35″ (n²α) | c/n | ✗ |
 | Undulatory / Snell / Snell·γ | 27.33″ | 36.35″ | c/n | ✗ |
-| Special Relativity / Pauli / Rosser — water at rest | 15.45″ | 20.55″ | c/n | ✓ |
-| Special Relativity / Pauli / Rosser — water in motion | 11.88″ | 15.80″ | c/n | ✗ |
+| Special Relativity / Pauli / Rosser / Franco — water at rest | 15.45″ | 20.55″ | c/n | ✓ |
+| Special Relativity / Pauli / Rosser / Franco — water in motion | 11.88″ | 15.80″ | c/n | ✗ |
 | Geocentric | 15.45″ | 20.55″ | c/n | ✓ |
 
-The frame-transform theories (SR, Pauli, Rosser) carry a **water at rest / water in
+The frame-transform theories (SR, Pauli, Rosser, Franco) carry a **water at rest / water in
 motion** toggle. Only the rest frame reproduces Airy. That frame is the one in
 which the water, and the Earth carrying it, is at rest.
 
