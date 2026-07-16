@@ -58,6 +58,11 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:none;border-ra
 .dot{width:9px;height:9px;border-radius:50%}
 .dot.star{background:var(--star)} .dot.app{background:var(--app)} .dot.vel{background:var(--vel)}
 
+/* Source link */
+.src{margin-top:14px;font-size:12px;color:var(--dim)}
+.src a{color:var(--accent);text-decoration:none;font-weight:600}
+.src a:hover{text-decoration:underline}
+
 /* Math legend */
 #math .row{display:flex;justify-content:space-between;font-size:12.5px;padding:2px 0}
 #math .row span{color:var(--dim)} #math .row b{color:#fff;font-variant-numeric:tabular-nums}

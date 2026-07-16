@@ -2,6 +2,9 @@
 
 A browser demonstration by the **Aether Cosmology Research Group**.
 
+Full data and derivations:
+[Google Sheet](https://docs.google.com/spreadsheets/d/1ztxCRJBzytxn6jICCrBjRUU67HcBrKAw_xMz9tPLZGw/edit?gid=0#gid=0)
+
 Starlight aberrates by α = arctan(v/c) = 20.55″ before it reaches any telescope.
 Airy (1871) filled a telescope with water and measured the same 20.55″. This sim
 shows what each theory predicts the water column does to that ray, and what the
