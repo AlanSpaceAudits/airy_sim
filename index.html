@@ -57,7 +57,21 @@
   <div id="m-formula" class="formula"></div>
   <div id="m-rows"></div>
   <div id="m-verdict" class="equal"></div>
+  <div id="m-scale" class="scale"></div>
   <p id="m-note" class="note"></p>
+
+  <details class="help">
+    <summary>What do “reading” and “internal angle” mean?</summary>
+    <p><b>Reading</b> — the celestial arc the micrometer reports: the star's sideways drift on the wire
+      plate divided by that telescope's own scale. Airy's 20.55″ is a reading, not a direct angle.</p>
+    <p><b>Internal angle (θ_int)</b> — the physical tilt the ray must take inside the tube to produce
+      that reading. It is implied, not measured; a 20.55″ reading needs 15.45″ inside the water.</p>
+    <p><b>Aberration</b> — the incoming tilt θ_ext = arctan(v/c) = 20.55″, set by the observer's
+      velocity. The reading recovers it.</p>
+    <p><b>Micrometer × n</b> — the water plate is calibrated n times finer than air (Airy p.39:
+      27.8-inch air-equivalent vs 37.0-inch tube), so 15.45″ inside reads the same 20.55″ as air. That
+      × n scaling is the whole reason the water null holds.</p>
+  </details>
 </section>
 
 <!-- Brand -->

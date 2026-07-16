@@ -34,9 +34,16 @@ AIY.THEORIES = {
     blurb:'Corpuscular refraction is Snell, so the angle is right. It dies on speed: it needs 1.33 c, '
       +'and Foucault measured 0.75 c.'
   },
+  klinkerfues: {
+    label:'Klinkerfues 1867', scene:'tube', speed:C/N,
+    thetaInt:A*N, cite:'Klinkerfues 1867, Die Aberration der Fixsterne nach der Wellentheorie',
+    formula:'α = g/v ,  v′ = v/n  (wave slows)\nθ_int = nα = 27.33″ ,  measured n²α = 36.35″',
+    blurb:'The original 1867 wave prediction Airy tested. Light slows to v/n, so the water telescope should '
+      +'read n²α = 36.35″. Airy measured 20.55″, unchanged. Falsified by a factor of n².'
+  },
   undulatory: {
     label:'Undulatory (wave)', scene:'tube', speed:C/N,
-    thetaInt:A*N, cite:'Klinkerfues 1867',
+    thetaInt:A*N, cite:'wave theory, undragged ether',
     formula:'tan θ_int = n·β = 27.33″\nspeed in water = c/n',
     blurb:'Wave slowed to c/n while the tube keeps moving. The internal tilt grows to 27.33″; reads 36.35″.'
   },

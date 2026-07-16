@@ -60,6 +60,7 @@ function updateMath(){
     rows.push(['shown (×'+state.exagg+')', (AIY.ALPHA*state.exagg/3600).toFixed(2)+'°']);
     $('m-verdict').innerHTML = 'v<sub>earth</sub> = w<sub>sky</sub> &rArr; '
       + '&alpha;<sub>helio</sub> = &alpha;<sub>geo</sub> = 20.55″';
+    $('m-scale').style.display = 'none';
   } else {
     const th = AIY.internalAngle(t, state.frame), reading = th*AIY.N;
     const match = Math.abs(reading-AIY.ALPHA)<0.5;
@@ -70,6 +71,14 @@ function updateMath(){
     $('m-verdict').innerHTML = match
       ? '<span class="ok">✓ reads 20.55″ — matches Airy</span>'
       : '<span class="bad">✗ reads '+reading.toFixed(2)+'″ — Airy measured 20.55″</span>';
+    // micrometer-scale numerics: raw air-scale angle vs the ×n calibrated reading
+    const r=(a,b,hit)=>`<div class="r${hit?' hit':''}"><span>${a}</span><b>${b}</b></div>`;
+    $('m-scale').style.display = '';
+    $('m-scale').innerHTML =
+      '<div class="sh">MICROMETER SCALE (Airy p.39)</div>'
+      + r('raw angle (air scale)', th.toFixed(2)+'″')
+      + r('water scale', '× '+AIY.N.toFixed(2)+'  (37.0 / 27.8 in)')
+      + r('calibrated reads', reading.toFixed(2)+'″', match);
   }
   $('m-rows').innerHTML = rows.map(r =>
     `<div class="row"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('');

@@ -28,15 +28,18 @@ function arcBetween(ctx, c, r, a, b, color){
   ctx.beginPath(); ctx.arc(c.x, c.y, r, Math.min(a,b), Math.max(a,b)); ctx.stroke();
 }
 
-// micrometer plate: ruled grid + centre wire + landing spot
-function micrometer(ctx, xc, gy, landingX){
+// micrometer plate: ruled grid + centre wire + landing spot.
+// tick spacing is the telescope's own scale — the water plate is n× finer (Airy p.39),
+// so the closer-in water landing lands on the SAME tick count as air → same reading.
+function micrometer(ctx, xc, gy, landingX, tickPx, fine){
   const half=W/2+36;
   ctx.strokeStyle='rgba(220,230,245,.55)'; ctx.lineWidth=1.5;
   ctx.beginPath(); ctx.moveTo(xc-half,gy); ctx.lineTo(xc+half,gy); ctx.stroke();
   ctx.strokeStyle='rgba(200,215,235,.4)'; ctx.lineWidth=1;
-  for(let x=-half; x<=half; x+=12){ const tall=Math.abs(x)<1; ctx.beginPath();
+  for(let x=-half; x<=half; x+=tickPx){ const tall=Math.abs(x)<tickPx/2; ctx.beginPath();
     ctx.moveTo(xc+x, gy); ctx.lineTo(xc+x, gy+(tall?9:5)); ctx.stroke(); }
   AIY.disc(ctx, {x:landingX,y:gy}, 4.5, '#3fe0d0');      // where the star transits
+  if(fine) AIY.text(ctx, '× n finer scale', xc, gy-11, '#9fd4ff', '10px system-ui', 'center');
 }
 
 // one telescope
@@ -73,10 +76,10 @@ function drawTube(ctx, xc, o, time){
   AIY.text(ctx, 'θ_ext '+AIY.ALPHA.toFixed(2)+'″', entry.x-10, topY-30, '#f2c14e', '11px system-ui', 'right');
   AIY.text(ctx, 'θ_int '+o.thetaIntArc.toFixed(2)+'″', entry.x+28, topY+20, '#3fe0d0', '11px system-ui', 'left');
 
-  micrometer(ctx, xc, plateY, landing.x);
+  micrometer(ctx, xc, plateY, landing.x, o.tickPx, o.water);
 
-  // photon at the medium's light speed
-  const rate=0.4*(o.speed/AIY.C), ph=along([start,entry,landing],(time*rate)%1);
+  // photon position is precomputed (o.photonS) so both tubes share one cycle
+  const ph=along([start,entry,landing], o.photonS);
   ctx.save(); ctx.shadowBlur=12; ctx.shadowColor='#fff'; AIY.disc(ctx,ph,4.5,'#fff'); ctx.restore();
 
   // labels
@@ -99,15 +102,22 @@ AIY.drawTube = (ctx, st, time) => {
   AIY.text(ctx, 'incoming starlight, aberrated by α = 20.55″', midX, topY-LIN-40,
            '#f2c14e', '13px system-ui', 'center');
 
-  drawTube(ctx, midX-155, {                              // air (baseline)
-    title:'AIR TUBE', mediumLabel:'n = 1', water:false, topY,
-    thetaIntArc:AIY.ALPHA,
+  // Shared cycle: photon speed ∝ light speed in the medium. The cycle lasts as long as the
+  // SLOWER beam takes to reach the plate; the faster one clamps at the bottom and waits, so
+  // neither repeats until both have transited.
+  const rateAir = 0.4, rateWater = 0.4*(t.speed/AIY.C), minRate = Math.min(rateAir, rateWater);
+  const g = (time*minRate) % 1;                          // 0→1 over one shared cycle
+  const sAir = Math.min(1, g*rateAir/minRate), sWater = Math.min(1, g*rateWater/minRate);
+
+  drawTube(ctx, midX-155, {                              // air (baseline): scale = 37.0 in
+    title:'AIR TUBE', mediumLabel:'n = 1', water:false, topY, tickPx:12,
+    thetaIntArc:AIY.ALPHA, photonS:sAir,
     reading:AIY.ALPHA, matches:true, speed:AIY.C
   }, time);
 
-  drawTube(ctx, midX+155, {                              // water (theory)
-    title:'WATER TUBE', mediumLabel:'n = 1.33', water:true, topY,
-    thetaIntArc,
+  drawTube(ctx, midX+155, {                              // water (theory): scale n× finer (27.8 in)
+    title:'WATER TUBE', mediumLabel:'n = 1.33', water:true, topY, tickPx:12/AIY.N,
+    thetaIntArc, photonS:sWater,
     reading, matches, speed:t.speed,
     speedNote: t.speed>AIY.C ? 'needs 1.33 c — Foucault measured 0.75 c' : null
   }, time);

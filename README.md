@@ -26,6 +26,7 @@ moves at the light speed the theory needs in the water.
 | Theory | θ_int | reads | speed in water | matches Airy |
 |---|---|---|---|---|
 | Emission | 15.45″ | 20.55″ | 1.33 c | angle ✓, speed ✗ (Foucault: 0.75 c) |
+| Klinkerfues 1867 | 27.33″ | 36.35″ (n²α) | c/n | ✗ |
 | Undulatory / Snell / Snell·γ | 27.33″ | 36.35″ | c/n | ✗ |
 | Special Relativity / Pauli / Rosser — water at rest | 15.45″ | 20.55″ | c/n | ✓ |
 | Special Relativity / Pauli / Rosser — water in motion | 11.88″ | 15.80″ | c/n | ✗ |
@@ -34,6 +35,26 @@ moves at the light speed the theory needs in the water.
 The frame-transform theories (SR, Pauli, Rosser) carry a **water at rest / water in
 motion** toggle. Only the rest frame reproduces Airy. That frame is the one in
 which the water, and the Earth carrying it, is at rest.
+
+## What "reading" means
+
+**Reading** is the celestial arc the telescope's micrometer reports. It is not a direct
+angle measurement. It is the star's sideways drift on the wire plate, divided by that
+telescope's own scale to give an angle in the sky. Airy's 20.55″ is a reading.
+
+**Internal angle (θ_int)** is the physical tilt the ray actually takes inside the tube. Airy
+never measured it; it is the angle the ray would have to make to produce the observed
+reading. In water, a 20.55″ reading requires 15.45″ inside.
+
+**Aberration** is the incoming tilt of the starlight, θ_ext = arctan(v/c) = 20.55″, set by the
+observer's velocity. The reading recovers that arc, and the internal angle is the refracted
+angle inside the medium that, run through the scale, reproduces it.
+
+**Micrometer × n.** The water plate is calibrated n times finer than air (Airy p.39:
+air-equivalent length 27.8 in vs physical tube 37.0 in, ratio n). This is why a smaller
+internal angle (15.45″) in water reads the same 20.55″ as air. That equal reading is Airy's
+null result, and it exists only because of the × n scale. Strip the scale and the water tube
+reports its raw internal angle (15.45″, 27.33″, or 11.88″), which differs from air's 20.55″.
 
 ## Run
 
