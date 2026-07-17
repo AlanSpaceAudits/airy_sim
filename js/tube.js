@@ -86,16 +86,17 @@ function drawTube(ctx, xc, o, time){
   ctx.save(); ctx.shadowBlur=12; ctx.shadowColor='#fff'; AIY.disc(ctx,ph,4.5,'#fff'); ctx.restore();
 
   // labels
+  const fmt=(v,u)=> u==='µm' ? v.toFixed(1)+' µm' : v.toFixed(2)+'″';
   AIY.text(ctx, o.title, xc, topY-LIN-16, '#e9eef6', f(14,1), 'center');
   if(o.water){                                            // theory PREDICTION vs Airy's lab-frame value
     const col=o.matches?'#5fd07a':'#ff6a78';
-    AIY.text(ctx, (o.matches?'✓ ':'✗ ')+'predicted '+o.showVal.toFixed(2)+'″', xc, plateY+dy(24), col, f(14,1), 'center');
-    AIY.text(ctx, "Airy's lab frame value "+o.labVal.toFixed(2)+'″', xc, plateY+dy(44), '#5fd07a', f(13), 'center');
+    AIY.text(ctx, (o.matches?'✓ ':'✗ ')+'predicted '+fmt(o.showVal,o.unit), xc, plateY+dy(24), col, f(14,1), 'center');
+    AIY.text(ctx, "Airy's lab frame value ("+o.tag+") "+fmt(o.labVal,o.unit), xc, plateY+dy(44), '#5fd07a', f(13), 'center');
   } else {                                                // the measured baseline
-    AIY.text(ctx, o.showVal.toFixed(2)+'″', xc, plateY+dy(24), '#cfe0f0', f(14,1), 'center');
+    AIY.text(ctx, fmt(o.showVal,o.unit), xc, plateY+dy(24), '#cfe0f0', f(14,1), 'center');
     AIY.text(ctx, 'air reference', xc, plateY+dy(44), '#9fb0c6', f(13), 'center');
   }
-  AIY.text(ctx, 'drift '+AIY.drift(o.thetaIntArc).toFixed(1)+' µm', xc, plateY+dy(64), '#9fb0c6', f(13), 'center');
+  AIY.text(ctx, o.aux.label+' '+fmt(o.aux.val,o.aux.unit), xc, plateY+dy(64), '#9fb0c6', f(13), 'center');
   AIY.text(ctx, o.mediumLabel, xc, plateY+dy(82), '#9fb0c6', f(13), 'center');
   if(o.speedNote) AIY.text(ctx, o.speedNote, xc, plateY+dy(100), '#ff9aa2', f(13), 'center');
 }
@@ -103,7 +104,9 @@ function drawTube(ctx, xc, o, time){
 AIY.drawTube = (ctx, st, time) => {
   const t = AIY.THEORIES[st.theory];
   const thetaIntArc = AIY.internalAngle(t, st.frame);
-  const V = AIY.viewData(t, st.frame, st.view || 'cali');   // predicted value + Airy's value for this view
+  const view = st.view || 'cali';
+  const V = AIY.viewData(t, st.frame, view);                // predicted value + Airy's value for this view
+  const airV = AIY.viewVals(AIY.ALPHA, view);               // air baseline in the same view
   const topY = AIY.view.cy - 170, midX = AIY.view.cx;
 
   AIY.text(ctx, 'incoming starlight, aberrated by α = 20.55″', midX, topY-LIN-40,
@@ -119,13 +122,13 @@ AIY.drawTube = (ctx, st, time) => {
   drawTube(ctx, midX-155, {                              // air (baseline): scale = 37.0 in
     title:'AIR TUBE', mediumLabel:'n = 1', water:false, topY, tickPx:12,
     thetaIntArc:AIY.ALPHA, photonS:sAir,
-    showVal:AIY.ALPHA, speed:AIY.C
+    showVal:airV.val, unit:airV.unit, aux:airV.aux, speed:AIY.C
   }, time);
 
   drawTube(ctx, midX+155, {                              // water (theory): scale n× finer (27.8 in)
     title:'WATER TUBE', mediumLabel:'n = 1.33', water:true, topY, tickPx:12/AIY.N,
     thetaIntArc, photonS:sWater,
-    showVal:V.wv, labVal:V.lab, matches:V.match, speed:t.speed,
+    showVal:V.wv, labVal:V.lab, matches:V.match, unit:V.unit, tag:V.tag, aux:V.aux, speed:t.speed,
     speedNote: t.speed>AIY.C ? 'needs 1.33 c — Foucault measured 0.75 c' : null
   }, time);
 };

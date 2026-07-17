@@ -90,16 +90,29 @@ AIY.internalAngle = (t, frame) => t.frames ? (frame==='moving' ? t.moving : t.re
 
 // Display views. Each theory's number is a PREDICTION; the lab value is what Airy read.
 //   cali     — calibrated reading (θ_int · n); Airy published 20.55″
-//   raw      — raw air-scale reading (= θ_int);   air-scale of Airy's reading is 20.55/n = 15.45″
-//   thetaint — the predicted internal angle (= θ_int); same target as raw
+//   raw      — raw air-scale reading (= θ_int)
+//   thetaint — the predicted internal angle (= θ_int)
+//   micro    — the physical plate drift in µm (∝ θ_int); angle becomes the supporting figure
+// val(θ_int) is the headline number; aux(θ_int) is the related figure shown greyed.
 AIY.VIEWS = {
-  cali:     {name:'Reads — calibrated (θ_int × n)', wv:th=>th*AIY.N, lab:AIY.ALPHA,       labWord:'measured'},
-  raw:      {name:'Reads — raw (air scale)',        wv:th=>th,       lab:AIY.ALPHA/AIY.N, labWord:'requires'},
-  thetaint: {name:'θ_int — predicted internal angle',wv:th=>th,      lab:AIY.ALPHA/AIY.N, labWord:'requires'},
+  cali:     {name:'Reads — calibrated (θ_int × n)',  tag:'cali',  labWord:'measured', unit:'″',
+             val:th=>th*AIY.N, aux:th=>({label:'drift', val:AIY.drift(th), unit:'µm'})},
+  raw:      {name:'Reads — raw (air scale)',         tag:'raw',   labWord:'requires', unit:'″',
+             val:th=>th,       aux:th=>({label:'drift', val:AIY.drift(th), unit:'µm'})},
+  thetaint: {name:'θ_int — predicted internal angle', tag:'θ_int', labWord:'requires', unit:'″',
+             val:th=>th,       aux:th=>({label:'drift', val:AIY.drift(th), unit:'µm'})},
+  micro:    {name:'Micrometer — plate drift (µm)',   tag:'micro', labWord:'requires', unit:'µm',
+             val:th=>AIY.drift(th), aux:th=>({label:'θ_int', val:th, unit:'″'})},
+};
+AIY.viewVals = (thInt, view) => {
+  const V = AIY.VIEWS[view] || AIY.VIEWS.cali;
+  return {val:V.val(thInt), unit:V.unit, aux:V.aux(thInt)};
 };
 AIY.viewData = (t, frame, view) => {
   const thInt = AIY.internalAngle(t, frame), V = AIY.VIEWS[view] || AIY.VIEWS.cali;
-  const wv = V.wv(thInt);
-  return {thInt, wv, lab:V.lab, labWord:V.labWord, match:Math.abs(wv-V.lab)<0.5, name:V.name};
+  const ref = AIY.ALPHA/AIY.N;                          // internal angle Airy's reading implies
+  const wv = V.val(thInt), lab = V.val(ref), eps = V.unit==='µm' ? 1 : 0.5;
+  return {thInt, wv, lab, unit:V.unit, tag:V.tag, labWord:V.labWord,
+          aux:V.aux(thInt), match:Math.abs(wv-lab)<eps, name:V.name};
 };
 })();

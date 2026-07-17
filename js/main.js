@@ -64,15 +64,16 @@ function updateMath(){
     $('m-scale').style.display = 'none';
   } else {
     const V = AIY.viewData(t, state.frame, state.view);
-    rows.push(['this theory predicts', V.wv.toFixed(2)+'″']);
-    rows.push(['Airy '+V.labWord, V.lab.toFixed(2)+'″']);
+    const fmt=(v,u)=> u==='µm' ? v.toFixed(1)+' µm' : v.toFixed(2)+'″';
+    rows.push(['this theory predicts', fmt(V.wv,V.unit)]);
+    rows.push(['Airy '+V.labWord+' ('+V.tag+')', fmt(V.lab,V.unit)]);
     rows.push(['θ_int (in water)', V.thInt.toFixed(2)+'″']);
     rows.push(['plate drift', AIY.drift(V.thInt).toFixed(1)+' µm']);
     rows.push(['speed in water', (t.speed/AIY.C).toFixed(2)+' c']);
     const th = V.thInt, reading = th*AIY.N, match = V.match;
     $('m-verdict').innerHTML = match
-      ? '<span class="ok">✓ prediction matches Airy ('+V.lab.toFixed(2)+'″)</span>'
-      : '<span class="bad">✗ predicts '+V.wv.toFixed(2)+'″ — Airy '+V.labWord+' '+V.lab.toFixed(2)+'″</span>';
+      ? '<span class="ok">✓ prediction matches Airy ('+fmt(V.lab,V.unit)+')</span>'
+      : '<span class="bad">✗ predicts '+fmt(V.wv,V.unit)+' — Airy '+V.labWord+' '+fmt(V.lab,V.unit)+'</span>';
     // micrometer-scale numerics: raw air-scale angle vs the ×n calibrated reading
     const r=(a,b,hit)=>`<div class="r${hit?' hit':''}"><span>${a}</span><b>${b}</b></div>`;
     $('m-scale').style.display = '';
