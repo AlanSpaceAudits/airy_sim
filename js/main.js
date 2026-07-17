@@ -7,7 +7,7 @@ const canvas = document.getElementById('scene'), ctx = canvas.getContext('2d');
 const $ = id => document.getElementById(id);
 
 // default view = aberration in air, heliocentric
-const state = { theory:'air', frame:'helio', phase:5.43, exagg:3500, starLat:45, animate:true };
+const state = { theory:'air', frame:'helio', phase:5.43, exagg:3500, starLat:45, animate:true, view:'cali' };
 const latLabel = v => Math.abs(v)+'° '+(v<0?'S':v>0?'N':'');
 
 // ── Canvas + hi-dpi ────────────────────────────────────────────────────────
@@ -32,6 +32,7 @@ function syncControls(){
   $('row-exagg').style.display = sky ? '' : 'none';
   const showFrame = sky || t.frames;
   $('frame-wrap').style.display = showFrame ? '' : 'none';
+  $('row-view').style.display = sky ? 'none' : '';   // tube scenes only
   if(sky){                                             // heliocentric / geocentric
     $('btn-frameA').textContent='Heliocentric'; $('btn-frameA').dataset.v='helio';
     $('btn-frameB').textContent='Geocentric';   $('btn-frameB').dataset.v='geo';
@@ -62,15 +63,16 @@ function updateMath(){
       + '&alpha;<sub>helio</sub> = &alpha;<sub>geo</sub> = 20.55″';
     $('m-scale').style.display = 'none';
   } else {
-    const th = AIY.internalAngle(t, state.frame), reading = th*AIY.N;
-    const match = Math.abs(reading-AIY.ALPHA)<0.5;
-    rows.push(['θ_int (in water)', th.toFixed(2)+'″']);
-    rows.push(['micrometer reads', reading.toFixed(2)+'″']);
-    rows.push(['plate drift', AIY.drift(th).toFixed(1)+' µm']);
+    const V = AIY.viewData(t, state.frame, state.view);
+    rows.push(['this theory predicts', V.wv.toFixed(2)+'″']);
+    rows.push(['Airy '+V.labWord, V.lab.toFixed(2)+'″']);
+    rows.push(['θ_int (in water)', V.thInt.toFixed(2)+'″']);
+    rows.push(['plate drift', AIY.drift(V.thInt).toFixed(1)+' µm']);
     rows.push(['speed in water', (t.speed/AIY.C).toFixed(2)+' c']);
+    const th = V.thInt, reading = th*AIY.N, match = V.match;
     $('m-verdict').innerHTML = match
-      ? '<span class="ok">✓ reads 20.55″ — matches Airy</span>'
-      : '<span class="bad">✗ reads '+reading.toFixed(2)+'″ — Airy measured 20.55″</span>';
+      ? '<span class="ok">✓ prediction matches Airy ('+V.lab.toFixed(2)+'″)</span>'
+      : '<span class="bad">✗ predicts '+V.wv.toFixed(2)+'″ — Airy '+V.labWord+' '+V.lab.toFixed(2)+'″</span>';
     // micrometer-scale numerics: raw air-scale angle vs the ×n calibrated reading
     const r=(a,b,hit)=>`<div class="r${hit?' hit':''}"><span>${a}</span><b>${b}</b></div>`;
     $('m-scale').style.display = '';
@@ -107,6 +109,7 @@ $('lat').addEventListener('input', e=>{ state.starLat=+e.target.value; $('v-lat'
 $('phase').addEventListener('input', e=>{ state.phase=+e.target.value; $('v-phase').textContent=state.phase.toFixed(2); });
 $('exagg').addEventListener('input', e=>{ state.exagg=+e.target.value; $('v-exagg').innerHTML=state.exagg+'&times;'; });
 $('animate').addEventListener('change', e=>{ state.animate=e.target.checked; });
+$('view').addEventListener('change', e=>{ state.view=e.target.value; });
 
 // ── Animation loop ─────────────────────────────────────────────────────────
 let clock=0, last=0;

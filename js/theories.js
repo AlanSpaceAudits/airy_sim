@@ -87,4 +87,19 @@ AIY.THEORIES = {
 
 // Active internal angle for a theory + frame choice.
 AIY.internalAngle = (t, frame) => t.frames ? (frame==='moving' ? t.moving : t.rest) : t.thetaInt;
+
+// Display views. Each theory's number is a PREDICTION; the lab value is what Airy read.
+//   cali     — calibrated reading (θ_int · n); Airy published 20.55″
+//   raw      — raw air-scale reading (= θ_int);   air-scale of Airy's reading is 20.55/n = 15.45″
+//   thetaint — the predicted internal angle (= θ_int); same target as raw
+AIY.VIEWS = {
+  cali:     {name:'Reads — calibrated (θ_int × n)', wv:th=>th*AIY.N, lab:AIY.ALPHA,       labWord:'measured'},
+  raw:      {name:'Reads — raw (air scale)',        wv:th=>th,       lab:AIY.ALPHA/AIY.N, labWord:'requires'},
+  thetaint: {name:'θ_int — predicted internal angle',wv:th=>th,      lab:AIY.ALPHA/AIY.N, labWord:'requires'},
+};
+AIY.viewData = (t, frame, view) => {
+  const thInt = AIY.internalAngle(t, frame), V = AIY.VIEWS[view] || AIY.VIEWS.cali;
+  const wv = V.wv(thInt);
+  return {thInt, wv, lab:V.lab, labWord:V.labWord, match:Math.abs(wv-V.lab)<0.5, name:V.name};
+};
 })();

@@ -22,15 +22,16 @@ html,body{height:100%;overflow:hidden;background:#05070d;color:var(--ink);
   background:var(--panel);border:1px solid var(--edge);border-radius:14px;
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   box-shadow:0 10px 40px rgba(0,0,0,.5)}
-#controls{top:16px;left:16px}
-#math{bottom:16px;left:16px;width:360px}
+#panel{top:16px;left:16px;width:360px;max-height:calc(100vh - 32px);overflow-y:auto}
+.div{border:none;border-top:1px solid var(--edge);margin:18px 0 2px}
 .panel h2{font-size:15px;margin-bottom:10px;color:#fff}
 #desc{font-size:12.5px;color:var(--dim);margin:10px 0 14px}
 
 /* Theory selector */
 label.sel{display:block;font-size:12.5px;color:var(--dim)}
-#theory{width:100%;margin-top:6px;padding:8px 10px;border-radius:9px;
+#theory,#view{width:100%;margin-top:6px;padding:8px 10px;border-radius:9px;
   background:#0e1726;color:#fff;border:1px solid var(--edge);font-size:13px;cursor:pointer}
+#row-view{margin-bottom:14px}
 
 /* Frame toggle */
 #frame-wrap{margin-bottom:14px}
@@ -64,8 +65,8 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:none;border-ra
 .src a:hover{text-decoration:underline}
 
 /* Math legend */
-#math .row{display:flex;justify-content:space-between;font-size:12.5px;padding:2px 0}
-#math .row span{color:var(--dim)} #math .row b{color:#fff;font-variant-numeric:tabular-nums}
+#panel .row{display:flex;justify-content:space-between;font-size:12.5px;padding:2px 0}
+#panel .row span{color:var(--dim)} #panel .row b{color:#fff;font-variant-numeric:tabular-nums}
 .formula{font:12.5px/1.6 ui-monospace,Menlo,Consolas,monospace;color:var(--app);
   background:rgba(63,224,208,.07);border-radius:8px;padding:8px 10px;white-space:pre-wrap;margin-bottom:10px}
 .equal{margin:6px 0;font-size:12.5px;color:#fff;text-align:center;
@@ -83,9 +84,9 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:none;border-ra
 
 /* “What does reading mean” collapsible */
 .help{margin-top:10px;font-size:11.5px}
-.help summary{cursor:pointer;color:var(--accent);font-weight:600;list-style:none}
+.help summary{cursor:pointer;color:var(--star);font-weight:700;list-style:none}
 .help summary::-webkit-details-marker{display:none}
-.help summary::before{content:'▸ ';color:var(--accent)}
+.help summary::before{content:'▸ ';color:var(--star)}
 .help[open] summary::before{content:'▾ '}
 .help p{margin-top:7px;color:var(--dim)} .help b{color:#dbe6f4}
 
@@ -94,7 +95,12 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:none;border-ra
   align-items:center;gap:8px;pointer-events:none}
 #brand a{pointer-events:auto;display:block;line-height:0}
 #brand img{width:120px;height:120px;border-radius:50%;
-  box-shadow:0 0 0 2px var(--edge),0 6px 26px rgba(0,0,0,.6)}
+  box-shadow:0 0 0 2px var(--edge),0 6px 26px rgba(0,0,0,.6);
+  animation:acrgPulse 3.2s ease-in-out infinite}
+@keyframes acrgPulse{
+  0%,100%{transform:scale(1);     box-shadow:0 0 0 2px var(--edge),  0 6px 26px rgba(0,0,0,.6)}
+  50%    {transform:scale(1.055); box-shadow:0 0 0 2px var(--accent),0 6px 34px rgba(69,184,230,.55)}}
+@media (prefers-reduced-motion:reduce){#brand img{animation:none}}
 #brand span{font-size:12px;font-weight:600;color:var(--dim);letter-spacing:.2px}
 
 @media (max-width:860px){

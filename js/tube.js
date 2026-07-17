@@ -11,6 +11,8 @@ const AIY = window.AIY = window.AIY || {};
 const EXAGG = 800;                                      // arcsec → radians on screen
 const H = 300, W = 84, LIN = 140;                       // tube height, width, incoming ray length
 const disp = a => a/206264.806 * EXAGG;                 // display angle, radians
+// font scale: ≥1.1× base, grows with the monitor so labels stay readable
+const fscale = () => Math.min(2.0, Math.max(1.1, Math.min(innerWidth/1366, innerHeight/768)));
 
 // position along a poly-path at parameter s∈[0,1] (photon travel)
 function along(pts, s){
@@ -39,12 +41,13 @@ function micrometer(ctx, xc, gy, landingX, tickPx, fine){
   for(let x=-half; x<=half; x+=tickPx){ const tall=Math.abs(x)<tickPx/2; ctx.beginPath();
     ctx.moveTo(xc+x, gy); ctx.lineTo(xc+x, gy+(tall?9:5)); ctx.stroke(); }
   AIY.disc(ctx, {x:landingX,y:gy}, 4.5, '#3fe0d0');      // where the star transits
-  if(fine) AIY.text(ctx, '× n finer scale', xc, gy-11, '#9fd4ff', '10px system-ui', 'center');
+  if(fine) AIY.text(ctx, '× n finer scale', xc, gy-11, '#9fd4ff', Math.round(11*fscale())+'px system-ui', 'center');
 }
 
 // one telescope
 function drawTube(ctx, xc, o, time){
   const topY=o.topY, plateY=topY+H;
+  const S=fscale(), f=(n,b)=>(b?'bold ':'')+Math.round(n*S)+'px system-ui', dy=n=>n*S;
   const entry={x:xc, y:topY};
   const thExt=disp(AIY.ALPHA), thInt=disp(o.thetaIntArc);
   const landing={x:xc + H*Math.tan(thInt), y:plateY};
@@ -73,8 +76,8 @@ function drawTube(ctx, xc, o, time){
   const inDn  = Math.atan2(landing.y-entry.y, landing.x-entry.x);// refracted, pointing down the tube
   arcBetween(ctx, entry, 30, -Math.PI/2, incUp, '#f2c14e');     // external, above boundary
   arcBetween(ctx, entry, 30,  Math.PI/2, inDn,  '#3fe0d0');     // internal, below boundary
-  AIY.text(ctx, 'θ_ext '+AIY.ALPHA.toFixed(2)+'″', entry.x-10, topY-30, '#f2c14e', '11px system-ui', 'right');
-  AIY.text(ctx, 'θ_int '+o.thetaIntArc.toFixed(2)+'″', entry.x+28, topY+20, '#3fe0d0', '11px system-ui', 'left');
+  AIY.text(ctx, 'θ_ext '+AIY.ALPHA.toFixed(2)+'″', entry.x-10, topY-30, '#f2c14e', f(12), 'right');
+  AIY.text(ctx, 'θ_int '+o.thetaIntArc.toFixed(2)+'″', entry.x+28, topY+20, '#3fe0d0', f(12), 'left');
 
   micrometer(ctx, xc, plateY, landing.x, o.tickPx, o.water);
 
@@ -83,24 +86,28 @@ function drawTube(ctx, xc, o, time){
   ctx.save(); ctx.shadowBlur=12; ctx.shadowColor='#fff'; AIY.disc(ctx,ph,4.5,'#fff'); ctx.restore();
 
   // labels
-  const F='12px system-ui', FB='bold 13px system-ui';
-  AIY.text(ctx, o.title, xc, topY-LIN-16, '#e9eef6', FB, 'center');
-  AIY.text(ctx, 'reads '+o.reading.toFixed(2)+'″', xc, plateY+22, o.matches?'#5fd07a':'#ff6a78', FB, 'center');
-  AIY.text(ctx, o.matches?'✓ matches Airy':'✗ vs 20.55″', xc, plateY+40, o.matches?'#5fd07a':'#ff6a78', F, 'center');
-  AIY.text(ctx, 'drift '+AIY.drift(o.thetaIntArc).toFixed(1)+' µm', xc, plateY+58, '#9fb0c6', F, 'center');
-  AIY.text(ctx, o.mediumLabel, xc, plateY+76, '#9fb0c6', F, 'center');
-  if(o.speedNote) AIY.text(ctx, o.speedNote, xc, plateY+94, '#ff9aa2', F, 'center');
+  AIY.text(ctx, o.title, xc, topY-LIN-16, '#e9eef6', f(14,1), 'center');
+  if(o.water){                                            // theory PREDICTION vs Airy's lab-frame value
+    const col=o.matches?'#5fd07a':'#ff6a78';
+    AIY.text(ctx, (o.matches?'✓ ':'✗ ')+'predicted '+o.showVal.toFixed(2)+'″', xc, plateY+dy(24), col, f(14,1), 'center');
+    AIY.text(ctx, "Airy's lab frame value "+o.labVal.toFixed(2)+'″', xc, plateY+dy(44), '#5fd07a', f(13), 'center');
+  } else {                                                // the measured baseline
+    AIY.text(ctx, o.showVal.toFixed(2)+'″', xc, plateY+dy(24), '#cfe0f0', f(14,1), 'center');
+    AIY.text(ctx, 'air reference', xc, plateY+dy(44), '#9fb0c6', f(13), 'center');
+  }
+  AIY.text(ctx, 'drift '+AIY.drift(o.thetaIntArc).toFixed(1)+' µm', xc, plateY+dy(64), '#9fb0c6', f(13), 'center');
+  AIY.text(ctx, o.mediumLabel, xc, plateY+dy(82), '#9fb0c6', f(13), 'center');
+  if(o.speedNote) AIY.text(ctx, o.speedNote, xc, plateY+dy(100), '#ff9aa2', f(13), 'center');
 }
 
 AIY.drawTube = (ctx, st, time) => {
   const t = AIY.THEORIES[st.theory];
   const thetaIntArc = AIY.internalAngle(t, st.frame);
-  const reading = thetaIntArc * AIY.N;
-  const matches = Math.abs(reading-AIY.ALPHA) < 0.5;
+  const V = AIY.viewData(t, st.frame, st.view || 'cali');   // predicted value + Airy's value for this view
   const topY = AIY.view.cy - 170, midX = AIY.view.cx;
 
   AIY.text(ctx, 'incoming starlight, aberrated by α = 20.55″', midX, topY-LIN-40,
-           '#f2c14e', '13px system-ui', 'center');
+           '#f2c14e', Math.round(14*fscale())+'px system-ui', 'center');
 
   // Shared cycle: photon speed ∝ light speed in the medium. The cycle lasts as long as the
   // SLOWER beam takes to reach the plate; the faster one clamps at the bottom and waits, so
@@ -112,13 +119,13 @@ AIY.drawTube = (ctx, st, time) => {
   drawTube(ctx, midX-155, {                              // air (baseline): scale = 37.0 in
     title:'AIR TUBE', mediumLabel:'n = 1', water:false, topY, tickPx:12,
     thetaIntArc:AIY.ALPHA, photonS:sAir,
-    reading:AIY.ALPHA, matches:true, speed:AIY.C
+    showVal:AIY.ALPHA, speed:AIY.C
   }, time);
 
   drawTube(ctx, midX+155, {                              // water (theory): scale n× finer (27.8 in)
     title:'WATER TUBE', mediumLabel:'n = 1.33', water:true, topY, tickPx:12/AIY.N,
     thetaIntArc, photonS:sWater,
-    reading, matches, speed:t.speed,
+    showVal:V.wv, labVal:V.lab, matches:V.match, speed:t.speed,
     speedNote: t.speed>AIY.C ? 'needs 1.33 c — Foucault measured 0.75 c' : null
   }, time);
 };

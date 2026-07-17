@@ -1,8 +1,9 @@
 (function(){
 /* ── Sky scene: stellar aberration in air (the orbital view) ───────────────
- * apparent = star + (v/c)·(perp component of v to the line of sight).
- * The star-latitude slider tilts the star off the ecliptic pole, so the annual
- * aberration ellipse morphs from a circle (pole) to a line (in the plane).
+ * The annual aberration ellipse lies flat in the sky, with on-screen aspect
+ * ratio = |sin(ecliptic latitude)|: a flat circle at the poles, tightening
+ * evenly to a straight line at the ecliptic. The apparent star rides it, toward
+ * the projected velocity.
  * ------------------------------------------------------------------------- */
 'use strict';
 const AIY = window.AIY = window.AIY || {};
@@ -10,17 +11,13 @@ const AIY = window.AIY = window.AIY || {};
 const ORBIT_PX = 210;                                 // orbit radius, px
 const VEC_LEN  = 165;                                 // star-vector length, world px
 const VEL_LEN  = 120;                                 // velocity-vector length, world px
+const FLAT     = 0.42;                                 // scene tilt: a sky-circle lies this flat on screen
 const AXIS = AIY.norm({x:0.20, y:0.92, z:-0.40});     // Earth rotation axis, tilted 23.5° away
 
 // star direction from ecliptic latitude (90°=pole → straight up; 0°=in the plane)
 function starDir(latDeg){
   const l=latDeg*Math.PI/180, c=Math.cos(l);
   return AIY.norm({x:0.88*c, y:Math.sin(l), z:-0.25*c});
-}
-// first-order aberration: displace by the component of v⃗ perpendicular to the star
-function aberrate(star, vdir, k){
-  const dot=star.x*vdir.x+star.y*vdir.y+star.z*vdir.z;
-  return AIY.add(star, {x:k*(vdir.x-dot*star.x), y:k*(vdir.y-dot*star.y), z:k*(vdir.z-dot*star.z)});
 }
 function worldArrow(ctx, from, dir, len, color, w){
   const d=AIY.projectDir(dir); AIY.arrow(ctx, from, {x:from.x+d.x*len, y:from.y+d.y*len}, color, w);
@@ -32,7 +29,6 @@ AIY.drawSky = (ctx, st) => {
   const phi  = st.phase/12 * 2*Math.PI;
   const vdir = AIY.norm({x:-Math.sin(phi), y:0, z:Math.cos(phi)});   // relative velocity dir (both frames)
   const k    = AIY.BETA * st.exagg;
-  const app  = aberrate(STAR, vdir, k);
 
   const body   = AIY.project({x:ORBIT_PX*Math.cos(phi), y:0, z:ORBIT_PX*Math.sin(phi)});
   const center = {x:cx, y:cy};
@@ -59,13 +55,19 @@ AIY.drawSky = (ctx, st) => {
   ctx.fillStyle=sg; ctx.beginPath(); ctx.arc(sun.x,sun.y,60,0,7); ctx.fill();
   AIY.disc(ctx,sun,17,'#ffd35a');
 
-  // annual aberration ellipse (exact, projectDir is linear) — collapses to a line near the plane
+  // annual aberration ellipse — flat in the sky, on-screen aspect = |sin(latitude)|:
+  // horizontal major (along the ecliptic), vertical minor that vanishes at the ecliptic.
+  const sTip=AIY.projectDir(STAR);
+  const starTip={x:earth.x+sTip.x*VEC_LEN, y:earth.y+sTip.y*VEC_LEN};
+  const A=k*VEC_LEN, aMin=A*FLAT*Math.abs(Math.sin(st.starLat*Math.PI/180));
   ctx.strokeStyle='rgba(63,224,208,.55)'; ctx.lineWidth=1.2; ctx.beginPath();
-  const STEPS=96;
-  for(let i=0;i<=STEPS;i++){ const tt=i/STEPS*2*Math.PI, vd={x:-Math.sin(tt),y:0,z:Math.cos(tt)};
-    const d=AIY.projectDir(aberrate(STAR,vd,k)), pt={x:earth.x+d.x*VEC_LEN, y:earth.y+d.y*VEC_LEN};
+  for(let i=0;i<=96;i++){ const th=i/96*2*Math.PI;
+    const pt={x:starTip.x+A*Math.cos(th), y:starTip.y+aMin*Math.sin(th)};
     i===0?ctx.moveTo(pt.x,pt.y):ctx.lineTo(pt.x,pt.y);
   } ctx.closePath(); ctx.stroke();
+  // apparent star sits on the ellipse, toward the projected velocity
+  const vd2=AIY.projectDir(vdir), vm=Math.hypot(vd2.x,vd2.y)||1;
+  const appTip={x:starTip.x+A*vd2.x/vm, y:starTip.y+aMin*vd2.y/vm};
 
   // Earth + tilted axis
   const ax=AIY.projectDir(AXIS), am=Math.hypot(ax.x,ax.y);
@@ -76,7 +78,7 @@ AIY.drawSky = (ctx, st) => {
 
   // vectors
   worldArrow(ctx, earth, STAR, VEC_LEN, '#f2c14e', 2.5);   // yellow true
-  worldArrow(ctx, earth, app,  VEC_LEN, '#3fe0d0', 2.5);   // cyan apparent
+  AIY.arrow(ctx, earth, appTip, '#3fe0d0', 2.5);           // cyan apparent (on the ellipse)
   worldArrow(ctx, earth, vdir, VEL_LEN, '#ff5b6a', 2.5);   // red velocity
 };
 })();

@@ -12,8 +12,8 @@
 <!-- Scene: everything is drawn here -->
 <canvas id="scene"></canvas>
 
-<!-- Left control panel -->
-<section id="controls" class="panel">
+<!-- Left panel: controls + live math legend, one scrollable container -->
+<section id="panel" class="panel">
   <h2>Stellar Aberration</h2>
 
   <label class="sel">Theory / prediction
@@ -28,6 +28,15 @@
       <button id="btn-frameB"></button>
     </div>
   </div>
+
+  <!-- Which quantity to show for the water tube (its prediction) -->
+  <label class="sel" id="row-view">Show
+    <select id="view">
+      <option value="cali">Reads — calibrated (θ_int × n)</option>
+      <option value="raw">Reads — raw (air scale)</option>
+      <option value="thetaint">θ_int — predicted internal angle</option>
+    </select>
+  </label>
 
   <label id="row-lat">Star latitude: <b id="v-lat">45° N</b>
     <input id="lat" type="range" min="-90" max="90" step="1" value="45">
@@ -49,10 +58,9 @@
   <p class="src">Full data &amp; derivations:
     <a href="https://docs.google.com/spreadsheets/d/1ztxCRJBzytxn6jICCrBjRUU67HcBrKAw_xMz9tPLZGw/edit?gid=0#gid=0"
        target="_blank" rel="noopener">Google Sheet &#8599;</a></p>
-</section>
 
-<!-- Live math legend -->
-<section id="math" class="panel">
+  <hr class="div">
+
   <h2 id="m-title">Math in use</h2>
   <div id="m-formula" class="formula"></div>
   <div id="m-rows"></div>
