@@ -1,0 +1,4 @@
+# source notes stay local; only the primary PDFs and page captures are published
+project_sources/*.md
+__pycache__/
+*.pyc

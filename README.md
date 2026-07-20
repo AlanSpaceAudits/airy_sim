@@ -75,12 +75,9 @@ with no server and no network. Open `airy_prezzie/airy.html` directly.
     #12                         deep-links to a slide
     arrows / swipe              navigate      L  contents      F  fullscreen
 
-The deck is generated. Edit `slides.html` or `deck.css`, then rebuild:
-
-    cd airy_prezzie && python3 build.py
-
-`build.py` re-reads the simulation from this repo on every build and asserts the embedded
-copy is byte-for-byte identical to the source, so simulation changes propagate automatically.
+The deck is generated from a separate source project and published here as a single built
+file. Its build step re-reads the simulation from this repo and asserts the embedded copy is
+byte-for-byte identical to the source, so simulation changes propagate to the deck.
 
 ## Files
 
@@ -95,12 +92,9 @@ copy is byte-for-byte identical to the source, so simulation changes propagate a
 
     airy_prezzie/
       airy.html       the built deck, self-contained
-      slides.html     slide markup
-      deck.css        deck theme
-      build.py        assembles airy.html from the above plus the simulation
 
-    project_sources/  primary sources: papers, source notes, extracts
-      pics/           page captures and figures cited by the notes
+    project_sources/  primary sources: the papers themselves
+      pics/           page captures and figures
 
 ## Constants
 
