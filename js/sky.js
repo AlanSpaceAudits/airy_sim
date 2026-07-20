@@ -27,13 +27,26 @@ AIY.drawSky = (ctx, st) => {
   const {cx,cy,squash} = AIY.view;
   const STAR = starDir(st.starLat);
   const phi  = st.phase/12 * 2*Math.PI;
-  const vdir = AIY.norm({x:-Math.sin(phi), y:0, z:Math.cos(phi)});   // relative velocity dir (both frames)
+  const geo  = st.frame==='geo';
   const k    = AIY.BETA * st.exagg;
 
-  const body   = AIY.project({x:ORBIT_PX*Math.cos(phi), y:0, z:ORBIT_PX*Math.sin(phi)});
+  // Earth→Sun direction is an observable: it must be the same on a given date in
+  // either frame. Helio puts Earth at +P(φ) about the Sun, so geo puts the Sun at
+  // −P(φ) about the Earth. s = −1 in geo carries that flip.
+  const s = geo ? -1 : 1;
+  const orbit = {x:s*ORBIT_PX*Math.cos(phi), y:0, z:s*ORBIT_PX*Math.sin(phi)};
+  // Velocity of the moving body, tangent to its own path (d/dφ of its position).
+  // Helio: the Earth moves at +v. Geo: the Earth is at rest and the sky streams
+  // past at −v, which is also the Sun's orbital direction. Relative velocity, and
+  // so the aberration, is identical either way.
+  const vdir = AIY.norm({x:-s*Math.sin(phi), y:0, z:s*Math.cos(phi)});
+  // Earth's velocity relative to the sky. Frame-independent, so aberration is too.
+  const abdir = AIY.norm({x:-Math.sin(phi), y:0, z:Math.cos(phi)});
+
+  const body   = AIY.project(orbit);
   const center = {x:cx, y:cy};
-  const earth  = st.frame==='geo' ? center : body;
-  const sun    = st.frame==='geo' ? body   : center;
+  const earth  = geo ? center : body;
+  const sun    = geo ? body   : center;
 
   // parallel incoming starlight
   const sd=AIY.norm(AIY.projectDir(STAR)), n={x:-sd.y,y:sd.x}, L=2400;
@@ -65,8 +78,11 @@ AIY.drawSky = (ctx, st) => {
     const pt={x:starTip.x+A*Math.cos(th), y:starTip.y+aMin*Math.sin(th)};
     i===0?ctx.moveTo(pt.x,pt.y):ctx.lineTo(pt.x,pt.y);
   } ctx.closePath(); ctx.stroke();
-  // apparent star sits on the ellipse, toward the projected velocity
-  const vd2=AIY.projectDir(vdir), vm=Math.hypot(vd2.x,vd2.y)||1;
+  // Apparent star sits on the ellipse, displaced along the Earth's velocity
+  // RELATIVE TO THE SKY — abdir, not the drawn arrow. Stopping the Earth and
+  // streaming the sky the other way leaves that relative velocity unchanged, so
+  // the displacement is identical in both frames. That is the reciprocity.
+  const vd2=AIY.projectDir(abdir), vm=Math.hypot(vd2.x,vd2.y)||1;
   const appTip={x:starTip.x+A*vd2.x/vm, y:starTip.y+aMin*vd2.y/vm};
 
   // Earth + tilted axis

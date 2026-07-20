@@ -60,6 +60,28 @@ reports its raw internal angle (15.45″, 27.33″, or 11.88″), which differs 
 
 Open `index.html` in any modern browser. No build step, no dependencies.
 
+## Presentation
+
+`airy_prezzie/airy.html` is a self-contained slide deck covering the experiment: what
+aberration is, what Airy built and measured, what each theory predicted, and which frame
+reproduces the reading. It carries a **Presentation / Simulation** toggle that runs the
+simulation below in an isolated frame, so one file holds both.
+
+Everything is inlined (fonts, logo, the full simulation), so it works offline from a phone
+with no server and no network. Open `airy_prezzie/airy.html` directly.
+
+    Presentation / Simulation   toggle at the top, or press S
+    #sim                        opens straight into the simulation
+    #12                         deep-links to a slide
+    arrows / swipe              navigate      L  contents      F  fullscreen
+
+The deck is generated. Edit `slides.html` or `deck.css`, then rebuild:
+
+    cd airy_prezzie && python3 build.py
+
+`build.py` re-reads the simulation from this repo on every build and asserts the embedded
+copy is byte-for-byte identical to the source, so simulation changes propagate automatically.
+
 ## Files
 
     index.html        markup, controls, live math legend
@@ -70,6 +92,15 @@ Open `index.html` in any modern browser. No build step, no dependencies.
     js/tube.js        air-vs-water telescope scene
     js/main.js        state, controls, animation loop
     assets/           logo
+
+    airy_prezzie/
+      airy.html       the built deck, self-contained
+      slides.html     slide markup
+      deck.css        deck theme
+      build.py        assembles airy.html from the above plus the simulation
+
+    project_sources/  primary sources: papers, source notes, extracts
+      pics/           page captures and figures cited by the notes
 
 ## Constants
 
