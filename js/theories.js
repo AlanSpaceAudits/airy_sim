@@ -77,6 +77,13 @@ AIY.THEORIES = {
     formula:'tan α′₁ = sin α √(1−β²) / (cos α + v/c)\nrest 15.45″     moving 11.88″',
     blurb:'§4.4.5 argues Airy in the water’s rest frame with no equation. Rest 15.45″, moving 11.88″.'
   },
+  jones: {
+    label:'Jones 1972 (transverse drag, measured)', scene:'tube', speed:C/N,
+    thetaInt:A*(N-1/N), cite:'Jones 1972, Proc. R. Soc. Lond. A 328, 337',
+    formula:'δ = (v/c)·L·(n − 1/n)  →  θ_int = β(n − 1/n) = 11.88″\nmeasured 6.174 nm vs Fresnel 6.175 nm  (0.02%)',
+    blurb:'The moving-frame transverse drag, measured directly in Airy’s geometry to 0.02%. θ_int = 11.88″ '
+      +'reads 15.80″, not 20.55″. Read as a speed the moving frame needs 1.73c; the real speed is 0.75c.'
+  },
   geo: {
     label:'Geocentric', scene:'tube', speed:C/N,
     thetaInt:A/N, cite:'Earth at rest, single frame',
