@@ -79,7 +79,7 @@ function updateMath(){
   } else if(t.scene==='micro'){
     const air=AIY.microData('air'), wat=AIY.microData('water'), gd=AIY.microData(state.frame);
     rows.push(['medium', gd.water ? 'water, n = 1.33' : 'air, n = 1']);
-    rows.push(['1 · displacement (measured)', gd.xMm.toFixed(4)+' mm']);
+    rows.push(['1 · displacement (measured)', (gd.xMm*1000).toFixed(1)+' µm']);
     rows.push(['2 · celestial arc (reads)', gd.read.toFixed(2)+'″']);
     rows.push(['3 · internal tilt (implied)', gd.thInt.toFixed(2)+'″']);
     rows.push(['physical tube length', gd.Lmm.toFixed(0)+' mm']);
@@ -88,8 +88,8 @@ function updateMath(){
     const r=(a,b,hit)=>`<div class="r${hit?' hit':''}"><span>${a}</span><b>${b}</b></div>`;
     $('m-scale').innerHTML =
       '<div class="sh">SAME PLATE DISPLACEMENT</div>'
-      + r('air  (tube 706 mm)', air.xMm.toFixed(4)+' mm')
-      + r('water (tube 940 mm)', wat.xMm.toFixed(4)+' mm')
+      + r('air  (tube 706 mm)', (air.xMm*1000).toFixed(1)+' µm')
+      + r('water (tube 940 mm)', (wat.xMm*1000).toFixed(1)+' µm')
       + r('both read', '20.55″', true);
   } else {
     const V = AIY.viewData(t, state.frame, state.view);

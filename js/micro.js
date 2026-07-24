@@ -90,7 +90,7 @@ AIY.drawMicrometer = (ctx, st, clock) => {
   // bottom bracket = the celestial arc it converts to (Reads, green).
   if(p>0.03){
     bracket(ctx, starX, merX, starY-g(30), held?'#e9eef6':'#9fd4ff',
-            'micrometer  '+liveMm.toFixed(3)+' mm', f(13.5,held), 'up', g);
+            'micrometer  '+(liveMm*1000).toFixed(1)+' µm', f(13.5,held), 'up', g);
     bracket(ctx, starX, merX, starY+g(30), held?'#5fd07a':'#3fe0d0',
             (held?'reads ':'')+liveArc.toFixed(2)+'″'+(held?' ✓':''), f(13.5,held), 'down', g);
   }
@@ -107,10 +107,10 @@ AIY.drawMicrometer = (ctx, st, clock) => {
 
   // ── transit clock ─────────────────────────────────────────────────────────
   const cY=E.y+R+g(28);
-  AIY.text(ctx,'expected transit',E.x-R*0.5,cY,'#9fb0c6',f(13),'center');
-  AIY.text(ctx,T_E.toFixed(2)+' s',E.x-R*0.5,cY+g(21),'#e9eef6',f(17,1),'center');
-  AIY.text(ctx,'current',E.x+R*0.5,cY,'#9fb0c6',f(13),'center');
-  AIY.text(ctx,tcur.toFixed(2)+' s',E.x+R*0.5,cY+g(21),held?'#5fd07a':'#f2c14e',f(17,1),'center');
+  AIY.text(ctx,'current',E.x-R*0.5,cY,'#9fb0c6',f(13),'center');
+  AIY.text(ctx,tcur.toFixed(2)+' s',E.x-R*0.5,cY+g(21),held?'#5fd07a':'#f2c14e',f(17,1),'center');
+  AIY.text(ctx,'expected transit',E.x+R*0.5,cY,'#9fb0c6',f(13),'center');
+  AIY.text(ctx,T_E.toFixed(2)+' s',E.x+R*0.5,cY+g(21),'#e9eef6',f(17,1),'center');
   const bw=R*1.3,bx=E.x-bw/2,by=cY+g(38);
   ctx.strokeStyle='rgba(159,176,198,.4)'; ctx.lineWidth=1; ctx.strokeRect(bx,by,bw,g(6));
   ctx.fillStyle=held?'#5fd07a':'#f2c14e'; ctx.fillRect(bx,by,bw*(tcur/T_E),g(6));
@@ -119,35 +119,37 @@ AIY.drawMicrometer = (ctx, st, clock) => {
 
 // the conversion, rendered as a real HTML panel (not canvas) for readability.
 AIY.microPanelHTML = frame => {
-  const d = AIY.microData(frame), F = F_MM.toFixed(0);
-  const x = d.xMm.toFixed(4), k = '206265″';
+  const d = AIY.microData(frame), k = '206265″';
+  const xUm = (d.xMm*1000).toFixed(1);                 // plate displacement, µm
+  const fUm = (F_MM*1000).toFixed(0);                  // focal length in µm (for the division)
+  const LUm = (d.Lmm*1000).toFixed(0);                 // tube length in µm
   return `
   <h3>MICROMETER READING &rarr; CELESTIAL ARC</h3>
 
   <div class="mstep measured">
     <div class="lbl">1 &middot; measured on the plate</div>
-    <div class="eq"><span class="v">x</span> = <span class="res">${x} mm</span></div>
-    <div class="lbl">the star's offset from the meridian wire at transit (${(d.xMm*1000).toFixed(1)} µm)</div>
+    <div class="eq"><span class="v">x</span> = <span class="res">${xUm} µm</span></div>
+    <div class="lbl">the star's offset from the meridian wire at transit</div>
   </div>
 
   <div class="mstep reads">
     <div class="lbl">2 &middot; convert to a sky angle &mdash; the reading</div>
     <div class="eq">arc = ( <span class="v">x</span> &divide; <span class="v">f</span> ) &times; <span class="v">k</span></div>
-    <div class="eq sm">= ( ${x} &divide; ${F} ) &times; ${k}</div>
+    <div class="eq sm">= ( ${xUm} &divide; ${fUm} ) &times; ${k}</div>
     <div class="eq"><span class="res">= ${d.read.toFixed(2)}&Prime;</span> &nbsp;Airy's reading</div>
   </div>
 
   <div class="mstep implied">
     <div class="lbl">3 &middot; internal tilt &mdash; implied afterward (or via Snell)</div>
     <div class="eq">&theta;_int = ( <span class="v">x</span> &divide; <span class="v">L</span> ) &times; <span class="v">k</span></div>
-    <div class="eq sm">= ( ${x} &divide; ${d.Lmm.toFixed(0)} ) &times; ${k}</div>
+    <div class="eq sm">= ( ${xUm} &divide; ${LUm} ) &times; ${k}</div>
     <div class="eq"><span class="res">= ${d.thInt.toFixed(2)}&Prime;</span></div>
   </div>
 
   <div class="mdefs">
-    <div class="d"><b>x</b><span>plate displacement, measured (mm)</span></div>
+    <div class="d"><b>x</b><span>plate displacement, measured (µm)</span></div>
     <div class="d"><b>f</b><span>focal length, air-equivalent = 706 mm</span></div>
-    <div class="d"><b>L</b><span>physical tube length — air 706, water 940 mm</span></div>
+    <div class="d"><b>L</b><span>physical tube length — air 706 mm, water 940 mm</span></div>
     <div class="d"><b>k</b><span>206265&Prime; per radian — the number of arcseconds in one radian (1 rad = 180/&pi; &times; 3600&Prime;)</span></div>
   </div>
 
