@@ -22,6 +22,14 @@ const A = AIY.ALPHA, N = AIY.N, C = AIY.C;
 // scene:'sky' → orbital view; scene:'tube' → air-vs-water telescope.
 // frames:true → water-at-rest vs water-in-motion toggle (frame-transform theories).
 AIY.THEORIES = {
+  micrometer: {
+    label:'Micrometer — meridian transit', scene:'micro', micro:true, speed:C/N,
+    formula:'1. displacement x  (measured on the plate)\n2. arc = x ÷ focal length  → reads 20.55″\n3. θ_int = x ÷ tube length  (implied)',
+    blurb:'γ Draconis drifts to the meridian wire and is caught at the predicted transit instant. Airy read '
+      +'the star’s plate displacement, not an angle, then converted it to a celestial arc. The internal tilt '
+      +'is only known afterwards, by implication. Air (tube 706 mm) and water (tube 940 mm) land at the same '
+      +'displacement, so both read 20.55″.'
+  },
   air: {
     label:'Aberration — Air', scene:'sky',
     formula:'ŝ_app = normalize( c·ŝ + v⃗ )\nα = arctan(v/c) = 20.55″',

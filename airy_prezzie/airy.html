@@ -1225,6 +1225,9 @@ water moving:   <span class="int">θ_int = β(n − 1/n) = 11.88″</span>  → 
   </details>
 </section>
 
+<!-- Right sector: the micrometer→arc conversion, shown only in Micrometer mode -->
+<aside id="micro-panel" hidden></aside>
+
 <!-- Brand -->
 <footer id="brand">
   <a href="https://discord.gg/aethercosmology" target="_blank" rel="noopener">
@@ -1232,6 +1235,7 @@ water moving:   <span class="int">θ_int = β(n − 1/n) = 11.88″</span>  → 
   </a>
   <span>Aether Cosmology Research Group</span>
 </footer>
+
 
 
 
@@ -1331,6 +1335,36 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:none;border-ra
 .help[open] summary::before{content:'▾ '}
 .help p{margin-top:7px;color:var(--dim)} .help b{color:#dbe6f4}
 
+/* Micrometer conversion panel (right sector) */
+#micro-panel{position:fixed;z-index:2;right:24px;top:50%;transform:translateY(-50%);
+  width:372px;max-height:calc(100vh - 32px);overflow-y:auto;padding:20px 22px;
+  background:var(--panel);border:1px solid var(--edge);border-radius:14px;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  box-shadow:0 10px 40px rgba(0,0,0,.5)}
+#micro-panel[hidden]{display:none}
+#micro-panel h3{font-size:13px;font-weight:700;letter-spacing:.4px;color:var(--accent);margin-bottom:16px}
+.mstep{margin-bottom:16px;padding:2px 0 2px 13px;border-left:2px solid var(--edge)}
+.mstep .lbl{font-size:12px;color:var(--dim);margin:2px 0}
+.mstep .eq{font:17px/1.75 ui-monospace,Menlo,Consolas,monospace;color:var(--ink);
+  font-variant-numeric:tabular-nums}
+.mstep .eq.sm{font-size:14px;color:var(--dim)}
+.mstep .eq .v{color:var(--accent);font-weight:700}
+.mstep .eq .res{font-weight:700}
+.mstep.measured{border-left-color:#cfe0f0}
+.mstep.measured .res{color:#fff;font-size:21px}
+.mstep.reads{border-left-color:#5fd07a}
+.mstep.reads .res{color:#5fd07a;font-size:23px}
+.mstep.implied{border-left-color:var(--app)}
+.mstep.implied .res{color:var(--app);font-size:20px}
+.mdefs{margin:16px 0 12px;padding:12px 14px;background:rgba(69,184,230,.06);
+  border:1px solid var(--edge);border-radius:9px}
+.mdefs .d{display:flex;gap:10px;padding:4px 0;font-size:12px;color:var(--dim);line-height:1.45}
+.mdefs .d b{color:var(--accent);font-family:ui-monospace,Menlo,Consolas,monospace;
+  min-width:18px;text-align:center;font-size:13px}
+.mnull{font-size:12.5px;color:#5fd07a;text-align:center;
+  background:rgba(95,208,122,.09);border:1px solid rgba(95,208,122,.3);border-radius:8px;padding:9px 10px}
+.mnull b{color:#8fe6a5}
+
 /* Brand (bottom-right, prominent) */
 #brand{position:fixed;bottom:18px;right:20px;z-index:3;display:flex;flex-direction:column;
   align-items:center;gap:8px;pointer-events:none}
@@ -1411,6 +1445,14 @@ const A = AIY.ALPHA, N = AIY.N, C = AIY.C;
 // scene:'sky' → orbital view; scene:'tube' → air-vs-water telescope.
 // frames:true → water-at-rest vs water-in-motion toggle (frame-transform theories).
 AIY.THEORIES = {
+  micrometer: {
+    label:'Micrometer — meridian transit', scene:'micro', micro:true, speed:C/N,
+    formula:'1. displacement x  (measured on the plate)\n2. arc = x ÷ focal length  → reads 20.55″\n3. θ_int = x ÷ tube length  (implied)',
+    blurb:'γ Draconis drifts to the meridian wire and is caught at the predicted transit instant. Airy read '
+      +'the star’s plate displacement, not an angle, then converted it to a celestial arc. The internal tilt '
+      +'is only known afterwards, by implication. Air (tube 706 mm) and water (tube 940 mm) land at the same '
+      +'displacement, so both read 20.55″.'
+  },
   air: {
     label:'Aberration — Air', scene:'sky',
     formula:'ŝ_app = normalize( c·ŝ + v⃗ )\nα = arctan(v/c) = 20.55″',
@@ -1750,6 +1792,173 @@ AIY.drawTube = (ctx, st, time) => {
 };
 })();
 </script>
+<script type="text/plain" id="sim-js-micro">(function(){
+/* ── Micrometer scene: γ Draconis meridian transit, Airy's water telescope ──
+ * You look up the tube at the eyepiece: a round field ruled with the micrometer
+ * grid, a bold meridian wire. γ Draconis drifts to the wire and is CAUGHT at the
+ * predicted transit instant, stopping short by the aberration.
+ *
+ * Airy did NOT measure an angle. He read the star's PLATE POSITION at the transit
+ * moment (a micrometer displacement) and converted it to a celestial arc. The
+ * internal tilt is only known AFTER that, by implication. So the chain reads:
+ *     micrometer displacement (measured)  →  celestial arc = displacement ÷ focal
+ *     →  internal tilt (implied) = displacement ÷ physical tube length
+ * Air (tube 706 mm) and water (tube 940 mm) both land at the same displacement,
+ * so both read the same 20.55″. That is the null.
+ *
+ * Everything scales off S (tied to the eyepiece radius) so fonts and spacing grow
+ * together at any window size or browser zoom.
+ * ------------------------------------------------------------------------- */
+'use strict';
+const AIY = window.AIY = window.AIY || {};
+
+const AS   = 206264.806;
+const T_E  = 6.0, HOLD = 2.6;      // expected transit time / caught pause, s
+const KAPPA= 20.55;               // aberration constant → the arc it settles on
+const F_MM = 27.8*25.4;            // focal length (air-equivalent), mm
+const ease = p => p<1 ? 1-Math.pow(1-p,2.3) : 1;
+
+// γ Draconis (Eltanin) transits ~0.9′ from the zenith at Greenwich — Airy's star.
+AIY.microData = frame => {
+  const water = frame==='water';
+  const thInt = water ? KAPPA/AIY.N : KAPPA;           // 15.45″ or 20.55″
+  const Lmm   = water ? 37.0*25.4 : 27.8*25.4;         // physical tube length, mm
+  const xMm   = thInt/AS * Lmm;                        // plate displacement, mm (~0.070)
+  const read  = xMm/F_MM * AS;                         // celestial arc ≈ 20.55″
+  return {water, thInt, Lmm, xMm, read};
+};
+
+// Lay the eyepiece and the formula panel out as one centred pair, so the panel
+// sits right beside the eyepiece instead of pinned to the far edge. Shared by
+// the canvas (eyepiece position) and main.js (panel's left edge).
+AIY.microLayout = () => {
+  const R = Math.max(150, Math.min(240, Math.min(innerWidth,innerHeight)*0.26));
+  const S = Math.max(0.95, Math.min(1.55, R/165));
+  const PANEL_W = 418, GAP = 44, leftUI = 396;          // panel total width, gap, controls
+  const pairW = 2*R + GAP + PANEL_W;
+  const blockLeft = leftUI + Math.max(0, (innerWidth - leftUI - pairW)/2);
+  const Ex = blockLeft + R;
+  return { R, S, Ex, panelLeft: Ex + R + GAP };
+};
+
+AIY.drawMicrometer = (ctx, st, clock) => {
+  const water = st.frame==='water', d = AIY.microData(st.frame);
+
+  // one scale for the whole widget: tie it to the eyepiece radius so fonts and
+  // spacing grow together (fixes overlap at high-res / different zoom levels).
+  const L = AIY.microLayout(), R = L.R, S = L.S;
+  const f = (n,b)=>(b?'bold ':'')+Math.round(n*S)+'px system-ui';
+  const g = n => n*S;                                   // vertical spacing unit
+
+  const E = {x: L.Ex, y: AIY.view.cy + g(6)};
+  const merX = E.x;
+
+  // transit clock → progress
+  const tc=clock%(T_E+HOLD), tcur=Math.min(tc,T_E), p=ease(tcur/T_E), held=tc>=T_E;
+  const liveMm = d.xMm*p, liveArc = d.read*p;
+
+  const offPx = R*0.42;                                 // caught offset from the wire, px
+  const startX= E.x - R*0.86, stopX = merX - offPx;
+  const starX = startX + (stopX-startX)*p, starY = E.y;
+
+  // ── eyepiece body + grid ───────────────────────────────────────────────────
+  ctx.save();
+  const bg=ctx.createRadialGradient(E.x,E.y,8,E.x,E.y,R);
+  bg.addColorStop(0,'#0a1522'); bg.addColorStop(1,'#050a12');
+  ctx.fillStyle=bg; ctx.beginPath(); ctx.arc(E.x,E.y,R,0,7); ctx.fill();
+  ctx.beginPath(); ctx.arc(E.x,E.y,R,0,7); ctx.clip();
+  if(water){ ctx.fillStyle='rgba(70,150,210,.10)'; ctx.fillRect(E.x-R,E.y-R,2*R,2*R); }
+  const tick=R/10*(water?1/AIY.N:1);                   // water plate is n× finer
+  ctx.lineWidth=1;
+  for(let x=-R;x<=R;x+=tick){ ctx.strokeStyle='rgba(200,215,235,.13)';
+    ctx.beginPath(); ctx.moveTo(E.x+x,E.y-R); ctx.lineTo(E.x+x,E.y+R); ctx.stroke(); }
+  for(let y=-R;y<=R;y+=tick){ ctx.strokeStyle='rgba(200,215,235,.06)';
+    ctx.beginPath(); ctx.moveTo(E.x-R,E.y+y); ctx.lineTo(E.x+R,E.y+y); ctx.stroke(); }
+  ctx.strokeStyle='rgba(220,230,245,.3)'; ctx.lineWidth=1.3;               // drift track
+  ctx.beginPath(); ctx.moveTo(E.x-R,E.y); ctx.lineTo(E.x+R,E.y); ctx.stroke();
+  ctx.strokeStyle='#ff8a94'; ctx.lineWidth=2.4;                            // meridian wire
+  ctx.beginPath(); ctx.moveTo(merX,E.y-R); ctx.lineTo(merX,E.y+R); ctx.stroke();
+  AIY.text(ctx,'meridian',merX+g(7),E.y-R+g(15),'#ff8a94',f(11.5),'left');
+
+  // top bracket = the micrometer scale reading (measured displacement, counting);
+  // bottom bracket = the celestial arc it converts to (Reads, green).
+  if(p>0.03){
+    bracket(ctx, starX, merX, starY-g(30), held?'#e9eef6':'#9fd4ff',
+            'micrometer  '+liveMm.toFixed(3)+' mm', f(13.5,held), 'up', g);
+    bracket(ctx, starX, merX, starY+g(30), held?'#5fd07a':'#3fe0d0',
+            (held?'reads ':'')+liveArc.toFixed(2)+'″'+(held?' ✓':''), f(13.5,held), 'down', g);
+  }
+  ctx.save(); ctx.shadowBlur=14; ctx.shadowColor='#fff'; AIY.disc(ctx,{x:starX,y:starY},g(4.5),'#fff'); ctx.restore();
+  ctx.restore();
+
+  ctx.strokeStyle='rgba(120,200,255,.85)'; ctx.lineWidth=3;                // rim
+  ctx.beginPath(); ctx.arc(E.x,E.y,R,0,7); ctx.stroke();
+
+  // ── titles ──────────────────────────────────────────────────────────────
+  AIY.text(ctx,(water?'WATER-FILLED':'AIR')+' TELESCOPE — eyepiece', E.x, E.y-R-g(50),'#e9eef6',f(17,1),'center');
+  AIY.text(ctx,'γ Draconis  ·  δ +51°29′  ·  Greenwich φ +51°28′', E.x, E.y-R-g(30),'#9fb0c6',f(13),'center');
+  AIY.text(ctx,'transits 0.9′ from the zenith — Airy’s chosen star', E.x, E.y-R-g(13),'#9fb0c6',f(12.5),'center');
+
+  // ── transit clock ─────────────────────────────────────────────────────────
+  const cY=E.y+R+g(28);
+  AIY.text(ctx,'expected transit',E.x-R*0.5,cY,'#9fb0c6',f(13),'center');
+  AIY.text(ctx,T_E.toFixed(2)+' s',E.x-R*0.5,cY+g(21),'#e9eef6',f(17,1),'center');
+  AIY.text(ctx,'current',E.x+R*0.5,cY,'#9fb0c6',f(13),'center');
+  AIY.text(ctx,tcur.toFixed(2)+' s',E.x+R*0.5,cY+g(21),held?'#5fd07a':'#f2c14e',f(17,1),'center');
+  const bw=R*1.3,bx=E.x-bw/2,by=cY+g(38);
+  ctx.strokeStyle='rgba(159,176,198,.4)'; ctx.lineWidth=1; ctx.strokeRect(bx,by,bw,g(6));
+  ctx.fillStyle=held?'#5fd07a':'#f2c14e'; ctx.fillRect(bx,by,bw*(tcur/T_E),g(6));
+  if(held) AIY.text(ctx,'★ caught at transit — plate position is the measurement',E.x,by+g(24),'#5fd07a',f(13,1),'center');
+};
+
+// the conversion, rendered as a real HTML panel (not canvas) for readability.
+AIY.microPanelHTML = frame => {
+  const d = AIY.microData(frame), F = F_MM.toFixed(0);
+  const x = d.xMm.toFixed(4), k = '206265″';
+  return `
+  <h3>MICROMETER READING &rarr; CELESTIAL ARC</h3>
+
+  <div class="mstep measured">
+    <div class="lbl">1 &middot; measured on the plate</div>
+    <div class="eq"><span class="v">x</span> = <span class="res">${x} mm</span></div>
+    <div class="lbl">the star's offset from the meridian wire at transit (${(d.xMm*1000).toFixed(1)} µm)</div>
+  </div>
+
+  <div class="mstep reads">
+    <div class="lbl">2 &middot; convert to a sky angle &mdash; the reading</div>
+    <div class="eq">arc = ( <span class="v">x</span> &divide; <span class="v">f</span> ) &times; <span class="v">k</span></div>
+    <div class="eq sm">= ( ${x} &divide; ${F} ) &times; ${k}</div>
+    <div class="eq"><span class="res">= ${d.read.toFixed(2)}&Prime;</span> &nbsp;Airy's reading</div>
+  </div>
+
+  <div class="mstep implied">
+    <div class="lbl">3 &middot; internal tilt &mdash; implied afterward (or via Snell)</div>
+    <div class="eq">&theta;_int = ( <span class="v">x</span> &divide; <span class="v">L</span> ) &times; <span class="v">k</span></div>
+    <div class="eq sm">= ( ${x} &divide; ${d.Lmm.toFixed(0)} ) &times; ${k}</div>
+    <div class="eq"><span class="res">= ${d.thInt.toFixed(2)}&Prime;</span></div>
+  </div>
+
+  <div class="mdefs">
+    <div class="d"><b>x</b><span>plate displacement, measured (mm)</span></div>
+    <div class="d"><b>f</b><span>focal length, air-equivalent = 706 mm</span></div>
+    <div class="d"><b>L</b><span>physical tube length — air 706, water 940 mm</span></div>
+    <div class="d"><b>k</b><span>206265&Prime; per radian — the number of arcseconds in one radian (1 rad = 180/&pi; &times; 3600&Prime;)</span></div>
+  </div>
+
+  <div class="mnull">air &amp; water reach the same displacement <b>x</b> &rarr; both read 20.55&Prime;</div>`;
+};
+
+
+// bracket spanning [a,b] at height y, tick ends, label outside
+function bracket(ctx, a, b, y, color, label, font, dir, g){
+  ctx.strokeStyle=color; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(a,y); ctx.lineTo(b,y);
+  ctx.moveTo(a,y-g(4)); ctx.lineTo(a,y+g(4)); ctx.moveTo(b,y-g(4)); ctx.lineTo(b,y+g(4)); ctx.stroke();
+  AIY.text(ctx, label, (a+b)/2, y+(dir==='up'?-g(10):g(12)), color, font, 'center');
+}
+
+})();
+</script>
 <script type="text/plain" id="sim-js-main">(function(){
 /* ── Main: state, controls, scene dispatch, animation loop ─────────────────*/
 'use strict';
@@ -1759,7 +1968,7 @@ const canvas = document.getElementById('scene'), ctx = canvas.getContext('2d');
 const $ = id => document.getElementById(id);
 
 // default view = aberration in air, heliocentric
-const state = { theory:'air', frame:'helio', phase:5.43, exagg:3500, starLat:45, animate:true, view:'cali' };
+const state = { theory:'micrometer', frame:'air', phase:5.43, exagg:3500, starLat:45, animate:true, view:'cali' };
 const latLabel = v => Math.abs(v)+'° '+(v<0?'S':v>0?'N':'');
 
 // ── Canvas + hi-dpi ────────────────────────────────────────────────────────
@@ -1769,32 +1978,46 @@ function resize(){
   ctx.setTransform(dpr,0,0,dpr,0,0);
   AIY.view.cx = innerWidth*0.56; AIY.view.cy = innerHeight*0.52;
 }
-addEventListener('resize', resize); resize();
+addEventListener('resize', ()=>{ resize(); if(typeof updateMicroPanel==='function') updateMicroPanel(); }); resize();
 
 // ── Populate theory selector ───────────────────────────────────────────────
 for(const [key,t] of Object.entries(AIY.THEORIES)){
   const o=document.createElement('option'); o.value=key; o.textContent=t.label; $('theory').appendChild(o);
 }
+$('theory').value = state.theory;                       // keep the dropdown in sync with default state
 
 // ── Contextual controls: which panel bits apply to the current theory ──────
 function syncControls(){
-  const t = AIY.THEORIES[state.theory], sky = t.scene==='sky';
+  const t = AIY.THEORIES[state.theory], sky = t.scene==='sky', micro = t.scene==='micro';
   $('row-lat').style.display   = sky ? '' : 'none';
   $('row-phase').style.display = sky ? '' : 'none';
   $('row-exagg').style.display = sky ? '' : 'none';
-  const showFrame = sky || t.frames;
+  const showFrame = sky || t.frames || micro;
   $('frame-wrap').style.display = showFrame ? '' : 'none';
-  $('row-view').style.display = sky ? 'none' : '';   // tube scenes only
+  $('row-view').style.display = t.scene==='tube' ? '' : 'none';   // tube scenes only
   if(sky){                                             // heliocentric / geocentric
     $('btn-frameA').textContent='Heliocentric'; $('btn-frameA').dataset.v='helio';
     $('btn-frameB').textContent='Geocentric';   $('btn-frameB').dataset.v='geo';
     $('k-vel').textContent = state.frame==='geo' ? 'Sky velocity' : 'Earth velocity';
+  } else if(micro){                                     // air / water eyepiece
+    $('btn-frameA').textContent='Air'; $('btn-frameA').dataset.v='air';
+    $('btn-frameB').textContent='Water'; $('btn-frameB').dataset.v='water';
+    $('k-vel').textContent = 'Star';
   } else if(t.frames){                                 // water at rest / in motion
     $('btn-frameA').textContent='Water at rest'; $('btn-frameA').dataset.v='rest';
     $('btn-frameB').textContent='Water in motion'; $('btn-frameB').dataset.v='moving';
     $('k-vel').textContent = 'Velocity';
   }
   setFrameButtons();
+  updateMicroPanel();
+}
+function updateMicroPanel(){
+  const t = AIY.THEORIES[state.theory], mp = $('micro-panel');
+  if(t.scene==='micro'){
+    mp.hidden = false; mp.innerHTML = AIY.microPanelHTML(state.frame);
+    const lay = AIY.microLayout();                       // sit beside the eyepiece
+    mp.style.left = lay.panelLeft + 'px'; mp.style.right = 'auto';
+  } else mp.hidden = true;
 }
 function setFrameButtons(){
   $('btn-frameA').classList.toggle('active', state.frame===$('btn-frameA').dataset.v);
@@ -1814,6 +2037,21 @@ function updateMath(){
     $('m-verdict').innerHTML = 'v<sub>earth</sub> = w<sub>sky</sub> &rArr; '
       + '&alpha;<sub>helio</sub> = &alpha;<sub>geo</sub> = 20.55″';
     $('m-scale').style.display = 'none';
+  } else if(t.scene==='micro'){
+    const air=AIY.microData('air'), wat=AIY.microData('water'), gd=AIY.microData(state.frame);
+    rows.push(['medium', gd.water ? 'water, n = 1.33' : 'air, n = 1']);
+    rows.push(['1 · displacement (measured)', gd.xMm.toFixed(4)+' mm']);
+    rows.push(['2 · celestial arc (reads)', gd.read.toFixed(2)+'″']);
+    rows.push(['3 · internal tilt (implied)', gd.thInt.toFixed(2)+'″']);
+    rows.push(['physical tube length', gd.Lmm.toFixed(0)+' mm']);
+    $('m-verdict').innerHTML = '<span class="ok">air 20.55″ = water 20.55″ (same displacement)</span>';
+    $('m-scale').style.display = '';
+    const r=(a,b,hit)=>`<div class="r${hit?' hit':''}"><span>${a}</span><b>${b}</b></div>`;
+    $('m-scale').innerHTML =
+      '<div class="sh">SAME PLATE DISPLACEMENT</div>'
+      + r('air  (tube 706 mm)', air.xMm.toFixed(4)+' mm')
+      + r('water (tube 940 mm)', wat.xMm.toFixed(4)+' mm')
+      + r('both read', '20.55″', true);
   } else {
     const V = AIY.viewData(t, state.frame, state.view);
     const fmt=(v,u)=> u==='µm' ? v.toFixed(1)+' µm' : v.toFixed(2)+'″';
@@ -1842,7 +2080,9 @@ function updateMath(){
 // ── Render one frame ───────────────────────────────────────────────────────
 function render(clock){
   ctx.clearRect(0,0,innerWidth,innerHeight);
-  if(AIY.THEORIES[state.theory].scene==='sky') AIY.drawSky(ctx, state);
+  const sc = AIY.THEORIES[state.theory].scene;
+  if(sc==='sky') AIY.drawSky(ctx, state);
+  else if(sc==='micro') AIY.drawMicrometer(ctx, state, clock);
   else AIY.drawTube(ctx, state, clock);
   updateMath();
 }
@@ -1851,12 +2091,13 @@ function render(clock){
 $('theory').addEventListener('change', e=>{
   state.theory = e.target.value;
   const t = AIY.THEORIES[state.theory];
-  state.frame = t.scene==='sky' ? 'helio' : (t.frames ? 'rest' : 'rest');
+  state.frame = t.scene==='sky' ? 'helio' : t.micro ? 'air' : 'rest';
   syncControls();
 });
 [$('btn-frameA'),$('btn-frameB')].forEach(b=>b.addEventListener('click',()=>{
   state.frame=b.dataset.v; setFrameButtons();
   if(AIY.THEORIES[state.theory].scene==='sky') syncControls();  // relabel velocity key
+  if(AIY.THEORIES[state.theory].scene==='micro') updateMicroPanel();  // air/water formula
 }));
 $('lat').addEventListener('input', e=>{ state.starLat=+e.target.value; $('v-lat').textContent=latLabel(state.starLat); });
 $('phase').addEventListener('input', e=>{ state.phase=+e.target.value; $('v-phase').textContent=state.phase.toFixed(2); });
@@ -1964,7 +2205,7 @@ function mountSim(){
     '<style>'+document.getElementById('sim-css').textContent+'</style></head><body>'+
     document.getElementById('sim-html').textContent+'</body></html>');
   d.close();
-  ['util','theories','sky','tube','main'].forEach(n=>{
+  ['util','theories','sky','tube','micro','main'].forEach(n=>{
     const s=d.createElement('script');
     s.textContent=document.getElementById('sim-js-'+n).textContent;
     d.body.appendChild(s);
