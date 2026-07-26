@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stellar Aberration — Predictions, Air vs Water</title>
+<link rel="icon" href="assets/acrg-logo.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Scene: everything is drawn here -->
+<canvas id="scene"></canvas>
+
+<!-- Left panel: controls + live math legend, one scrollable container -->
+<section id="panel" class="panel">
+  <h2>Stellar Aberration</h2>
+
+  <label class="sel">Theory / prediction
+    <select id="theory"></select>
+  </label>
+  <p id="desc"></p>
+
+  <!-- Frame toggle: helio/geo (sky) or water rest/moving (transform theories) -->
+  <div id="frame-wrap">
+    <div class="toggle" role="tablist">
+      <button id="btn-frameA" class="active"></button>
+      <button id="btn-frameB"></button>
+    </div>
+  </div>
+
+  <!-- Which quantity to show for the water tube (its prediction) -->
+  <label class="sel" id="row-view">Show
+    <select id="view">
+      <option value="cali">Reads — calibrated (θ_int × n)</option>
+      <option value="raw">Reads — raw (air scale)</option>
+      <option value="thetaint">θ_int — predicted internal angle</option>
+      <option value="micro">Micrometer — plate drift (µm)</option>
+    </select>
+  </label>
+
+  <label id="row-lat">Star latitude: <b id="v-lat">45° N</b>
+    <input id="lat" type="range" min="-90" max="90" step="1" value="45">
+  </label>
+  <label id="row-phase">Orbital phase (months): <b id="v-phase">5.43</b>
+    <input id="phase" type="range" min="0" max="12" step="0.01" value="5.43">
+  </label>
+  <label id="row-exagg">Aberration exaggeration: <b id="v-exagg">3500&times;</b>
+    <input id="exagg" type="range" min="1" max="6000" step="1" value="3500">
+  </label>
+  <label class="check"><input id="animate" type="checkbox" checked> Animate</label>
+
+  <ul class="key">
+    <li><span class="dot star"></span>True star / incoming</li>
+    <li><span class="dot app"></span>Apparent / refracted</li>
+    <li><span class="dot vel"></span><span id="k-vel">Earth velocity</span></li>
+  </ul>
+
+  <p class="src">Full data &amp; derivations:
+    <a href="https://docs.google.com/spreadsheets/d/1ztxCRJBzytxn6jICCrBjRUU67HcBrKAw_xMz9tPLZGw/edit?gid=0#gid=0"
+       target="_blank" rel="noopener">Google Sheet &#8599;</a></p>
+
+  <hr class="div">
+
+  <h2 id="m-title">Math in use</h2>
+  <div id="m-formula" class="formula"></div>
+  <div id="m-rows"></div>
+  <div id="m-verdict" class="equal"></div>
+  <div id="m-scale" class="scale"></div>
+  <p id="m-note" class="note"></p>
+
+  <details class="help">
+    <summary>What do “reading” and “internal angle” mean?</summary>
+    <p><b>Reading</b> — the celestial arc the micrometer reports: the star's sideways drift on the wire
+      plate divided by that telescope's own scale. Airy's 20.55″ is a reading, not a direct angle.</p>
+    <p><b>Internal angle (θ_int)</b> — the physical tilt the ray must take inside the tube to produce
+      that reading. It is implied, not measured; a 20.55″ reading needs 15.45″ inside the water.</p>
+    <p><b>Aberration</b> — the incoming tilt θ_ext = arctan(v/c) = 20.55″, set by the observer's
+      velocity. The reading recovers it.</p>
+    <p><b>Micrometer × n</b> — the water plate is calibrated n times finer than air (Airy p.39:
+      27.8-inch air-equivalent vs 37.0-inch tube), so 15.45″ inside reads the same 20.55″ as air. That
+      × n scaling is the whole reason the water null holds.</p>
+  </details>
+</section>
+
+<!-- Right sector: the micrometer→arc conversion, shown only in Micrometer mode -->
+<aside id="micro-panel" hidden></aside>
+
+<!-- Brand -->
+<footer id="brand">
+  <a href="https://discord.gg/aethercosmology" target="_blank" rel="noopener">
+    <img src="assets/acrg-logo.png" alt="Aether Cosmology Research Group">
+  </a>
+  <span>Aether Cosmology Research Group</span>
+</footer>
+
+<script src="js/util.js"></script>
+<script src="js/theories.js"></script>
+<script src="js/sky.js"></script>
+<script src="js/tube.js"></script>
+<script src="js/micro.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
