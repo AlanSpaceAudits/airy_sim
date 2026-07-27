@@ -90,6 +90,43 @@
     background:rgba(69,184,230,.07)}
   .final h2{font-size:18px;color:var(--accent);margin-bottom:8px}
   footer{margin-top:30px;color:var(--dim);font-size:12.5px;text-align:center}
+
+  .update{margin:46px 0 18px;padding-top:26px;border-top:1px solid rgba(69,184,230,.25)}
+  .uphead{font-size:22px;color:var(--accent);font-weight:800;margin-bottom:4px}
+  .core{margin:26px 0;padding:22px 24px;border:1px solid var(--acrgEdge);border-radius:14px;
+    background:linear-gradient(180deg,rgba(69,184,230,.11),rgba(69,184,230,.04))}
+  .core h3{font-size:17.5px;color:var(--accent);margin-bottom:11px;letter-spacing:.2px;line-height:1.35}
+  .core p{font-size:15.5px;margin-bottom:11px}
+  .core p:last-child{margin-bottom:0}
+  .core b{color:#fff}
+  .core .kill{color:var(--accent);font-weight:700}
+  .core .cite{margin-top:10px;color:var(--dim);font-size:12px;font-style:italic}
+  .ledger{margin:38px 0 10px}
+  .ledger h2{font-size:20px;color:var(--accent);margin-bottom:4px}
+  .fal{display:flex;gap:16px;padding:13px 2px;border-bottom:1px solid rgba(69,184,230,.12);font-size:14.5px}
+  .fal .fname{flex:none;width:215px;color:#fff;font-weight:700}
+  .fal .fname .lat{display:block;color:var(--dim);font-weight:400;font-style:italic;font-size:11.5px;margin-top:2px}
+  .fal .fbody{flex:1}
+  .fal .fdef{color:var(--dim)}
+  .fal .fwhere{margin-top:4px}
+  .fal .fwhere b{color:var(--amber)}
+  @media(max-width:640px){.fal{flex-direction:column;gap:5px}.fal .fname{width:auto}}
+
+  html{scroll-behavior:smooth}
+  .falrow{display:flex;flex-wrap:wrap;gap:7px;margin:-6px 0 15px 50px}
+  .falchip{display:inline-flex;align-items:center;gap:5px;padding:3px 11px;border-radius:999px;
+    font-size:11px;font-weight:700;letter-spacing:.2px;scroll-margin-top:80px;
+    background:rgba(242,193,78,.12);border:1px solid rgba(242,193,78,.5);color:#ffe0a0}
+  .falchip::before{content:"\26A0\FE0E";font-size:10px;opacity:.85}
+  .falchip a{color:inherit;text-decoration:none}
+  .falchip a:hover{text-decoration:underline}
+  .falchip:target{background:rgba(242,193,78,.32);border-color:#f2c14e;color:#fff;box-shadow:0 0 0 2px rgba(242,193,78,.55)}
+  .fal{scroll-margin-top:80px}
+  .fal:target{background:rgba(69,184,230,.08);border-radius:8px}
+  .fal .fjump{display:inline-block;margin-left:8px;color:var(--dim);font-style:normal}
+  .fal .fjump a{display:inline-block;min-width:15px;text-align:center;color:var(--accent);
+    border:1px solid var(--acrgEdge);border-radius:5px;font-size:11px;text-decoration:none;padding:0 5px;margin:0 2px}
+  .fal .fjump a:hover{background:rgba(69,184,230,.15)}
 </style>
 </head>
 <body>
@@ -137,6 +174,7 @@
   <div class="rlabel">1 · "Water only refracts, full stop"</div>
   <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">1:41 AM</span></div>
     <span class="quote">"In a relativistic framework, adding water to the telescope has the ONLY effect of refracting light. This is what Pauli said in 1925."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-begging-1"><a href="#L-begging">Begging the Question</a></span><span class="falchip" id="fal-authority-1"><a href="#L-authority">Appeal to Authority</a></span></div>
   <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
     Agreed on the arithmetic. Snell's law holds <b>in the frame where the water is at rest</b>. On the Space you told us what that frame is:
     <span class="kill">there is no velocity of the telescope, of the water, and therefore the Earth.</span> So "just Snell's law" is the stationary-Earth calculation. We never disputed the math. We dispute the frame it demands, which is ours.</span></div></div>
@@ -177,6 +215,7 @@
   <div class="rlabel">5 · He writes the drag term, then refuses to finish it</div>
   <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">2:33 AM</span></div>
     <span class="quote">"In S light is partially dragged... it acquires a horizontal component u_x = V(1−1/n²)... computing what happens in S and then converting is totally unnecessary."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-dismissal-1"><a href="#L-dismissal">Argument by Dismissal</a></span></div>
   <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
     That u_x = V(1−1/n²) <b>is the transverse Fresnel-drag term.</b> In S, the frame where the Earth and its water move at 30 km/s, the frame heliocentrism says we occupy, it makes the internal angle β(n−1/n) ≈ <b>11.88″</b>, reading <b>15.80″</b>. You wrote the ingredient and then called finishing it "unnecessary." It is the <span class="kill">only calculation that tests the Earth's motion,</span> and it does not give 20.55″. Jones measured that exact drag to 0.02%, so the moving-frame number is pinned. It is not what Airy read.</span></div></div>
 </div>
@@ -195,6 +234,7 @@
   <div class="rlabel">7 · "Light's direction is constant in air, not constant in water"</div>
   <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">2:33 AM</span></div>
     <span class="quote">"In case A the light's direction is assumed to remain constant in S. In case B you introduce a moving medium so the light's direction in S is NOT constant."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-specialpleading-1"><a href="#L-specialpleading">Special Pleading</a></span></div>
   <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
     This is the causal split laid bare. In air, aberration exists in the Earth frame <b>because the Earth moves</b>. In water, you compute in the Earth-rest frame and the motion drops out. <span class="kill">You cannot use aberration-in-air as proof the Earth moves and compute aberration-in-water as if it does not.</span> One instrument, one causal story. Choose.</span></div></div>
 </div>
@@ -204,6 +244,7 @@
   <div class="rlabel">8 · "He changed his claim to V/c(n−1/n)"</div>
   <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">2:43 AM</span></div>
     <span class="quote">"He changed his claim to an even more absurd one, namely that Airy should have measured the V/c(n−1/n) angle... he has no idea what frames of reference are."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-adhominem-1"><a href="#L-adhominem">Ad Hominem</a></span><span class="falchip" id="fal-ridicule-1"><a href="#L-ridicule">Appeal to Ridicule</a></span></div>
   <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
     V/c(n−1/n) = 11.88″ is not a retraction. It is the <b>moving-frame internal angle</b>, the Lorentz, Pauli and Rosser result, and the transverse drag Jones measured to 0.02%. It is <span class="kill">the same V(1−1/n²) term you wrote yourself at 2:33.</span> Calling it "absurd" and "no idea what frames are" is calling your own line absurd.</span></div></div>
 </div>
@@ -213,6 +254,7 @@
   <div class="rlabel">9 · The bowling ball / airport walkway test</div>
   <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">2:58 AM</span></div>
     <span class="quote">"The problem I gave him involved a bowling ball rolled toward a pin on a cruising ship... or two parallel walkways moving in opposite directions."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-analogy-1"><a href="#L-analogy">Weak Analogy</a></span></div>
   <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
     Pure kinematics lets you relabel which body moves. Airy is not pure kinematics. Water is a <b>physical medium whose drag depends on its real motion</b> (Fizeau, Jones), so the effect is dynamical, not a matter of viewpoint. A walkway has no analog of "the medium selects a frame." <span class="kill">You said so yourself in Round 2:</span> water introduces a privileged frame. Your own analogy defeats your own point.</span></div></div>
 </div>
@@ -224,6 +266,7 @@
     <span class="quote">"Alice shoots a pea perpendicular to her walkway, through two loops... At what angle will Bob receive the pea? Does it have to be the same as Alice's?... he measures angles by arranging two parallel rows of dominos and sees which have been taken down. How would they depend on Bob's walkway speed?"</span></div></div>
   <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">3:27 AM</span></div>
     <span class="quote">"The telescope is the equivalent of the loops or dominos in Alice's (or Bob's) walkways."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-analogy-2"><a href="#L-analogy">Weak Analogy</a></span></div>
   <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
     The dominos settle it, and they settle it for us. Alice and Bob can compute different angles, but they agree on one physical fact: <b>which dominos fell.</b> That record is invariant, and it is the only thing Airy measured, one set of micrometer wires struck. <span class="kill">You granted this on the Space:</span> every observer must agree on the wire that is hit. For Airy that invariant is 20.55″, the air value. The frame-dependent angle is a label you attach afterward; the fallen dominos are the physics, and they correspond to the stationary-Earth result.</span></div></div>
   <div class="chip conc"><span class="tt"><b>CONCESSION</b></span> <span class="src">Space <a class="yt" href="https://youtu.be/oLJsJS2u0ug?t=2711" target="_blank" rel="noopener">45:11</a> · "every observer in every frame must agree on... the wire that's being hit by the starlight."</span></div>
@@ -234,6 +277,7 @@
   <div class="rlabel">11 · The clay block</div>
   <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">3:27 AM</span></div>
     <span class="quote">"To make the analogy closer to Airy's case, suppose Alice places a clay, or wax, block behind the second loop, so that the pea penetrates it before being stopped by friction. What do you think the path of the pea will be, in the block? How will it depend on Alice's and Bob's walkway velocity relative to the airport?"</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-analogy-3"><a href="#L-analogy">Weak Analogy</a></span></div>
   <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
     You have just built our argument in miniature. The block is the water, and you ask how the pea's path inside it depends on the walkway velocity <b>relative to the airport.</b> So the in-block path is fixed by real motion against a rest frame, the airport floor. That is a privileged frame and a dynamical effect, not a change of viewpoint. Map it: <span class="kill">airport = absolute rest, the stationary Earth; walkway = the moving frame; block = water.</span> The path in the block is solved in the frame where the block is at rest, which is the walkway it is fixed to. Airy's water is fixed to the telescope and the Earth, so that frame is the Earth frame. Finish your own analogy and it lands on the stationary-Earth calculation. The pea reaches the same fallen dominos only when the block, and the Earth, are at rest.</span></div></div>
   <div class="chip contra"><span class="tt"><b>CONTRADICTION</b></span> <span class="src">Space <a class="yt" href="https://youtu.be/oLJsJS2u0ug?t=3007" target="_blank" rel="noopener">50:07</a> · "no preferred frame... Yes."&nbsp;&rarr;&nbsp;DM 3:27 · the in-block path "depends on velocity relative to the airport," a preferred frame.</span></div>
@@ -243,6 +287,264 @@
   <h2>The one thing every observer must agree on</h2><span class="tt">
   The micrometer wire the starlight strikes. That physical point corresponds to 20.55″, the air value. Every route Franco takes to it, "just Snell," "move to the medium's rest frame," "compute in S′," passes through the frame where the water, and therefore the Earth, is at rest. Relativity forbids a privileged frame; the water experiment forces him to adopt one; and the one he adopts is the stationary Earth. That is the whole argument, and he restated it for us in his own recap.
 </span></div>
+
+<!-- ══════════════════ UPDATE: THE DISCORD BARRAGE ══════════════════ -->
+<section class="update">
+  <div class="rlabel">Update &middot; 27 Jul 2026</div>
+  <h2 class="uphead">The Discord recap, point by point</h2>
+  <p class="axnote">After this page went up, Franco posted a fifteen-point reply in a DM exchange with Piezo, then a long live exchange in the open channel. Same treatment: his words on the left, the optics on the right. The logical-fallacy ledger is at the end.</p>
+</section>
+
+<!-- R1 -->
+<div class="round">
+  <div class="rlabel">Point 1 &middot; "No distinction between moving and stationary"</div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">8:35 AM</span></div>
+    <span class="quote">"In the relativistic framework, there is no such distinction as 'the earth is in motion' and 'the earth is stationary'. Relativity predicts the angle in water to follow Snell's law, and THAT is what Airy measured."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-begging-2"><a href="#L-begging">Begging the Question</a></span></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    If moving and stationary are not distinguishable, then aberration in air is not evidence the Earth moves, because that distinction <b>is</b> the heliocentric claim. You cannot spend "the Earth moves" to explain the air angle and then retire the distinction when the water goes in. And "Snell's law is what Airy measured" is our result restated: Snell's law holds <b>in the frame where the water is at rest</b>, and that frame is the Earth. Conceding that Snell reproduces 20.55&Prime; <span class="kill">concedes the stationary-Earth calculation.</span></span></div></div>
+</div>
+
+<!-- R2 -->
+<div class="round">
+  <div class="rlabel">Point 2 &middot; "A privileged class of frames"</div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">8:35 AM</span></div>
+    <span class="quote">"In Special Relativity there is no privileged frame of reference within the class of inertial frames. THAT is a privileged class of frames."</span></div></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    A privileged class of frames, the ones that see light isotropic at c, is an absolute standard of rest written in the plural. Lorentz gave that standard a physical name, the ether frame, and derived every null from the Earth sitting in it. The water experiment then selects <b>one member</b> of the class as the frame to compute in, the frame where the water is at rest. A privileged class plus a selected member <span class="kill">is a preferred frame,</span> and here it is the geocentric one.</span></div></div>
+</div>
+
+<!-- R3 -->
+<div class="round">
+  <div class="rlabel">Point 3 &middot; "General principle vs particular case"</div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">8:52 AM</span></div>
+    <span class="quote">"If only any of you had passed a physics exam you would know this is no contradiction. The absence of privileged inertial frames is a general principle... if you introduce particular situations they can make one frame privileged relative to others. In jones' measurement the 'privileged' frame is the inertial frame where the dielectric is stationary... I don't want to go and look what logical fallacy this is."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-adhominem-2"><a href="#L-adhominem">Ad Hominem</a></span><span class="falchip" id="fal-dismissal-2"><a href="#L-dismissal">Argument by Dismissal</a></span></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    We agree with every word. A physical medium makes one frame privileged for the problem, the frame where the medium is at rest. <b>That is our claim, in your handwriting.</b> For Airy that frame is where the water is at rest, and the water is bolted to the Earth, so it is the Earth's rest frame. You have supplied the mechanism and kept only the label in dispute. <span class="kill">Declining to name the fallacy does not dissolve it.</span></span></div></div>
+</div>
+
+<!-- R4 -->
+<div class="round">
+  <div class="rlabel">Point 4 &middot; "Water is not a rigid body, but ok"</div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">8:52 AM</span></div>
+    <span class="quote">"water is not a rigid body, but ok. I see your point, but this is not a correct language."</span></div></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    Conceded, and that is all the chain needs. The water, the telescope and the Earth move as one body for this purpose, so <span class="kill">the rest frame of the water is the rest frame of the Earth.</span> The language can be sharpened; the frame does not change.</span></div></div>
+  <div class="chip conc"><span class="tt"><b>CONCESSION</b></span> <span class="src">DM 8:52 &middot; "I see your point."</span></div>
+</div>
+
+<!-- R5 -->
+<div class="round">
+  <div class="rlabel">Point 5 &middot; "That angle is in a different frame, not the instrument's"</div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">8:52 AM</span></div>
+    <span class="quote">"This is ridiculous. This angle is the one formed by the light in water in a different frame, not the one where the instrument is... it has the opposite sign as the one measured by the telescope... this is the angle of light in moving water, so Snell's law does not apply, as even Jones showed: zero incident angle in air resulted in a nonzero angle in glass. Whoever thought this up has HUGE gaps in their basic background (shock!)."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-repetition-1"><a href="#L-repetition">Argument by Repetition</a></span><span class="falchip" id="fal-adhominem-3"><a href="#L-adhominem">Ad Hominem</a></span></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    The instrument sits on the Earth. If the Earth moves at 30 km/s, <b>the instrument is in the moving frame,</b> so the moving-frame angle, 11.88&Prime; internal, 15.80&Prime; read, is exactly what it should register. Calling that "a different frame, not the instrument's" <span class="kill">declares the instrument's frame to be the rest frame,</span> which is geocentrism. The opposite sign and different size are the point, not an embarrassment: the moving frame predicts a signed, measurable departure from the air value, and Airy saw none. Jones's zero-in, nonzero-out <b>is</b> that transverse drag, measured to 0.02%, and it lands on 15.80&Prime;, not 20.55&Prime;. Jones confirms the moving-frame number, and its absence from Airy's plate.</span></div></div>
+</div>
+
+<!-- R6 -->
+<div class="round">
+  <div class="rlabel">Point 6 &middot; Fizeau's water, the cruising ship</div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">9:11 AM</span></div>
+    <span class="quote">"if you shine light through moving water on earth as Fizeau did, that makes the frame in which water is stationary (which is not the Earth's) the frame where to make the computations. If you are playing pingpong on a cruising ship... the 'privileged' frame is the ship."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-analogy-4"><a href="#L-analogy">Weak Analogy</a></span></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    Every example proves ours. Fizeau's water flows through the lab, the ship sails through the sea, so their rest frames are genuinely other frames. Airy's water flows through nothing. <b>It is the lab.</b> The frame where it is at rest is the Earth, and by your own rule that is where you compute. <span class="kill">The one case whose selected frame is the Earth is the case you are trying to exclude.</span></span></div></div>
+</div>
+
+<!-- R7 -->
+<div class="round">
+  <div class="rlabel">Point 7 &middot; "It is the general procedure, like Landau &amp; Lifshitz"</div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">9:22 AM</span></div>
+    <span class="quote">"our general recipe applied to Airy reads: compute in the Earth-at-rest frame. That is geocentrism written as a procedure. &lt;&lt; Nope, it's the general procedure applied to this special case... exactly the way Landau and Lifshitz derive the boundary conditions for moving dielectrics. And it's not the ONLY procedure, it's just the easiest."</span></div></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    Landau and Lifshitz change to the frame K&prime; "which moves with the surface element considered," impose the boundary conditions there, then transform back. For Fizeau and Jones K&prime; is not the lab, the medium moves. For Airy K&prime; is the water-rest frame, <b>which is the Earth.</b> So L&amp;L's own recipe, applied to Airy, computes in the Earth-rest frame. As for the other procedures: you tried the Sun-frame version yourself and got "the same result as velocity composition." In the moving frame that result is the drag angle, 15.80&Prime;. Getting back to 20.55&Prime; from it takes the Lorentz transform, <span class="kill">the step that removes the 30 km/s you set out to measure.</span> The only frame that hands you 20.55&Prime; with no velocity to cancel is the one where there is none.</span></div></div>
+</div>
+
+<!-- R8 -->
+<div class="round">
+  <div class="rlabel">Point 8 &middot; "Air: constant direction in S. Water: cumbersome in S"</div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">9:40 &middot; 9:51 &middot; 9:59 AM</span></div>
+    <span class="quote">"This is again SO wrong it's hard to chose where to begin. For air, the vector velocity of light is assumed NOT TO CHANGE in S between march and september, whereas the motion of S&prime; relative to S changes... For water, the angle in vacuum stays the same all year in S, the angle in water DOES NOT, because you are adding a body of water that's moving... that's why it is cumbersome to use that frame. None of this is wrong or contradictory, as anyone having solved problems in elementary physics knows."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-repetition-2"><a href="#L-repetition">Argument by Repetition</a></span><span class="falchip" id="fal-intimidation-1"><a href="#L-intimidation">Proof by Intimidation</a></span></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    You have written the asymmetry down yourself. Air: start from a fixed direction in the Sun frame S, and the Earth's motion in S&prime; produces the &plusmn;V/c swing, so <b>the aberration is the Earth's motion.</b> Water: start from the incident angle already in S&prime;, the Earth frame, with the motion spent as a "preliminary problem." Same instrument, two starting frames. "Cumbersome to use the moving frame for water" is the admission: in the moving frame the water angle changes across the year because it carries the velocity, and that moving-frame value is 15.80&Prime;, not the flat 20.55&Prime; Airy recorded. <span class="kill">The convenient frame is convenient because it is the one where the answer already matches, the rest frame.</span></span></div></div>
+</div>
+
+<!-- R9 -->
+<div class="round">
+  <div class="rlabel">Point 9 &middot; "Aberration measures relative motion only"</div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">10:11 AM</span></div>
+    <span class="quote">"There's really little I can do if not suggest you take a physics course from scratch and get tested by a physicist. aberration measures the change in relative motion between the star and the telescope. There is no way of measuring anything else from relative velocities, because motion (or the absence thereof) is only DEFINED relative to something else."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-adhominem-4"><a href="#L-adhominem">Ad Hominem</a></span></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    Then aberration cannot single out the Earth as the thing that moves. By your own statement it measures only star-telescope relative motion, which a stationary Earth under a circling sky reproduces exactly. <span class="kill">You have described the geocentric reading and called it relativity.</span> But dynamics is not bookkeeping: a real 30 km/s through space either exists or it does not. If it is real, the moving-frame drag is real and reads 15.80&Prime;. If it is only a relative label, aberration says nothing about the Earth. Either way, 20.55&Prime; is the rest-frame value.</span></div></div>
+</div>
+
+<!-- R10 -->
+<div class="round">
+  <div class="rlabel">Point 10 &middot; "SR is internally consistent, no ad hoc"</div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">10:11 AM</span></div>
+    <span class="quote">"Fresnel's drag... was replaced by the more correct velocity composition, derived within SR, an internally consistent framework, and it's the same framework that predicts no effect of the earth's motion on Snell's law. Surprise, it is consistent, with no ad hoc explanation."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-begging-3"><a href="#L-begging">Begging the Question</a></span></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    Internally consistent is not the same as true. The Fresnel coefficient 1&minus;1/n&sup2; is <b>defined</b> as the value that cancels the medium's effect on the aberration angle; SR returns the same number because SR was built to reproduce the null results. A framework recovering a null it was constructed to recover is consistent, not confirmed. And Jones measuring that drag to 0.02% confirms the water <b>does</b> bend the moving-frame ray to 15.80&Prime;, <span class="kill">the number Airy did not read.</span> The independent confirmation confirms the moving-frame value, and its absence from Airy's data.</span></div></div>
+</div>
+
+<!-- R11 -->
+<div class="round">
+  <div class="rlabel">Point 11 &middot; "Water is not moving relative to the Earth"</div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">10:24 AM</span></div>
+    <span class="quote">"The angle in water is not computed 'as if the earth is not moving'. The hypothesis is that it is moving relative to the star, and that WATER is not moving relative to the Earth, that is why you compute directly in the Earth's frame. Again this gives away that you have NOT understood the point."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-repetition-3"><a href="#L-repetition">Argument by Repetition</a></span></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    "Water is not moving relative to the Earth, so compute in the Earth's frame," <span class="kill">that is the concession in one line.</span> The Earth's motion is carried entirely by the first step, the incident angle; the second step, the refraction, is done where the Earth is at rest. Air proves the motion, water assumes the rest, in a single experiment. The prediction to compare against the data is the Earth-rest 20.55&Prime;; the moving-frame prediction is 15.80&Prime;; the data is 20.55&Prime;; the frame that fits is the one where the Earth does not move.</span></div></div>
+</div>
+
+<!-- R12 -->
+<div class="round">
+  <div class="rlabel">Point 12 &middot; "Drag depends on motion relative to the observation frame"</div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">10:24 AM</span></div>
+    <span class="quote">"water is a physical medium whose drag depends on its motion RELATIVE to the frame in which you are making the observation."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-goalposts-1"><a href="#L-goalposts">Moving the Goal Posts</a></span></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    For Airy the water's motion relative to the observation frame is <b>zero</b>, they are bolted together, so the drag term vanishes and you are in the rest frame. Give the Earth a real 30 km/s and the water carries it; in the Sun frame the drag gives 15.80&Prime;. <span class="kill">Your own rule, drag depends on the medium's relative motion, is why the moving frame predicts a different, measurable number, and why the rest frame predicts none.</span></span></div></div>
+</div>
+
+<!-- R13 -->
+<div class="round">
+  <div class="rlabel">Point 13 &middot; "Solve it in both frames and compare"</div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">10:38 AM</span></div>
+    <span class="quote">"why are you insisting he should have measured the +11&Prime; instead of the &minus;15&Prime; in water? Make the calculation of the displacement at the telescope's bottom in the S frame where the angle is (V/c)(n&minus;1/n)... compare it to the prediction in frame S&prime;, where the angle is &minus;V/(nc). Find the values in the two frames and compare."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-goalposts-2"><a href="#L-goalposts">Moving the Goal Posts</a></span><span class="falchip" id="fal-redherring-1"><a href="#L-redherring">Red Herring</a></span></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    Gladly, the two-frame comparison is the whole case. In the moving frame S the ray picks up the transverse drag, internal angle (V/c)(n&minus;1/n) = <b>11.88&Prime;</b>, reading 15.80&Prime;. In the Earth-rest frame S&prime; the incident ray refracts by Snell to internal &minus;V/(nc) = <b>15.45&Prime;</b>, reading 20.55&Prime;. Two frames, <b>two different angles, two struck wires.</b> Airy's plate shows one wire, and it is the 20.55&Prime; wire, the S&prime; value. <span class="kill">Running the numbers does not close S onto S&prime;; it pins the gap.</span> The frame whose prediction matches the plate is the stationary Earth. This is exactly what the simulation computes.</span></div></div>
+</div>
+
+<!-- R14 -->
+<div class="round">
+  <div class="rlabel">Point 14 &middot; The clay block, again</div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">10:47 AM</span></div>
+    <span class="quote">"how does the speed of the walkway relative to the airport affect 1) the angle measured by Bob 2) the angle measured in the clay?... let Alice shoot two parallel peas, one reaching Bob, the other reaching the clay. Please solve the problems with numbers, not just words."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-analogy-5"><a href="#L-analogy">Weak Analogy</a></span><span class="falchip" id="fal-goalposts-3"><a href="#L-goalposts">Moving the Goal Posts</a></span></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    Answered when you first built it. The clay path is set in the clay's rest frame, the walkway it is bolted to, so it depends on the walkway's motion <b>relative to the airport,</b> a privileged frame. Airy's water is bolted to the Earth, so the in-water path is set in the Earth frame, and the "walkway speed relative to the airport" that matters is the Earth's speed relative to absolute rest. Set it to zero and the pea and the starlight strike the same dominos, 20.55&Prime;. <span class="kill">Two parallel peas change nothing: both in-clay paths are governed by the clay's rest frame.</span></span></div></div>
+</div>
+
+<!-- R15 -->
+<div class="round">
+  <div class="rlabel">Point 15 &middot; "Which wire does the +11&Prime; light strike? Numbers."</div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">10:55 AM</span></div>
+    <span class="quote">"make the calculation of what wire the +11&Prime; angled light would strike in the S frame where the telescope is moving... take a telescope length of 1 m and an interwire distance of 10 microns. Get Claude to teach you how to do it, and post the results. It took me four hours to write these replies; the 'ACRG group' published all of them in under an hour. This is why in exams we ask students to solve problems at the blackboard, without consulting LLMs."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-redherring-2"><a href="#L-redherring">Red Herring</a></span><span class="falchip" id="fal-accomplishment-1"><a href="#L-accomplishment">Appeal to Accomplishment</a></span></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    Done. Signed drift at the tube bottom, V/c = 1.0&times;10&#8315;&#8308;, n = 1.33, L = 1 m:<br>
+    &bull; moving frame S: &Delta;x = L&middot;(V/c)(n&minus;1/n) = 11.88&Prime; = <b>57.6 &micro;m</b> &rarr; wire &asymp; 6<br>
+    &bull; rest frame S&prime;: &Delta;x = L&middot;V/(nc) = 15.45&Prime; = <b>74.9 &micro;m</b> &rarr; wire &asymp; 7&ndash;8<br>
+    The two frames strike <b>different wires,</b> which already refutes the claim that every frame lands on the same one without help. The physical starlight in Airy's real tube struck the 74.9 &micro;m wire, reading 20.55&Prime;. To force the moving-frame ray onto that same wire you apply the Lorentz transform, <span class="kill">which subtracts the 30 km/s back out.</span> The frame where the ray lands on the observed wire with no velocity to subtract is the rest frame.</span></div></div>
+</div>
+
+<!-- ═══ LIVE EXCHANGE ═══ -->
+<section class="update">
+  <h2 class="uphead">The live exchange</h2>
+  <p class="axnote">Later that day, in the open channel.</p>
+</section>
+
+<!-- LIVE: understanding vs disagreeing -->
+<div class="round">
+  <div class="rlabel">Disagreeing is not the same as not understanding</div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">2:20 PM</span></div>
+    <span class="quote">"it is my JOB to assess people's understanding of basic physics, and if someone uses the kind of arguments that are made in these responses, the assessment is that the person does not have them."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-authority-2"><a href="#L-authority">Appeal to Authority</a></span></div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">2:30 PM</span></div>
+    <span class="quote">"Until two months ago your argument was that Airy had measured the same angle in water and in air... NOW he made up this thing that one should have measured the angle computed in a different frame, which is a complete nonsensical statement."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-strawman-1"><a href="#L-strawman">Strawman</a></span></div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">2:32 PM</span></div>
+    <span class="quote">"you are climbing mirrors, as we say in italy."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-ridicule-2"><a href="#L-ridicule">Appeal to Ridicule</a></span></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    Disagreeing with mainstream physics is not the same as not understanding it, and a title does not settle a measurement. Nothing was made up and nothing was reversed. Our claim then and now is the same: Airy measured the same aberration angle with water as without it. What we did not see two months ago is that the calculation being handed to us was quietly working in <b>internal angles</b>, and that special relativity was hiding the moving-frame prediction inside the rest frame through the transform. Sharpening that is a refinement of the claim, not a retreat from it. And the refinement is decisive: the transverse Fresnel drag is not a viewpoint, it is a dynamical effect confirmed in the lab, and Jones measured it to 0.02%. <span class="kill">That measured drag term is the same term special relativity puts in the moving frame.</span> You cannot take a dynamically moving Earth and then use a kinematic frame change, velocity composition, to relabel the drag away: a mutually exclusive dynamical prediction outranks a kinematic bookkeeping choice, and a real motion has to show a real, measurable consequence. So the question is not which frame is convenient, it is what SR <b>dynamically</b> predicts for a moving Earth. <span class="kill">It predicts a celestial arc near 15.80″ in the moving frame, the drag value, not the 20.55″ of the rest frame.</span> Airy read 20.55″. Each argument stands on its own merit, and in the end the experiment is the judge, not the credential.</span></div></div>
+</div>
+
+
+<!-- LIVE: dilemma -->
+<div class="round">
+  <div class="rlabel">The dilemma he has to answer</div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    The calculation returns 20.55&Prime; only in the geocentric, stationary-Earth frame. In that frame the 30 km/s is either <b>(A)</b> assigned to the stars, not the Earth, or <b>(B)</b> not present at all. Under A, the velocity is a relative label with no privileged owner, so aberration no longer shows the Earth orbiting. Under B, there is no solar-system velocity in the measurement to begin with. <span class="kill">Either horn removes the Earth's orbital motion as the cause.</span></span></div></div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">4:33 PM</span></div>
+    <span class="quote">"in the Earth's frame the earth's velocity is zero by definition. So any other velocity is relative to earth, for instance, the star's. In the analyzed scenario a 30 km/s relative velocity is assumed, and its consequences agree with what is measured."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-specialpleading-2"><a href="#L-specialpleading">Special Pleading</a></span></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    That is horn A, taken. Once the 30 km/s is "relative, with the star owning it just as well as the Earth," aberration stops being evidence that the Earth moves: <b>it is the same angle whether the Earth circles the Sun or the sky circles a fixed Earth.</b> "Zero by definition in the Earth's frame" is the geocentric frame stated as an axiom, and it is the frame in which the water result comes out right.</span></div></div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">4:42 PM</span></div>
+    <span class="quote">"the star's path relative to the earth will be roughly a circle of 150 million km radius (1 a.u.). There is no implication on the distance, except that it has to be MUCH larger than 1 a.u., otherwise the incoming light's direction would change by LARGE angles, not 20&Prime;. That kind of angle change exists, it's parallax."</span></div></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    Agreed, and it helps us. The aberration angle arctan(v/c) is <b>independent of the star's distance,</b> which is exactly why it cannot tell you who owns the velocity. Distance-independence means aberration is blind to whether the Earth moves or the heavens do. <span class="kill">That is the geocentric equivalence, not a rebuttal of it.</span></span></div></div>
+</div>
+
+<!-- Core box positions filled on integration: CORE1 (Lorentz), CORE2 (AU), CORE3 (all physics) -->
+<!-- Franco 4:59 lead-in -->
+<div class="round">
+  <div class="rlabel">"Just refraction, full stop"</div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">4:59 PM</span></div>
+    <span class="quote">"Is there ANY reason we can think of, in the modern physics framework, why this visible light should do anything different from ordinary refraction? The answer is: NO. Light's speed is independent of the source's motion... there is NO conceivable mechanism that could distinguish the behaviour of light. Full stop."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-begging-4"><a href="#L-begging">Begging the Question</a></span><span class="falchip" id="fal-ignorance-1"><a href="#L-ignorance">Argument from Ignorance</a></span><span class="falchip" id="fal-selfsealing-1"><a href="#L-selfsealing">Self-Sealing Argument</a></span></div>
+</div>
+
+<div class="core">
+  <h3>Relativity is not correct by fiat. It has to make mutually exclusive predictions about the dynamics.</h3>
+  <p><span class="tt">A physical theory earns the word "correct" by predicting one outcome for a moving Earth and a <b>different</b> outcome for a stationary one, then matching the measurement. If it predicts the same reading, 20.55&Prime;, in every frame no matter how the Earth moves, it has made no mutually exclusive prediction about the dynamics of relative motion, and Airy cannot test it at all. A claim no result could contradict is not a strong claim. It is a self-sealing one.</span></p>
+  <p><span class="tt">Take relativity as it has to be taken, as a real dynamical claim, and it <b>does</b> split. For a genuinely moving Earth the water carries the 30 km/s, and in that frame special relativity reduces to the transverse Fresnel drag Franco wrote himself: internal angle &beta;(n&minus;1/n) = 11.88&Prime;, reading <b>15.80&Prime;</b>. That is the mutually exclusive prediction. Airy's plate returned <b>20.55&Prime;</b>, the stationary-Earth value. The moving branch is falsified; the theory keeps its footing here only by retreating to "every frame reads the same," <span class="kill">which is the retreat into unfalsifiability.</span></span></p>
+  <p><span class="tt">This is why the framework is Lorentz's and not something newer. Lorentz's electron theory is mathematically the same transformation, and it derives the identical null <b>from the Earth being at rest in the ether</b>. Einstein kept the transformation and dropped the ether's name; the postulates are still postulates and still have to be tested. "No conceivable mechanism for water to do anything but refract" is the ether-at-rest prediction restated: it expects a null because it was built to expect one, and the null is exactly what a stationary Earth gives.</span></p>
+</div>
+
+<div class="core">
+  <h3>Why the AU and the 30 km/s "agree" with aberration</h3>
+  <p><span class="tt">On the Space the question came up: why do the astronomical unit and the 30 km/s orbital speed come out consistent with aberration? They come out consistent because <b>aberration is where several of them were fixed.</b> The 30 km/s is not an independent measurement. It is v&oplus; = c&middot;tan&nbsp;&kappa; &asymp; 29.8 km/s, read straight off the aberration constant &kappa; and c. The AU follows as AU = v&oplus;&middot;T/2&pi; &asymp; 149.5 million km, the same figure the parallax route reaches through AU = R&oplus;/sin&nbsp;&pi;&oplus;.</span></p>
+  <p><span class="tt">These are not separate pillars that happen to line up. The aberration constant &kappa;, the solar parallax &pi;&oplus;, c, the AU, the Earth's radius and the 30 km/s all sit in one ring identity, &kappa; = 2&pi;R&oplus; / (c&middot;T&middot;sin&nbsp;&pi;&oplus;), so each is defined through the others. Laplace asked Delambre to re-derive the aberration constant from Io's eclipses alone; it returned Bradley's value, and Laplace called it "a perfect agreement between two results deduced from entirely different methods." Both methods were anchored in aberration. de Sitter and Brouwer later put it plainly: the constants "are, of course, dependent on each other through observations."</span></p>
+  <p><span class="tt">Agreement inside a system whose constants were fixed by that system is bookkeeping, not confirmation. It is the same shape as Newton's G, which enters only as a ratio, G = 3g/(4&pi;R&oplus;&rho;&oplus;): scale every length in the solar system by one factor and the two independent determinations of the Earth's mass still agree at every scale, fixing no absolute size. <span class="kill">Internal consistency is a property of the ledger, not proof that the Earth moves.</span></span></p>
+  <p class="cite"><span class="tt">Laplace, P.-S. (1805). Traite de Mecanique Celeste, Tome IV: Theorie des satellites de Jupiter. Courcier. &middot; de Sitter, W. &amp; Brouwer, D. (1938). On the System of Astronomical Constants. Bulletin of the Astronomical Institutes of the Netherlands, 8, 213-231. &middot; Foucault, L. (1862). Comptes Rendus, 55, 501-503.</span></p>
+</div>
+
+<!-- Franco 4:14 lead-in -->
+<div class="round">
+  <div class="rlabel">"So every physicist for four centuries is wrong?"</div>
+  <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">4:14 PM</span></div>
+    <span class="quote">"I can't spend my time doing this, you already made me miss the film I wanted to see... being called presumptuous by someone who claims the entirety of physics from Newton onward is wrong, well this is RICH. Between hypothesis H1 = 'all physics is wrong, and hundreds of thousands of physicists, the finest minds humanity has ever had, have been either lying or stupid' and hypothesis H0 = 'those guys have not understood', I vote for hypothesis H0."</span></div></div>
+  <div class="falrow"><span class="falchip" id="fal-adpopulum-1"><a href="#L-adpopulum">Appeal to Common Belief</a></span><span class="falchip" id="fal-ridicule-3"><a href="#L-ridicule">Appeal to Ridicule</a></span><span class="falchip" id="fal-pity-1"><a href="#L-pity">Appeal to Pity</a></span></div>
+</div>
+
+<div class="core">
+  <h3>"So you think every physicist for four centuries is wrong?"</h3>
+  <p><span class="tt">No. Heliocentrism's correctness rests on Kepler's kinematics and Newton's dynamics, and those two are inter-derivable: each recovers the other, and neither reaches deeper than the other into the real motions of the bodies. What they build together is a set of ratio-based, mutually-reliant constants that is internally consistent, and a geocentric assignment of the same ratios is <b>equally</b> consistent. Airy's null is the datum that fits the second reading. Rejecting one interpretation of one experiment is not "all of physics is wrong."</span></p>
+  <p><span class="tt">"Hundreds of thousands of physicists, the finest minds, would have to be wrong" is an appeal to numbers and to authority, not to the plate Airy exposed. And note the move on the hypotheses: the Popperian test, in which H&#8320; is the statement you try to <b>falsify</b>, has been turned into a show of hands, "I vote H&#8320;." H&#8320; is not voted on. It is falsified or it survives a test. <span class="kill">Airy's water telescope was the test, and it returned the stationary-Earth value.</span></span></p>
+  <p><span class="tt">Every superseded framework, Ptolemy's epicycles, Newton's absolute space, could have pointed to its centuries of success and its consensus of great minds. Longevity is not the judge. <b>Experimentum summus judex.</b></span></p>
+</div>
+
+<section class="ledger">
+  <h2>Logical-fallacy ledger</h2>
+  <p class="axnote">Named against Bo Bennett, <i>Logically Fallacious</i> (2012), and applied across the whole exchange. Each entry flags a rhetorical move, not the physics, which is answered above. Click a number to jump to where it occurs; click a chip in the thread to jump back here.</p>
+  <div class="fal" id="L-adhominem"><div class="fname">Ad Hominem (Abusive)<span class="lat">argumentum ad hominem</span></div><div class="fbody"><span class="fdef tt">Attacking the person making the argument rather than the argument itself, when the attack is irrelevant to it.</span><div class="fwhere tt"><b>Where:</b> "if only any of you had passed a physics exam"; "HUGE gaps in their basic background (shock!)"; "take a physics course from scratch and get tested by a physicist."<span class="fjump">Jump: <a href="#fal-adhominem-1">1</a> <a href="#fal-adhominem-2">2</a> <a href="#fal-adhominem-3">3</a> <a href="#fal-adhominem-4">4</a></span></div></div></div>
+  <div class="fal" id="L-authority"><div class="fname">Appeal to Authority<span class="lat">argumentum ad verecundiam &middot; ipse dixit</span></div><div class="fbody"><span class="fdef tt">Using an authority as evidence when it is not really an authority on the relevant facts.</span><div class="fwhere tt"><b>Where:</b> "this is what Pauli said in 1925"; "it is my JOB to assess people's understanding of basic physics"; "it is the position of modern physics."<span class="fjump">Jump: <a href="#fal-authority-1">1</a> <a href="#fal-authority-2">2</a></span></div></div></div>
+  <div class="fal" id="L-adpopulum"><div class="fname">Appeal to Common Belief<span class="lat">argumentum ad populum</span></div><div class="fbody"><span class="fdef tt">Presenting the fact that many people hold a belief as evidence that the belief is true.</span><div class="fwhere tt"><b>Where:</b> "hundreds of thousands of physicists, the finest minds humanity has ever had, have been either lying or stupid... I vote for hypothesis H0."<span class="fjump">Jump: <a href="#fal-adpopulum-1">1</a></span></div></div></div>
+  <div class="fal" id="L-accomplishment"><div class="fname">Appeal to Accomplishment<span class="lat">appeal to success</span></div><div class="fbody"><span class="fdef tt">Sheltering an argument from criticism by the accomplishment or success of the one making it.</span><div class="fwhere tt"><b>Where:</b> "in exams we ask students to solve problems at the blackboard, without consulting LLMs."<span class="fjump">Jump: <a href="#fal-accomplishment-1">1</a></span></div></div></div>
+  <div class="fal" id="L-repetition"><div class="fname">Argument by Repetition<span class="lat">argumentum ad nauseam &middot; proof by assertion</span></div><div class="fbody"><span class="fdef tt">Repeating an argument or premise in place of supporting evidence.</span><div class="fwhere tt"><b>Where:</b> "this is ridiculous"; "again SO wrong it's hard to chose where to begin"; "you have NOT understood the point."<span class="fjump">Jump: <a href="#fal-repetition-1">1</a> <a href="#fal-repetition-2">2</a> <a href="#fal-repetition-3">3</a></span></div></div></div>
+  <div class="fal" id="L-intimidation"><div class="fname">Proof by Intimidation<span class="lat">argumentum verbosium</span></div><div class="fbody"><span class="fdef tt">Making an argument purposely hard to follow to pressure the audience into accepting it.</span><div class="fwhere tt"><b>Where:</b> the volume of the reply, plus "as anyone having solved problems in elementary physics knows."<span class="fjump">Jump: <a href="#fal-intimidation-1">1</a></span></div></div></div>
+  <div class="fal" id="L-dismissal"><div class="fname">Argument by Dismissal</div><div class="fbody"><span class="fdef tt">An argument is rejected without saying why.</span><div class="fwhere tt"><b>Where:</b> "computing what happens in S and then converting is totally unnecessary"; "I don't want to go and look what logical fallacy this is."<span class="fjump">Jump: <a href="#fal-dismissal-1">1</a> <a href="#fal-dismissal-2">2</a></span></div></div></div>
+  <div class="fal" id="L-goalposts"><div class="fname">Moving the Goal Posts</div><div class="fbody"><span class="fdef tt">Demanding an opponent address more and more points after the initial counter has been met, rather than conceding.</span><div class="fwhere tt"><b>Where:</b> "solve the numeric wire-strike problem with numbers, not words," then "solve it first, then we can discuss."<span class="fjump">Jump: <a href="#fal-goalposts-1">1</a> <a href="#fal-goalposts-2">2</a> <a href="#fal-goalposts-3">3</a></span></div></div></div>
+  <div class="fal" id="L-redherring"><div class="fname">Red Herring<span class="lat">ignoratio elenchi &middot; irrelevant conclusion</span></div><div class="fbody"><span class="fdef tt">Redirecting the argument to another issue the redirector can better answer.</span><div class="fwhere tt"><b>Where:</b> the wire-strike arithmetic offered in place of answering the air-versus-water frame asymmetry.<span class="fjump">Jump: <a href="#fal-redherring-1">1</a> <a href="#fal-redherring-2">2</a></span></div></div></div>
+  <div class="fal" id="L-strawman"><div class="fname">Strawman</div><div class="fbody"><span class="fdef tt">Substituting a distorted or misrepresented version of the opponent's position for the real one.</span><div class="fwhere tt"><b>Where:</b> "two months ago your argument was that Airy disproved Snell's law... now he made up this thing."<span class="fjump">Jump: <a href="#fal-strawman-1">1</a></span></div></div></div>
+  <div class="fal" id="L-analogy"><div class="fname">Weak Analogy<span class="lat">bad analogy &middot; false analogy</span></div><div class="fbody"><span class="fdef tt">Using an analogy to prove a point when the analogy is too dissimilar to the case to be effective.</span><div class="fwhere tt"><b>Where:</b> the bowling ball on a cruising ship, the pea and dominos, the two moving walkways, the clay block: none has a medium that selects a rest frame the way water does.<span class="fjump">Jump: <a href="#fal-analogy-1">1</a> <a href="#fal-analogy-2">2</a> <a href="#fal-analogy-3">3</a> <a href="#fal-analogy-4">4</a> <a href="#fal-analogy-5">5</a></span></div></div></div>
+  <div class="fal" id="L-begging"><div class="fname">Begging the Question<span class="lat">petitio principii &middot; circular reasoning</span></div><div class="fbody"><span class="fdef tt">Any argument in which the conclusion is assumed in one of the premises.</span><div class="fwhere tt"><b>Where:</b> "no reason water does anything but refract, because light's speed is independent of the source," which assumes the very light postulate the experiment tests.<span class="fjump">Jump: <a href="#fal-begging-1">1</a> <a href="#fal-begging-2">2</a> <a href="#fal-begging-3">3</a> <a href="#fal-begging-4">4</a></span></div></div></div>
+  <div class="fal" id="L-specialpleading"><div class="fname">Special Pleading</div><div class="fbody"><span class="fdef tt">Treating one's own case as exempt from the standard applied elsewhere, without adequate justification.</span><div class="fwhere tt"><b>Where:</b> air's direction held constant in S while water's is not; "in the Earth's frame the earth's velocity is zero by definition" used to settle a physical question.<span class="fjump">Jump: <a href="#fal-specialpleading-1">1</a> <a href="#fal-specialpleading-2">2</a></span></div></div></div>
+  <div class="fal" id="L-ridicule"><div class="fname">Appeal to Ridicule<span class="lat">reductio ad ridiculum</span></div><div class="fbody"><span class="fdef tt">Presenting the opponent's argument so as to make it look ridiculous, usually by exaggeration.</span><div class="fwhere tt"><b>Where:</b> "he has no idea what frames of reference are"; "you are climbing mirrors, as we say in italy"; "well this is RICH."<span class="fjump">Jump: <a href="#fal-ridicule-1">1</a> <a href="#fal-ridicule-2">2</a> <a href="#fal-ridicule-3">3</a></span></div></div></div>
+  <div class="fal" id="L-pity"><div class="fname">Appeal to Pity<span class="lat">argumentum ad misericordiam</span></div><div class="fbody"><span class="fdef tt">Distracting from the truth of the conclusion by an appeal to pity.</span><div class="fwhere tt"><b>Where:</b> "you already made me miss the film I wanted to see"; "this is bad for my health, social life and work life."<span class="fjump">Jump: <a href="#fal-pity-1">1</a></span></div></div></div>
+  <div class="fal" id="L-ignorance"><div class="fname">Argument from Ignorance<span class="lat">argumentum ad ignorantiam &middot; argument from incredulity</span></div><div class="fbody"><span class="fdef tt">Concluding from the absence of a conceivable alternative that none exists.</span><div class="fwhere tt"><b>Where:</b> "there is NO conceivable mechanism that could distinguish the behaviour of light."<span class="fjump">Jump: <a href="#fal-ignorance-1">1</a></span></div></div></div>
+  <div class="fal" id="L-selfsealing"><div class="fname">Self-Sealing Argument<span class="lat">unfalsifiability</span></div><div class="fbody"><span class="fdef tt">A position that no possible evidence could count against.</span><div class="fwhere tt"><b>Where:</b> relativity taken to predict the same 20.55&Prime; in every frame regardless of the Earth's motion, so that no measurement could contradict it.<span class="fjump">Jump: <a href="#fal-selfsealing-1">1</a></span></div></div></div>
+</section>
 
 <footer>ACRG · Space quotes and timestamps from the <a class="yt" href="https://youtu.be/oLJsJS2u0ug" target="_blank" rel="noopener">YouTube recording</a> of the Twitter Space; Franco's numbered claims are from the Discord DM recap that followed (26 Jul 2026).</footer>
 
