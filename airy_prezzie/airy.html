@@ -425,6 +425,13 @@ body.argmode #deck{display:none}
 body.argmode #argwrap{display:block}
 #argwrap{display:none;position:fixed;inset:0;z-index:5;overflow:auto;background:#070a11}
 #argframe{width:100%;height:100%;border:0;display:block}
+#langbar{position:fixed;right:16px;top:14px;z-index:80;display:flex;gap:0;overflow:hidden;
+  background:rgba(10,16,26,.72);border:1px solid var(--rule);border-radius:10px;backdrop-filter:blur(8px)}
+#langbar button{font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;padding:9px 13px;
+  background:transparent;color:var(--ink-2);border:none;cursor:pointer;transition:.15s}
+#langbar button:hover{color:#fff}
+#langbar button.on{background:var(--accent);color:#04121b;font-weight:600}
+body.mobile #langbar{top:auto;bottom:60px;right:8px}
 </style>
 </head>
 <body>
@@ -433,6 +440,12 @@ body.argmode #argwrap{display:block}
   <button id="btn-deck" class="on">Presentation</button>
   <button id="btn-sim">Simulation</button>
   <button id="btn-arg">Arguments &amp; Refutations</button>
+</div>
+
+<div id="langbar">
+  <button data-l="en" class="on">EN</button>
+  <button data-l="cz">CZ</button>
+  <button data-l="sk">SK</button>
 </div>
 
 <div id="deck">
@@ -1248,6 +1261,7 @@ water moving:   <span class="int">θ_int = β(n − 1/n) = 11.88″</span>  → 
 
 
 
+
 </script>
 <script type="text/plain" id="sim-css">/* ── Aether Cosmology Research Group — Stellar Aberration sim ───────────── */
 
@@ -1389,6 +1403,182 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:none;border-ra
   body{overflow:auto} #scene{position:fixed} #brand img{width:84px;height:84px}
 }
 </script>
+<script type="text/plain" id="sim-js-i18n_sim">(function(){
+/* Sim-side translation. The sim draws most of its text on <canvas>, which the
+ * deck's DOM translator cannot reach, so the sim carries its own dictionary.
+ * AIY.L(s) returns the translation of s for the current AIY.lang, or s itself
+ * when English / not found. util.js routes every AIY.text() through it, and the
+ * DOM-panel builders wrap their labels in AIY.L too. The deck's language toggle
+ * sets AIY.lang on this iframe (see i18n.js). Numbers/symbols stay English. */
+'use strict';
+const AIY = window.AIY = window.AIY || {};
+AIY.lang = 'en';
+const norm = s => (''+s).replace(/\s+/g,' ').trim();
+
+const T = {
+cz:{
+// theory dropdown
+"Aberration — Air":"Aberace — vzduch","Emission theory":"Emisní teorie","Klinkerfues 1867":"Klinkerfues 1867",
+"Undulatory (wave)":"Vlnová (undulační)","Snell (classical)":"Snell (klasický)","Snell × γ (velocity comp.)":"Snell × γ (skládání rychlostí)",
+"Special Relativity":"Speciální relativita","Pauli 1921 §36γ":"Pauli 1921 §36γ","Rosser 1964 §4.4":"Rosser 1964 §4.4",
+"Jones 1972 (transverse drag, measured)":"Jones 1972 (příčné strhávání, naměřeno)","Geocentric":"Geocentrický",
+"Micrometer — meridian transit":"Mikrometr — průchod poledníkem",
+// panel controls
+"Stellar Aberration":"Hvězdná aberace","Theory / prediction":"Teorie / předpověď","Show":"Zobrazit",
+"Reads — calibrated (θ_int × n)":"Čtení — kalibrované (θ_int × n)","Reads — raw (air scale)":"Čtení — surové (stupnice vzduchu)",
+"θ_int — predicted internal angle":"θ_int — předpovězený vnitřní úhel","Micrometer — plate drift (µm)":"Mikrometr — posun na desce (µm)",
+"Star latitude:":"Šířka hvězdy:","Orbital phase (months):":"Orbitální fáze (měsíce):","Aberration exaggeration:":"Zvětšení aberace:",
+"Animate":"Animovat","True star / incoming":"Skutečná hvězda / příchozí","Apparent / refracted":"Zdánlivá / lomená",
+"Earth velocity":"Rychlost Země","Sky velocity":"Rychlost oblohy","Star":"Hvězda","Velocity":"Rychlost",
+"Full data & derivations:":"Úplná data a odvození:","Math in use":"Použitá matematika",
+"Heliocentric":"Heliocentrický","Water at rest":"Voda v klidu","Water in motion":"Voda v pohybu","Air":"Vzduch","Water":"Voda",
+// math legend labels
+"this theory predicts":"tato teorie předpovídá","θ_int (in water)":"θ_int (ve vodě)","plate drift":"posun na desce",
+"speed in water":"rychlost ve vodě","medium":"prostředí","air, n = 1":"vzduch, n = 1","water, n = 1.33":"voda, n = 1,33",
+"1 · displacement (measured)":"1 · posun (naměřeno)","2 · celestial arc (reads)":"2 · nebeský oblouk (čtení)",
+"3 · internal tilt (implied)":"3 · vnitřní náklon (odvozeno)","physical tube length":"fyzická délka trubice",
+"MICROMETER SCALE (Airy p.39)":"STUPNICE MIKROMETRU (Airy s.39)","raw angle (air scale)":"surový úhel (stupnice vzduchu)",
+"water scale":"stupnice vody","calibrated reads":"kalibrované čtení","SAME PLATE DISPLACEMENT":"STEJNÝ POSUN NA DESCE",
+"OFFSET → READING":"POSUN → ČTENÍ","air (tube 706 mm)":"vzduch (trubice 706 mm)","water (tube 940 mm)":"voda (trubice 940 mm)",
+"both read":"obojí čte",
+// canvas
+"AIR TUBE":"TRUBICE SE VZDUCHEM","WATER TUBE":"TRUBICE S VODOU","air reference":"reference (vzduch)",
+"incoming starlight, aberrated by α = 20.55″":"příchozí hvězdné světlo, aberované o α = 20,55″",
+"× n finer scale":"× n jemnější stupnice","meridian":"poledník","AIR TELESCOPE — eyepiece":"DALEKOHLED SE VZDUCHEM — okulár",
+"WATER-FILLED TELESCOPE — eyepiece":"DALEKOHLED S VODOU — okulár",
+"transits 0.9′ from the zenith — Airy’s chosen star":"prochází 0,9′ od zenitu — Airyho zvolená hvězda",
+"current":"aktuální","expected transit":"očekávaný průchod",
+"★ caught at transit — plate position is the measurement":"★ zachyceno při průchodu — poloha na desce je měření",
+"MICROMETER READING → CELESTIAL ARC":"ČTENÍ MIKROMETRU → NEBESKÝ OBLOUK",
+"1 · measured on the plate":"1 · naměřeno na desce","2 · convert to a sky angle — the reading":"2 · převod na nebeský úhel — čtení",
+"3 · internal tilt — implied afterward (or via Snell)":"3 · vnitřní náklon — odvozený až potom (nebo Snellem)",
+"the star's offset from the meridian wire at transit":"posun hvězdy od poledníkového vlákna při průchodu",
+"same celestial arc, different plate":"stejný nebeský oblouk, jiná deska",
+"Airy's reading":"Airyho čtení",
+"What do \u201creading\u201d and \u201cinternal angle\u201d mean?":"Co znamená \u201ečtení\u201c a \u201evnitřní úhel\u201c?",
+"plate displacement, measured (µm)":"posun na desce, naměřeno (µm)",
+"focal length, air-equivalent = 706 mm":"ohnisková vzdálenost, ekvivalent ve vzduchu = 706 mm",
+"physical tube length — air 706 mm, water 940 mm":"fyzická délka trubice — vzduch 706 mm, voda 940 mm",
+"measured":"naměřeno","requires":"vyžaduje","predicts":"předpovídá","prediction matches Airy":"předpověď souhlasí s Airym",
+"cali":"kalib.","raw":"surové","benchmark":"základ","micro":"mikro","drift":"posun","predicted":"předpovězeno",
+"Airy's lab frame value":"Airyho hodnota v lab. soustavě",
+"needs 1.33 c — Foucault measured 0.75 c":"vyžaduje 1,33 c – Foucault naměřil 0,75 c",
+"Reading":"Čtení","Internal angle (θ_int)":"Vnitřní úhel (θ_int)","Aberration":"Aberace","Micrometer × n":"Mikrometr × n",
+"— the celestial arc the micrometer reports: the star's sideways drift on the wire plate divided by that telescope's own scale. Airy's 20.55″ is a reading, not a direct angle.":"– nebeský oblouk, který mikrometr hlásí: boční posun hvězdy na drátkové desce dělený vlastní stupnicí toho dalekohledu. Airyho 20,55″ je údaj, ne přímý úhel.",
+"— the physical tilt the ray must take inside the tube to produce that reading. It is implied, not measured; a 20.55″ reading needs 15.45″ inside the water.":"– fyzický náklon, který musí paprsek zaujmout uvnitř trubice, aby vznikl tento údaj. Je odvozený, ne měřený; údaj 20,55″ vyžaduje uvnitř vody 15,45″.",
+"— the incoming tilt θ_ext = arctan(v/c) = 20.55″, set by the observer's velocity. The reading recovers it.":"– příchozí náklon θ_ext = arctan(v/c) = 20,55″, daný rychlostí pozorovatele. Údaj jej obnoví.",
+"— the water plate is calibrated n times finer than air (Airy p.39: 27.8-inch air-equivalent vs 37.0-inch tube), so 15.45″ inside reads the same 20.55″ as air. That × n scaling is the whole reason the water null holds.":"– vodní deska je kalibrována n-krát jemněji než vzduch (Airy s.39: 27,8 palce vzduchu odpovídající vs 37,0 palce trubice), takže 15,45″ uvnitř čte tentýž 20,55″ jako vzduch. Toto škálování × n je celý důvod, proč platí vodní nula.",
+"Starlight aberrates by α = arctan(v/c) before it reaches any telescope. Air adds nothing.":"Hvězdné světlo aberuje o α = arctan(v/c), než dosáhne jakéhokoli dalekohledu. Vzduch nic nepřidává.",
+"Corpuscular refraction is Snell, so the angle is right. It dies on speed: it needs 1.33 c, and Foucault measured 0.75 c.":"Korpuskulární lom je Snell, takže úhel je správný. Padá na rychlosti: vyžaduje 1,33 c, a Foucault naměřil 0,75 c.",
+"The original 1867 wave prediction Airy tested. Light slows to v/n, so the water telescope should read n²α = 36.35″. Airy measured 20.55″, unchanged. Falsified by a factor of n².":"Původní vlnová předpověď z roku 1867, kterou Airy testoval. Světlo se zpomalí na v/n, takže vodní dalekohled by měl číst n²α = 36,35″. Airy naměřil 20,55″, beze změny. Vyvráceno faktorem n².",
+"Wave slowed to c/n while the tube keeps moving. The internal tilt grows to 27.33″; reads 36.35″.":"Vlna zpomalená na c/n, zatímco se trubice dál pohybuje. Vnitřní náklon roste na 27,33″; čte 36,35″.",
+"Identical to the wave prediction: 27.33″ inside, reads 36.35″.":"Totožné s vlnovou předpovědí: 27,33″ uvnitř, čte 36,35″.",
+"γ in front moves the answer by a ten-millionth of an arcsec. Still 27.33″, reads 36.35″.":"γ vpředu posune odpověď o desetimiliontinu obloukové vteřiny. Stále 27,33″, čte 36,35″.",
+"Rest frame reproduces Airy: 15.45″ → 20.55″. Moving frame gives 11.88″ → 15.80″, never measured.":"Klidová soustava reprodukuje Airyho: 15,45″ → 20,55″. Pohybující se soustava dává 11,88″ → 15,80″, nikdy nenaměřeno.",
+"His own equation gives 15.45″ in the water's rest frame. §36γ stops before the moving case.":"Jeho vlastní rovnice dává 15,45″ v klidové soustavě vody. §36γ končí před pohybujícím se případem.",
+"§4.4.5 argues Airy in the water's rest frame with no equation. Rest 15.45″, moving 11.88″.":"§4.4.5 řeší Airyho v klidové soustavě vody bez rovnice. V klidu 15,45″, v pohybu 11,88″.",
+"The moving-frame transverse drag, measured directly in Airy's geometry to 0.02%. θ_int = 11.88″ reads 15.80″, not 20.55″. Read as a speed the moving frame needs 1.73c; the real speed is 0.75c.":"Příčné strhávání v pohybující se soustavě, změřené přímo v Airyho geometrii s přesností 0,02 %. θ_int = 11,88″ čte 15,80″, ne 20,55″. Čteno jako rychlost, pohybující se soustava vyžaduje 1,73c; skutečná rychlost je 0,75c.",
+"Earth and water at rest. Ordinary Snell: 15.45″ inside, reads 20.55″. Matches, in one frame.":"Země a voda v klidu. Obyčejný Snell: 15,45″ uvnitř, čte 20,55″. Souhlasí, v jedné soustavě.",
+"γ Draconis drifts to the meridian wire and is caught at the predicted transit instant. Airy read the star’s plate displacement, not an angle, then converted it to a celestial arc. The internal tilt is only known afterwards, by implication. Air (tube 706 mm) and water (tube 940 mm) land at the same displacement, so both read 20.55″.":"γ Draconis se posouvá k poledníkovému vláknu a je zachycena v předpovězeném okamžiku průchodu. Airy odečetl posun hvězdy na desce, ne úhel, a pak jej převedl na nebeský oblouk. Vnitřní náklon je znám až potom, odvozením. Vzduch (trubice 706 mm) a voda (trubice 940 mm) dopadnou na stejný posun, takže obojí čte 20,55″."
+},
+sk:{
+"Aberration — Air":"Aberácia — vzduch","Emission theory":"Emisná teória","Klinkerfues 1867":"Klinkerfues 1867",
+"Undulatory (wave)":"Vlnová (undulačná)","Snell (classical)":"Snell (klasický)","Snell × γ (velocity comp.)":"Snell × γ (skladanie rýchlostí)",
+"Special Relativity":"Špeciálna relativita","Pauli 1921 §36γ":"Pauli 1921 §36γ","Rosser 1964 §4.4":"Rosser 1964 §4.4",
+"Jones 1972 (transverse drag, measured)":"Jones 1972 (priečne strhávanie, namerané)","Geocentric":"Geocentrický",
+"Micrometer — meridian transit":"Mikrometer — prechod poludníkom",
+"Stellar Aberration":"Hviezdna aberácia","Theory / prediction":"Teória / predpoveď","Show":"Zobraziť",
+"Reads — calibrated (θ_int × n)":"Čítanie — kalibrované (θ_int × n)","Reads — raw (air scale)":"Čítanie — surové (stupnica vzduchu)",
+"θ_int — predicted internal angle":"θ_int — predpovedaný vnútorný uhol","Micrometer — plate drift (µm)":"Mikrometer — posun na doske (µm)",
+"Star latitude:":"Šírka hviezdy:","Orbital phase (months):":"Orbitálna fáza (mesiace):","Aberration exaggeration:":"Zväčšenie aberácie:",
+"Animate":"Animovať","True star / incoming":"Skutočná hviezda / prichádzajúci","Apparent / refracted":"Zdanlivá / lomená",
+"Earth velocity":"Rýchlosť Zeme","Sky velocity":"Rýchlosť oblohy","Star":"Hviezda","Velocity":"Rýchlosť",
+"Full data & derivations:":"Úplné dáta a odvodenia:","Math in use":"Použitá matematika",
+"Heliocentric":"Heliocentrický","Water at rest":"Voda v pokoji","Water in motion":"Voda v pohybe","Air":"Vzduch","Water":"Voda",
+"this theory predicts":"táto teória predpovedá","θ_int (in water)":"θ_int (vo vode)","plate drift":"posun na doske",
+"speed in water":"rýchlosť vo vode","medium":"prostredie","air, n = 1":"vzduch, n = 1","water, n = 1.33":"voda, n = 1,33",
+"1 · displacement (measured)":"1 · posun (namerané)","2 · celestial arc (reads)":"2 · nebeský oblúk (čítanie)",
+"3 · internal tilt (implied)":"3 · vnútorný náklon (odvodené)","physical tube length":"fyzická dĺžka trubice",
+"MICROMETER SCALE (Airy p.39)":"STUPNICA MIKROMETRA (Airy s.39)","raw angle (air scale)":"surový uhol (stupnica vzduchu)",
+"water scale":"stupnica vody","calibrated reads":"kalibrované čítanie","SAME PLATE DISPLACEMENT":"ROVNAKÝ POSUN NA DOSKE",
+"OFFSET → READING":"POSUN → ČÍTANIE","air (tube 706 mm)":"vzduch (trubica 706 mm)","water (tube 940 mm)":"voda (trubica 940 mm)",
+"both read":"obe čítajú",
+"AIR TUBE":"TRUBICA SO VZDUCHOM","WATER TUBE":"TRUBICA S VODOU","air reference":"referencia (vzduch)",
+"incoming starlight, aberrated by α = 20.55″":"prichádzajúce hviezdne svetlo, aberované o α = 20,55″",
+"× n finer scale":"× n jemnejšia stupnica","meridian":"poludník","AIR TELESCOPE — eyepiece":"ĎALEKOHĽAD SO VZDUCHOM — okulár",
+"WATER-FILLED TELESCOPE — eyepiece":"ĎALEKOHĽAD S VODOU — okulár",
+"transits 0.9′ from the zenith — Airy’s chosen star":"prechádza 0,9′ od zenitu — Airyho zvolená hviezda",
+"current":"aktuálne","expected transit":"očakávaný prechod",
+"★ caught at transit — plate position is the measurement":"★ zachytené pri prechode — poloha na doske je meranie",
+"MICROMETER READING → CELESTIAL ARC":"ČÍTANIE MIKROMETRA → NEBESKÝ OBLÚK",
+"1 · measured on the plate":"1 · namerané na doske","2 · convert to a sky angle — the reading":"2 · prevod na nebeský uhol — čítanie",
+"3 · internal tilt — implied afterward (or via Snell)":"3 · vnútorný náklon — odvodený až potom (alebo Snellom)",
+"the star's offset from the meridian wire at transit":"posun hviezdy od poludníkového vlákna pri prechode",
+"same celestial arc, different plate":"rovnaký nebeský oblúk, iná doska",
+"Airy's reading":"Airyho čítanie",
+"What do \u201creading\u201d and \u201cinternal angle\u201d mean?":"Čo znamená \u201ečítanie\u201c a \u201evnútorný uhol\u201c?",
+"plate displacement, measured (µm)":"posun na doske, namerané (µm)",
+"focal length, air-equivalent = 706 mm":"ohnisková vzdialenosť, ekvivalent vo vzduchu = 706 mm",
+"physical tube length — air 706 mm, water 940 mm":"fyzická dĺžka trubice — vzduch 706 mm, voda 940 mm",
+"measured":"namerané","requires":"vyžaduje","predicts":"predpovedá","prediction matches Airy":"predpoveď súhlasí s Airym",
+"cali":"kalib.","raw":"surové","benchmark":"základ","micro":"mikro","drift":"posun","predicted":"predpovedané",
+"Airy's lab frame value":"Airyho hodnota v lab. sústave",
+"needs 1.33 c — Foucault measured 0.75 c":"vyžaduje 1,33 c – Foucault nameral 0,75 c",
+"Reading":"Čítanie","Internal angle (θ_int)":"Vnútorný uhol (θ_int)","Aberration":"Aberácia","Micrometer × n":"Mikrometer × n",
+"— the celestial arc the micrometer reports: the star's sideways drift on the wire plate divided by that telescope's own scale. Airy's 20.55″ is a reading, not a direct angle.":"– nebeský oblúk, ktorý mikrometer hlási: bočný posun hviezdy na drôtikovej doske delený vlastnou stupnicou toho ďalekohľadu. Airyho 20,55″ je údaj, nie priamy uhol.",
+"— the physical tilt the ray must take inside the tube to produce that reading. It is implied, not measured; a 20.55″ reading needs 15.45″ inside the water.":"– fyzický náklon, ktorý musí lúč zaujať vnútri trubice, aby vznikol tento údaj. Je odvodený, nie meraný; údaj 20,55″ vyžaduje vnútri vody 15,45″.",
+"— the incoming tilt θ_ext = arctan(v/c) = 20.55″, set by the observer's velocity. The reading recovers it.":"– prichádzajúci náklon θ_ext = arctan(v/c) = 20,55″, daný rýchlosťou pozorovateľa. Údaj ho obnoví.",
+"— the water plate is calibrated n times finer than air (Airy p.39: 27.8-inch air-equivalent vs 37.0-inch tube), so 15.45″ inside reads the same 20.55″ as air. That × n scaling is the whole reason the water null holds.":"– vodná doska je kalibrovaná n-krát jemnejšie než vzduch (Airy s.39: 27,8 palca vzduchu zodpovedajúci vs 37,0 palca trubice), takže 15,45″ vnútri číta ten istý 20,55″ ako vzduch. Toto škálovanie × n je celý dôvod, prečo platí vodná nula.",
+"Starlight aberrates by α = arctan(v/c) before it reaches any telescope. Air adds nothing.":"Hviezdne svetlo aberuje o α = arctan(v/c), než dosiahne akýkoľvek ďalekohľad. Vzduch nič nepridáva.",
+"Corpuscular refraction is Snell, so the angle is right. It dies on speed: it needs 1.33 c, and Foucault measured 0.75 c.":"Korpuskulárny lom je Snell, takže uhol je správny. Padá na rýchlosti: vyžaduje 1,33 c, a Foucault nameral 0,75 c.",
+"The original 1867 wave prediction Airy tested. Light slows to v/n, so the water telescope should read n²α = 36.35″. Airy measured 20.55″, unchanged. Falsified by a factor of n².":"Pôvodná vlnová predpoveď z roku 1867, ktorú Airy testoval. Svetlo sa spomalí na v/n, takže vodný ďalekohľad by mal čítať n²α = 36,35″. Airy nameral 20,55″, bez zmeny. Vyvrátené faktorom n².",
+"Wave slowed to c/n while the tube keeps moving. The internal tilt grows to 27.33″; reads 36.35″.":"Vlna spomalená na c/n, kým sa trubica ďalej pohybuje. Vnútorný náklon rastie na 27,33″; číta 36,35″.",
+"Identical to the wave prediction: 27.33″ inside, reads 36.35″.":"Totožné s vlnovou predpoveďou: 27,33″ vnútri, číta 36,35″.",
+"γ in front moves the answer by a ten-millionth of an arcsec. Still 27.33″, reads 36.35″.":"γ vpredu posunie odpoveď o desaťmilióntinu oblúkovej sekundy. Stále 27,33″, číta 36,35″.",
+"Rest frame reproduces Airy: 15.45″ → 20.55″. Moving frame gives 11.88″ → 15.80″, never measured.":"Pokojová sústava reprodukuje Airyho: 15,45″ → 20,55″. Pohybujúca sa sústava dáva 11,88″ → 15,80″, nikdy nameraná.",
+"His own equation gives 15.45″ in the water's rest frame. §36γ stops before the moving case.":"Jeho vlastná rovnica dáva 15,45″ v pokojovej sústave vody. §36γ končí pred pohybujúcim sa prípadom.",
+"§4.4.5 argues Airy in the water's rest frame with no equation. Rest 15.45″, moving 11.88″.":"§4.4.5 rieši Airyho v pokojovej sústave vody bez rovnice. V pokoji 15,45″, v pohybe 11,88″.",
+"The moving-frame transverse drag, measured directly in Airy's geometry to 0.02%. θ_int = 11.88″ reads 15.80″, not 20.55″. Read as a speed the moving frame needs 1.73c; the real speed is 0.75c.":"Priečne strhávanie v pohybujúcej sa sústave, zmerané priamo v Airyho geometrii s presnosťou 0,02 %. θ_int = 11,88″ číta 15,80″, nie 20,55″. Čítané ako rýchlosť, pohybujúca sa sústava vyžaduje 1,73c; skutočná rýchlosť je 0,75c.",
+"Earth and water at rest. Ordinary Snell: 15.45″ inside, reads 20.55″. Matches, in one frame.":"Zem a voda v pokoji. Obyčajný Snell: 15,45″ vnútri, číta 20,55″. Súhlasí, v jednej sústave.",
+"γ Draconis drifts to the meridian wire and is caught at the predicted transit instant. Airy read the star’s plate displacement, not an angle, then converted it to a celestial arc. The internal tilt is only known afterwards, by implication. Air (tube 706 mm) and water (tube 940 mm) land at the same displacement, so both read 20.55″.":"γ Draconis sa posúva k poludníkovému vláknu a je zachytená v predpovedanom okamihu prechodu. Airy odčítal posun hviezdy na doske, nie uhol, a potom ho previedol na nebeský oblúk. Vnútorný náklon je známy až potom, odvodením. Vzduch (trubica 706 mm) a voda (trubica 940 mm) dopadnú na rovnaký posun, takže obe čítajú 20,55″."
+}
+};
+
+AIY.L = function(s){
+  if(AIY.lang === 'en' || s == null) return s;
+  const d = T[AIY.lang]; if(!d) return s;
+  const v = d[norm(s)];
+  return v !== undefined ? v : s;
+};
+
+const PH = {
+cz:[["(measured on the plate)","(naměřeno na desce)"],["(tangential velocity conserved)","(tečná rychlost zachována)"],["(wave slows)","(vlna se zpomaluje)"],["water at rest, no drag term","voda v klidu, bez členu strhávání"],["water at rest:","voda v klidu:"],["water moving:","voda v pohybu:"],["speed in water","rychlost ve vodě"],["focal length","ohnisková vzdálenost"],["tube length","délka trubice"],["displacement","posun"],["reads","čte"],["measured","naměřeno"],["(implied)","(odvozeno)"],["rest ","v klidu "],["moving","v pohybu"]],
+sk:[["(measured on the plate)","(namerané na doske)"],["(tangential velocity conserved)","(dotyčnicová rýchlosť zachovaná)"],["(wave slows)","(vlna sa spomaľuje)"],["water at rest, no drag term","voda v pokoji, bez člena strhávania"],["water at rest:","voda v pokoji:"],["water moving:","voda v pohybe:"],["speed in water","rýchlosť vo vode"],["focal length","ohnisková vzdialenosť"],["tube length","dĺžka trubice"],["displacement","posun"],["reads","číta"],["measured","namerané"],["(implied)","(odvodené)"],["rest ","v pokoji "],["moving","v pohybe"]]
+};
+AIY.Lf = function(s){
+  if(AIY.lang==='en'||s==null) return s;
+  const list = PH[AIY.lang]; if(!list) return s;
+  let out=''+s; for(let i=0;i<list.length;i++) out=out.split(list[i][0]).join(list[i][1]); return out;
+};
+
+// Static panel labels are plain DOM the sim never regenerates, so translate
+// their leading/trailing text nodes in place (preserving nested inputs/selects).
+AIY.translateStatic = function(root){
+  root = root || document;
+  root.querySelectorAll('h2, li, label, p.src, .help summary, .help p, .help p b').forEach(el=>{
+    [...el.childNodes].forEach(nd=>{
+      if(nd.nodeType !== 3 || !/[A-Za-z]/.test(nd.nodeValue)) return;
+      if(nd.__en === undefined) nd.__en = nd.nodeValue;
+      const pre = nd.__en.match(/^\s*/)[0], post = nd.__en.match(/\s*$/)[0];
+      const key = norm(nd.__en);
+      if(AIY.lang === 'en'){ nd.nodeValue = nd.__en; return; }
+      const tr = AIY.L(key);
+      nd.nodeValue = (tr && tr !== key) ? pre + tr + post : nd.__en;
+    });
+  });
+};
+})();
+</script>
 <script type="text/plain" id="sim-js-util">(function(){
 /* ── Shared helpers: vectors, orthographic projection, canvas primitives ──── */
 'use strict';
@@ -1420,10 +1610,11 @@ AIY.arrow = (ctx, from, to, color, w) => {
   ctx.closePath(); ctx.fill();
 };
 
-// text helper
+// text helper — every drawn string is routed through the sim translator
 AIY.text = (ctx, s, x, y, color, font, align='left') => {
+  const str = AIY.L ? AIY.L(s) : s;
   ctx.fillStyle=color; ctx.font=font; ctx.textAlign=align; ctx.textBaseline='middle';
-  ctx.fillText(s, x, y);
+  ctx.fillText(str, x, y);
 };
 })();
 </script>
@@ -1754,13 +1945,13 @@ function drawTube(ctx, xc, o, time){
   AIY.text(ctx, o.title, xc, topY-LIN-16, '#e9eef6', f(14,1), 'center');
   if(o.water){                                            // theory PREDICTION vs Airy's lab-frame value
     const col=o.matches?'#5fd07a':'#ff6a78';
-    AIY.text(ctx, (o.matches?'✓ ':'✗ ')+'predicted '+fmt(o.showVal,o.unit), xc, plateY+dy(24), col, f(14,1), 'center');
-    AIY.text(ctx, "Airy's lab frame value ("+o.tag+") "+fmt(o.labVal,o.unit), xc, plateY+dy(44), '#5fd07a', f(13), 'center');
+    AIY.text(ctx, (o.matches?'✓ ':'✗ ')+AIY.L('predicted')+' '+fmt(o.showVal,o.unit), xc, plateY+dy(24), col, f(14,1), 'center');
+    AIY.text(ctx, AIY.L("Airy's lab frame value")+' ('+AIY.L(o.tag)+') '+fmt(o.labVal,o.unit), xc, plateY+dy(44), '#5fd07a', f(13), 'center');
   } else {                                                // the measured baseline
     AIY.text(ctx, fmt(o.showVal,o.unit), xc, plateY+dy(24), '#cfe0f0', f(14,1), 'center');
     AIY.text(ctx, 'air reference', xc, plateY+dy(44), '#9fb0c6', f(13), 'center');
   }
-  AIY.text(ctx, o.aux.label+' '+fmt(o.aux.val,o.aux.unit), xc, plateY+dy(64), '#9fb0c6', f(13), 'center');
+  AIY.text(ctx, AIY.L(o.aux.label)+' '+fmt(o.aux.val,o.aux.unit), xc, plateY+dy(64), '#9fb0c6', f(13), 'center');
   AIY.text(ctx, o.mediumLabel, xc, plateY+dy(82), '#9fb0c6', f(13), 'center');
   if(o.speedNote) AIY.text(ctx, o.speedNote, xc, plateY+dy(100), '#ff9aa2', f(13), 'center');
 }
@@ -1924,32 +2115,32 @@ AIY.microPanelHTML = frame => {
   const fUm = (F_MM*1000).toFixed(0);                  // focal length in µm (for the division)
   const LUm = (d.Lmm*1000).toFixed(0);                 // tube length in µm
   return `
-  <h3>MICROMETER READING &rarr; CELESTIAL ARC</h3>
+  <h3>${AIY.L('MICROMETER READING → CELESTIAL ARC')}</h3>
 
   <div class="mstep measured">
-    <div class="lbl">1 &middot; measured on the plate</div>
+    <div class="lbl">${AIY.L('1 · measured on the plate')}</div>
     <div class="eq"><span class="v">x</span> = <span class="res">${xUm} µm</span></div>
-    <div class="lbl">the star's offset from the meridian wire at transit</div>
+    <div class="lbl">${AIY.L("the star's offset from the meridian wire at transit")}</div>
   </div>
 
   <div class="mstep reads">
-    <div class="lbl">2 &middot; convert to a sky angle &mdash; the reading</div>
+    <div class="lbl">${AIY.L('2 · convert to a sky angle — the reading')}</div>
     <div class="eq">arc = ( <span class="v">x</span> &divide; <span class="v">f</span> ) &times; <span class="v">k</span></div>
     <div class="eq sm">= ( ${xUm} &divide; ${fUm} ) &times; ${k}</div>
-    <div class="eq"><span class="res">= ${d.read.toFixed(2)}&Prime;</span> &nbsp;Airy's reading</div>
+    <div class="eq"><span class="res">= ${d.read.toFixed(2)}&Prime;</span> &nbsp;${AIY.L("Airy's reading")}</div>
   </div>
 
   <div class="mstep implied">
-    <div class="lbl">3 &middot; internal tilt &mdash; implied afterward (or via Snell)</div>
+    <div class="lbl">${AIY.L('3 · internal tilt — implied afterward (or via Snell)')}</div>
     <div class="eq">&theta;_int = ( <span class="v">x</span> &divide; <span class="v">L</span> ) &times; <span class="v">k</span></div>
     <div class="eq sm">= ( ${xUm} &divide; ${LUm} ) &times; ${k}</div>
     <div class="eq"><span class="res">= ${d.thInt.toFixed(2)}&Prime;</span></div>
   </div>
 
   <div class="mdefs">
-    <div class="d"><b>x</b><span>plate displacement, measured (µm)</span></div>
-    <div class="d"><b>f</b><span>focal length, air-equivalent = 706 mm</span></div>
-    <div class="d"><b>L</b><span>physical tube length — air 706 mm, water 940 mm</span></div>
+    <div class="d"><b>x</b><span>${AIY.L('plate displacement, measured (µm)')}</span></div>
+    <div class="d"><b>f</b><span>${AIY.L('focal length, air-equivalent = 706 mm')}</span></div>
+    <div class="d"><b>L</b><span>${AIY.L('physical tube length — air 706 mm, water 940 mm')}</span></div>
     <div class="d"><b>k</b><span>206265&Prime; per radian — the number of arcseconds in one radian (1 rad = 180/&pi; &times; 3600&Prime;)</span></div>
   </div>
 
@@ -1971,6 +2162,7 @@ function bracket(ctx, a, b, y, color, label, font, dir, g){
 /* ── Main: state, controls, scene dispatch, animation loop ─────────────────*/
 'use strict';
 const AIY = window.AIY;
+const L = s => (AIY.L ? AIY.L(s) : s);          // translate a UI string to AIY.lang
 
 const canvas = document.getElementById('scene'), ctx = canvas.getContext('2d');
 const $ = id => document.getElementById(id);
@@ -1990,9 +2182,14 @@ addEventListener('resize', ()=>{ resize(); if(typeof updateMicroPanel==='functio
 
 // ── Populate theory selector ───────────────────────────────────────────────
 for(const [key,t] of Object.entries(AIY.THEORIES)){
-  const o=document.createElement('option'); o.value=key; o.textContent=t.label; $('theory').appendChild(o);
+  const o=document.createElement('option'); o.value=key; o.textContent=L(t.label); $('theory').appendChild(o);
 }
 $('theory').value = state.theory;                       // keep the dropdown in sync with default state
+function retransViews(){
+  const vl={cali:'Reads — calibrated (θ_int × n)',raw:'Reads — raw (air scale)',thetaint:'θ_int — predicted internal angle',micro:'Micrometer — plate drift (µm)'};
+  [...$('view').options].forEach(o=>{ if(vl[o.value]) o.textContent=L(vl[o.value]); });
+}
+retransViews();
 
 // ── Contextual controls: which panel bits apply to the current theory ──────
 function syncControls(){
@@ -2004,17 +2201,19 @@ function syncControls(){
   $('frame-wrap').style.display = showFrame ? '' : 'none';
   $('row-view').style.display = t.scene==='tube' ? '' : 'none';   // tube scenes only
   if(sky){                                             // heliocentric / geocentric
-    $('btn-frameA').textContent='Heliocentric'; $('btn-frameA').dataset.v='helio';
-    $('btn-frameB').textContent='Geocentric';   $('btn-frameB').dataset.v='geo';
-    $('k-vel').textContent = state.frame==='geo' ? 'Sky velocity' : 'Earth velocity';
+    $('btn-frameA').textContent=L('Heliocentric'); $('btn-frameA').dataset.v='helio';
+    $('btn-frameB').textContent=L('Geocentric');   $('btn-frameB').dataset.v='geo';
+    $('k-vel').textContent = L(state.frame==='geo' ? 'Sky velocity' : 'Earth velocity');
   } else if(micro){                                     // air / water eyepiece
-    $('btn-frameA').textContent='Air'; $('btn-frameA').dataset.v='air';
-    $('btn-frameB').textContent='Water'; $('btn-frameB').dataset.v='water';
-    $('k-vel').textContent = 'Star';
+    $('btn-frameA').textContent=L('Air'); $('btn-frameA').dataset.v='air';
+    $('btn-frameB').textContent=L('Water'); $('btn-frameB').dataset.v='water';
+    $('k-vel').textContent = L('Star');
   } else if(t.frames){                                 // water at rest / in motion
-    $('btn-frameA').textContent='Water at rest'; $('btn-frameA').dataset.v='rest';
-    $('btn-frameB').textContent='Water in motion'; $('btn-frameB').dataset.v='moving';
-    $('k-vel').textContent = 'Velocity';
+    $('btn-frameA').textContent=L('Water at rest'); $('btn-frameA').dataset.v='rest';
+    $('btn-frameB').textContent=L('Water in motion'); $('btn-frameB').dataset.v='moving';
+    $('k-vel').textContent = L('Velocity');
+  } else {                                             // tube scenes with no frame toggle
+    $('k-vel').textContent = L('Earth velocity');
   }
   setFrameButtons();
   updateMicroPanel();
@@ -2035,9 +2234,9 @@ function setFrameButtons(){
 // ── Live math legend ───────────────────────────────────────────────────────
 function updateMath(){
   const t = AIY.THEORIES[state.theory];
-  $('m-title').textContent = t.label;
-  $('m-formula').textContent = t.formula;
-  $('m-note').textContent = t.blurb;
+  $('m-title').textContent = L(t.label);
+  $('m-formula').textContent = (AIY.Lf ? AIY.Lf(t.formula) : t.formula);
+  $('m-note').textContent = L(t.blurb);
   const rows = [];
   if(t.scene==='sky'){
     rows.push(['α = arctan(v/c)', AIY.ALPHA.toFixed(2)+'″']);
@@ -2047,39 +2246,39 @@ function updateMath(){
     $('m-scale').style.display = 'none';
   } else if(t.scene==='micro'){
     const air=AIY.microData('air'), wat=AIY.microData('water'), gd=AIY.microData(state.frame);
-    rows.push(['medium', gd.water ? 'water, n = 1.33' : 'air, n = 1']);
-    rows.push(['1 · displacement (measured)', (gd.xMm*1000).toFixed(1)+' µm']);
-    rows.push(['2 · celestial arc (reads)', gd.read.toFixed(2)+'″']);
-    rows.push(['3 · internal tilt (implied)', gd.thInt.toFixed(2)+'″']);
-    rows.push(['physical tube length', gd.Lmm.toFixed(0)+' mm']);
-    $('m-verdict').innerHTML = '<span class="ok">air 20.55″ = water 20.55″ (same displacement)</span>';
+    rows.push([L('medium'), gd.water ? L('water, n = 1.33') : L('air, n = 1')]);
+    rows.push([L('1 · displacement (measured)'), (gd.xMm*1000).toFixed(1)+' µm']);
+    rows.push([L('2 · celestial arc (reads)'), gd.read.toFixed(2)+'″']);
+    rows.push([L('3 · internal tilt (implied)'), gd.thInt.toFixed(2)+'″']);
+    rows.push([L('physical tube length'), gd.Lmm.toFixed(0)+' mm']);
+    $('m-verdict').innerHTML = '<span class="ok">air 20.55″ = water 20.55″</span>';
     $('m-scale').style.display = '';
     const r=(a,b,hit)=>`<div class="r${hit?' hit':''}"><span>${a}</span><b>${b}</b></div>`;
     $('m-scale').innerHTML =
-      '<div class="sh">SAME PLATE DISPLACEMENT</div>'
-      + r('air  (tube 706 mm)', (air.xMm*1000).toFixed(1)+' µm')
-      + r('water (tube 940 mm)', (wat.xMm*1000).toFixed(1)+' µm')
-      + r('both read', '20.55″', true);
+      '<div class="sh">'+L('SAME PLATE DISPLACEMENT')+'</div>'
+      + r(L('air  (tube 706 mm)'), (air.xMm*1000).toFixed(1)+' µm')
+      + r(L('water (tube 940 mm)'), (wat.xMm*1000).toFixed(1)+' µm')
+      + r(L('both read'), '20.55″', true);
   } else {
     const V = AIY.viewData(t, state.frame, state.view);
     const fmt=(v,u)=> u==='µm' ? v.toFixed(1)+' µm' : v.toFixed(2)+'″';
-    rows.push(['this theory predicts', fmt(V.wv,V.unit)]);
-    rows.push(['Airy '+V.labWord+' ('+V.tag+')', fmt(V.lab,V.unit)]);
-    rows.push(['θ_int (in water)', V.thInt.toFixed(2)+'″']);
-    rows.push(['plate drift', AIY.drift(V.thInt).toFixed(1)+' µm']);
-    rows.push(['speed in water', (t.speed/AIY.C).toFixed(2)+' c']);
+    rows.push([L('this theory predicts'), fmt(V.wv,V.unit)]);
+    rows.push([L('Airy')+' '+L(V.labWord)+' ('+L(V.tag)+')', fmt(V.lab,V.unit)]);
+    rows.push([L('θ_int (in water)'), V.thInt.toFixed(2)+'″']);
+    rows.push([L('plate drift'), AIY.drift(V.thInt).toFixed(1)+' µm']);
+    rows.push([L('speed in water'), (t.speed/AIY.C).toFixed(2)+' c']);
     const th = V.thInt, reading = th*AIY.N, match = V.match;
     $('m-verdict').innerHTML = match
-      ? '<span class="ok">✓ prediction matches Airy ('+fmt(V.lab,V.unit)+')</span>'
-      : '<span class="bad">✗ predicts '+fmt(V.wv,V.unit)+' — Airy '+V.labWord+' '+fmt(V.lab,V.unit)+'</span>';
+      ? '<span class="ok">✓ '+L('prediction matches Airy')+' ('+fmt(V.lab,V.unit)+')</span>'
+      : '<span class="bad">✗ '+L('predicts')+' '+fmt(V.wv,V.unit)+' — '+L('Airy')+' '+L(V.labWord)+' '+fmt(V.lab,V.unit)+'</span>';
     // micrometer-scale numerics: raw air-scale angle vs the ×n calibrated reading
     const r=(a,b,hit)=>`<div class="r${hit?' hit':''}"><span>${a}</span><b>${b}</b></div>`;
     $('m-scale').style.display = '';
     $('m-scale').innerHTML =
-      '<div class="sh">MICROMETER SCALE (Airy p.39)</div>'
-      + r('raw angle (air scale)', th.toFixed(2)+'″')
-      + r('water scale', '× '+AIY.N.toFixed(2)+'  (37.0 / 27.8 in)')
-      + r('calibrated reads', reading.toFixed(2)+'″', match);
+      '<div class="sh">'+L('MICROMETER SCALE (Airy p.39)')+'</div>'
+      + r(L('raw angle (air scale)'), th.toFixed(2)+'″')
+      + r(L('water scale'), '× '+AIY.N.toFixed(2)+'  (37.0 / 27.8 in)')
+      + r(L('calibrated reads'), reading.toFixed(2)+'″', match);
   }
   $('m-rows').innerHTML = rows.map(r =>
     `<div class="row"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('');
@@ -2114,9 +2313,16 @@ $('animate').addEventListener('change', e=>{ state.animate=e.target.checked; });
 $('view').addEventListener('change', e=>{ state.view=e.target.value; });
 
 // ── Animation loop ─────────────────────────────────────────────────────────
-let clock=0, last=0;
+let clock=0, last=0, _slang=AIY.lang;
 function loop(ts){
   const dt=(ts-last)/1000; last=ts;
+  if(AIY.lang!==_slang){                                 // deck toggled the language
+    _slang=AIY.lang;
+    [...$('theory').options].forEach(o=>{ o.textContent=L(AIY.THEORIES[o.value].label); });
+    retransViews();
+    syncControls();                                      // relabels frame buttons + micro panel
+    if(AIY.translateStatic) AIY.translateStatic();       // static panel labels
+  }
   if(state.animate){
     clock+=dt;
     if(AIY.THEORIES[state.theory].scene==='sky'){
@@ -2127,6 +2333,7 @@ function loop(ts){
   render(clock); requestAnimationFrame(loop);
 }
 syncControls();
+if(AIY.translateStatic) AIY.translateStatic();          // translate static labels at mount
 requestAnimationFrame(t=>{ last=t; loop(t); });
 })();
 </script>
@@ -2144,8 +2351,8 @@ requestAnimationFrame(t=>{ last=t; loop(t); });
 </header>
 
 <div class="h0">
-  <p class="hyp"><span class="hlbl">H<sub>1</sub></span>&ndash; Earth is in motion; therefore the aberration angle in air will <b>not</b> be equal to the aberration angle in water.</p>
-  <p class="hyp"><span class="hlbl">H<sub>0</sub></span>&ndash; Earth is at absolute rest; therefore the aberration angle in air should be <b>equal</b> to the aberration angle in water.</p>
+  <p class="hyp"><span class="hlbl">H<sub>1</sub></span><span class="tt">&ndash; Earth is in motion; therefore the aberration angle in air will <b>not</b> be equal to the aberration angle in water.</span></p>
+  <p class="hyp"><span class="hlbl">H<sub>0</sub></span><span class="tt">&ndash; Earth is at absolute rest; therefore the aberration angle in air should be <b>equal</b> to the aberration angle in water.</span></p>
   <p class="hnote">Airy measured them equal. The exchange below is what happened when that was pressed.</p>
 </div>
 
@@ -2153,23 +2360,23 @@ requestAnimationFrame(t=>{ last=t; loop(t); });
   <h2>The refutation as one chain</h2>
   <p class="axnote">Every step is either something Franco states himself or something his own statements force. Read top to bottom.</p>
 
-  <div class="ax"><div class="n">1</div><div class="body"><b>No preferred frame.</b> Relativity admits no privileged frame of reference.<span class="tag franco">Franco affirms · <a class="yt" href="https://youtu.be/oLJsJS2u0ug?t=3007" target="_blank" rel="noopener">50:07</a></span></div></div>
-  <div class="ax"><div class="n">2</div><div class="body"><b>A medium defines one.</b> Adding a physical medium introduces a privileged frame: the one in which the medium is at rest.<span class="tag franco">Franco's DM · 2:14</span></div></div>
-  <div class="ax"><div class="n">3</div><div class="body"><b>Compute there.</b> To predict a medium experiment you move to the medium's rest frame, solve, then transform back.<span class="tag franco">Franco's method · 2:24</span></div></div>
-  <div class="ax"><div class="n">4</div><div class="body"><b>Airy's water is bolted to the Earth.</b> The water, the telescope and the Earth are one rigid body.<span class="tag franco">Conceded · <a class="yt" href="https://youtu.be/oLJsJS2u0ug?t=1158" target="_blank" rel="noopener">19:18</a></span></div></div>
-  <div class="ax der"><div class="n">5</div><div class="body"><b>So the medium's rest frame is the Earth's rest frame,</b> in which the Earth's velocity is zero.<span class="tag then">follows from 2–4</span></div></div>
-  <div class="ax"><div class="n">6</div><div class="body"><b>There it reduces to Snell's law,</b> and Snell's law reproduces the measured 20.55″.<span class="tag franco">Franco's claim</span></div></div>
-  <div class="ax"><div class="n">7</div><div class="body"><b>The moving-Earth frame gives a different number.</b> With the Earth at 30 km/s the drag term gives 11.88″ internal, reading 15.80″, the value Jones measured directly. It is not 20.55″.<span class="tag meas">measured · Jones 1972</span></div></div>
-  <div class="ax"><div class="n">8</div><div class="body"><b>One instrument, one frame.</b> Aberration in air is credited to the Earth's motion; the water result is obtained only by removing it. The same telescope cannot be moving for air and at rest for water.<span class="tag then">consistency</span></div></div>
+  <div class="ax"><div class="n">1</div><div class="body"><span class="tt"><b>No preferred frame.</b> Relativity admits no privileged frame of reference.</span><span class="tag franco">Franco affirms · <a class="yt" href="https://youtu.be/oLJsJS2u0ug?t=3007" target="_blank" rel="noopener">50:07</a></span></div></div>
+  <div class="ax"><div class="n">2</div><div class="body"><span class="tt"><b>A medium defines one.</b> Adding a physical medium introduces a privileged frame: the one in which the medium is at rest.</span><span class="tag franco">Franco's DM · 2:14</span></div></div>
+  <div class="ax"><div class="n">3</div><div class="body"><span class="tt"><b>Compute there.</b> To predict a medium experiment you move to the medium's rest frame, solve, then transform back.</span><span class="tag franco">Franco's method · 2:24</span></div></div>
+  <div class="ax"><div class="n">4</div><div class="body"><span class="tt"><b>Airy's water is bolted to the Earth.</b> The water, the telescope and the Earth are one rigid body.</span><span class="tag franco">Conceded · <a class="yt" href="https://youtu.be/oLJsJS2u0ug?t=1158" target="_blank" rel="noopener">19:18</a></span></div></div>
+  <div class="ax der"><div class="n">5</div><div class="body"><span class="tt"><b>So the medium's rest frame is the Earth's rest frame,</b> in which the Earth's velocity is zero.</span><span class="tag then">follows from 2–4</span></div></div>
+  <div class="ax"><div class="n">6</div><div class="body"><span class="tt"><b>There it reduces to Snell's law,</b> and Snell's law reproduces the measured 20.55″.</span><span class="tag franco">Franco's claim</span></div></div>
+  <div class="ax"><div class="n">7</div><div class="body"><span class="tt"><b>The moving-Earth frame gives a different number.</b> With the Earth at 30 km/s the drag term gives 11.88″ internal, reading 15.80″, the value Jones measured directly. It is not 20.55″.</span><span class="tag meas">measured · Jones 1972</span></div></div>
+  <div class="ax"><div class="n">8</div><div class="body"><span class="tt"><b>One instrument, one frame.</b> Aberration in air is credited to the Earth's motion; the water result is obtained only by removing it. The same telescope cannot be moving for air and at rest for water.</span><span class="tag then">consistency</span></div></div>
 
-  <div class="qed"><span class="q">∴</span> To falsify <b>H<sub>0</sub></b> the water angle had to differ from the air angle. It did not. Airy measured them equal, and Franco's own method reproduces that equality only in the stationary-Earth frame. <b>We failed to falsify H<sub>0</sub>: the Earth is at absolute rest.</b> H<sub>1</sub> required the two angles to differ, and they do not, so <b>H<sub>1</sub> is not true.</b> The dispute was never about the arithmetic. It is that the arithmetic closes only when the Earth is at rest.</div>
+  <div class="qed"><span class="q">∴</span><span class="tt"> To falsify <b>H<sub>0</sub></b> the water angle had to differ from the air angle. It did not. Airy measured them equal, and Franco's own method reproduces that equality only in the stationary-Earth frame. <b>We failed to falsify H<sub>0</sub>: the Earth is at absolute rest.</b> H<sub>1</sub> required the two angles to differ, and they do not, so <b>H<sub>1</sub> is not true.</b> The dispute was never about the arithmetic. It is that the arithmetic closes only when the Earth is at rest.</span></div>
 </section>
 
 <div class="legend">
-  <span><span class="sw f"></span> Franco's claim</span>
-  <span><span class="sw a"></span> ACRG rebuttal</span>
-  <span><span class="sw c"></span> Contradicts his own Space words</span>
-  <span><span class="sw cc"></span> Concedes our premise</span>
+  <span><span class="sw f"></span><span class="tt">Franco's claim</span></span>
+  <span><span class="sw a"></span><span class="tt">ACRG rebuttal</span></span>
+  <span><span class="sw c"></span><span class="tt">Contradicts his own Space words</span></span>
+  <span><span class="sw cc"></span><span class="tt">Concedes our premise</span></span>
 </div>
 
 <!-- ROUND 1 -->
@@ -2177,10 +2384,10 @@ requestAnimationFrame(t=>{ last=t; loop(t); });
   <div class="rlabel">1 · "Water only refracts, full stop"</div>
   <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">1:41 AM</span></div>
     <span class="quote">"In a relativistic framework, adding water to the telescope has the ONLY effect of refracting light. This is what Pauli said in 1925."</span></div></div>
-  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
     Agreed on the arithmetic. Snell's law holds <b>in the frame where the water is at rest</b>. On the Space you told us what that frame is:
-    <span class="kill">there is no velocity of the telescope, of the water, and therefore the Earth.</span> So "just Snell's law" is the stationary-Earth calculation. We never disputed the math. We dispute the frame it demands, which is ours.</div></div>
-  <div class="chip conc"><b>CONCESSION</b> <span class="src">Space <a class="yt" href="https://youtu.be/oLJsJS2u0ug?t=1158" target="_blank" rel="noopener">19:18</a> · "In that frame there's no velocity of the telescope and of the water, and therefore the earth too, since they're all mounted rigid to one another."</span></div>
+    <span class="kill">there is no velocity of the telescope, of the water, and therefore the Earth.</span> So "just Snell's law" is the stationary-Earth calculation. We never disputed the math. We dispute the frame it demands, which is ours.</span></div></div>
+  <div class="chip conc"><span class="tt"><b>CONCESSION</b></span> <span class="src">Space <a class="yt" href="https://youtu.be/oLJsJS2u0ug?t=1158" target="_blank" rel="noopener">19:18</a> · "In that frame there's no velocity of the telescope and of the water, and therefore the earth too, since they're all mounted rigid to one another."</span></div>
 </div>
 
 <!-- ROUND 2 -->
@@ -2188,9 +2395,9 @@ requestAnimationFrame(t=>{ last=t; loop(t); });
   <div class="rlabel">2 · The privileged frame</div>
   <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">2:14 AM</span></div>
     <span class="quote">"The moment you add a physical macroscopic medium such as water, you ARE introducing a 'privileged' frame, namely the one where water is stationary."</span></div></div>
-  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div>
-    On the Space you were asked, yes or no, is there a preferred frame in relativity. You said <b>yes, there is none</b>. Now the medium introduces one. And for Airy the water is bolted to the telescope and the Earth, so the "privileged frame where water is stationary" <span class="kill">is the stationary Earth.</span> You have named a preferred frame, and it is the geocentric one.</div></div>
-  <div class="chip contra"><b>CONTRADICTION</b> <span class="src">Space <a class="yt" href="https://youtu.be/oLJsJS2u0ug?t=3007" target="_blank" rel="noopener">50:07</a> · "no preferred frame of reference? Yes or no?" / Franco: "Yes."&nbsp;→&nbsp;DM 2:14 · "you ARE introducing a privileged frame."</span></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    On the Space you were asked, yes or no, is there a preferred frame in relativity. You said <b>yes, there is none</b>. Now the medium introduces one. And for Airy the water is bolted to the telescope and the Earth, so the "privileged frame where water is stationary" <span class="kill">is the stationary Earth.</span> You have named a preferred frame, and it is the geocentric one.</span></div></div>
+  <div class="chip contra"><span class="tt"><b>CONTRADICTION</b></span> <span class="src">Space <a class="yt" href="https://youtu.be/oLJsJS2u0ug?t=3007" target="_blank" rel="noopener">50:07</a> · "no preferred frame of reference? Yes or no?" / Franco: "Yes."&nbsp;→&nbsp;DM 2:14 · "you ARE introducing a privileged frame."</span></div>
 </div>
 
 <!-- ROUND 3 -->
@@ -2198,8 +2405,8 @@ requestAnimationFrame(t=>{ last=t; loop(t); });
   <div class="rlabel">3 · "Move to the medium's rest frame, compute, move back"</div>
   <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">2:14 · 2:24 AM</span></div>
     <span class="quote">"To predict what happens in ANY frame, the best way is move to the frame where the medium is stationary, compute what happens there and then move back... This is what has to be done to predict Fizeau's and Jones'."</span></div></div>
-  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div>
-    For Fizeau and Jones the medium is dragged <b>through the lab</b>, so its rest frame is a genuinely different frame and the method earns its keep. Airy's water does not move through the lab. It is rigid with the instrument and the Earth. "The frame where the medium is stationary" <span class="kill">is the Earth frame.</span> Your general recipe, applied to Airy, reads: compute in the Earth-at-rest frame. That is geocentrism written as a procedure.</div></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    For Fizeau and Jones the medium is dragged <b>through the lab</b>, so its rest frame is a genuinely different frame and the method earns its keep. Airy's water does not move through the lab. It is rigid with the instrument and the Earth. "The frame where the medium is stationary" <span class="kill">is the Earth frame.</span> Your general recipe, applied to Airy, reads: compute in the Earth-at-rest frame. That is geocentrism written as a procedure.</span></div></div>
 </div>
 
 <!-- ROUND 4 -->
@@ -2207,9 +2414,9 @@ requestAnimationFrame(t=>{ last=t; loop(t); });
   <div class="rlabel">4 · Air vs water: the frame gets switched</div>
   <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">2:02 · 2:14 AM</span></div>
     <span class="quote">Air (case A): light's direction is constant in S (sun's frame); the Earth frame S′ moves at V, so S′ sees the angle vary ±V/c. Water (case B): the water is stationary in S′, so you solve it there.</span></div></div>
-  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div>
-    Same telescope, same night, same observer. For <b>air</b> you put the Earth in the moving frame, and the aberration comes from the Earth's V. For <b>water</b> you put the Earth in the rest frame and the V drops out. <span class="kill">You changed which frame the Earth occupies the moment you poured in the water.</span> That is two experiments with the control changed halfway through.</div></div>
-  <div class="chip contra"><b>SAME OBJECTION, LIVE</b> <span class="src">Space <a class="yt" href="https://youtu.be/oLJsJS2u0ug?t=3063" target="_blank" rel="noopener">51:03</a> · "you're picking and choosing both frames... you lose the ability to claim Earth's motion as the cause, because you're already treating the Earth stationary."</span></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    Same telescope, same night, same observer. For <b>air</b> you put the Earth in the moving frame, and the aberration comes from the Earth's V. For <b>water</b> you put the Earth in the rest frame and the V drops out. <span class="kill">You changed which frame the Earth occupies the moment you poured in the water.</span> That is two experiments with the control changed halfway through.</span></div></div>
+  <div class="chip contra"><span class="tt"><b>SAME OBJECTION, LIVE</b></span> <span class="src">Space <a class="yt" href="https://youtu.be/oLJsJS2u0ug?t=3063" target="_blank" rel="noopener">51:03</a> · "you're picking and choosing both frames... you lose the ability to claim Earth's motion as the cause, because you're already treating the Earth stationary."</span></div>
 </div>
 
 <!-- ROUND 5 -->
@@ -2217,8 +2424,8 @@ requestAnimationFrame(t=>{ last=t; loop(t); });
   <div class="rlabel">5 · He writes the drag term, then refuses to finish it</div>
   <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">2:33 AM</span></div>
     <span class="quote">"In S light is partially dragged... it acquires a horizontal component u_x = V(1−1/n²)... computing what happens in S and then converting is totally unnecessary."</span></div></div>
-  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div>
-    That u_x = V(1−1/n²) <b>is the transverse Fresnel-drag term.</b> In S, the frame where the Earth and its water move at 30 km/s, the frame heliocentrism says we occupy, it makes the internal angle β(n−1/n) ≈ <b>11.88″</b>, reading <b>15.80″</b>. You wrote the ingredient and then called finishing it "unnecessary." It is the <span class="kill">only calculation that tests the Earth's motion,</span> and it does not give 20.55″. Jones measured that exact drag to 0.02%, so the moving-frame number is pinned. It is not what Airy read.</div></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    That u_x = V(1−1/n²) <b>is the transverse Fresnel-drag term.</b> In S, the frame where the Earth and its water move at 30 km/s, the frame heliocentrism says we occupy, it makes the internal angle β(n−1/n) ≈ <b>11.88″</b>, reading <b>15.80″</b>. You wrote the ingredient and then called finishing it "unnecessary." It is the <span class="kill">only calculation that tests the Earth's motion,</span> and it does not give 20.55″. Jones measured that exact drag to 0.02%, so the moving-frame number is pinned. It is not what Airy read.</span></div></div>
 </div>
 
 <!-- ROUND 6 -->
@@ -2226,8 +2433,8 @@ requestAnimationFrame(t=>{ last=t; loop(t); });
   <div class="rlabel">6 · "This is how you derive Fresnel's formula"</div>
   <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">2:35 AM</span></div>
     <span class="quote">"In special relativity this is the way you DERIVE Fresnel's formula, which is a first-order expansion of velocity composition."</span></div></div>
-  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div>
-    Correct, and it cuts the other way. Solve for the drag coefficient that forces the water to read the air angle and you get <b>1 − 1/n²</b> uniquely, for any index and any speed, with the velocity cancelling. Fresnel's coefficient is <span class="kill">defined to be the number that cancels the medium's effect.</span> A coefficient fitted to produce a null, producing a null, is not evidence of the Earth's motion. It is the absence of one.</div></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    Correct, and it cuts the other way. Solve for the drag coefficient that forces the water to read the air angle and you get <b>1 − 1/n²</b> uniquely, for any index and any speed, with the velocity cancelling. Fresnel's coefficient is <span class="kill">defined to be the number that cancels the medium's effect.</span> A coefficient fitted to produce a null, producing a null, is not evidence of the Earth's motion. It is the absence of one.</span></div></div>
 </div>
 
 <!-- ROUND 7 -->
@@ -2235,8 +2442,8 @@ requestAnimationFrame(t=>{ last=t; loop(t); });
   <div class="rlabel">7 · "Light's direction is constant in air, not constant in water"</div>
   <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">2:33 AM</span></div>
     <span class="quote">"In case A the light's direction is assumed to remain constant in S. In case B you introduce a moving medium so the light's direction in S is NOT constant."</span></div></div>
-  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div>
-    This is the causal split laid bare. In air, aberration exists in the Earth frame <b>because the Earth moves</b>. In water, you compute in the Earth-rest frame and the motion drops out. <span class="kill">You cannot use aberration-in-air as proof the Earth moves and compute aberration-in-water as if it does not.</span> One instrument, one causal story. Choose.</div></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    This is the causal split laid bare. In air, aberration exists in the Earth frame <b>because the Earth moves</b>. In water, you compute in the Earth-rest frame and the motion drops out. <span class="kill">You cannot use aberration-in-air as proof the Earth moves and compute aberration-in-water as if it does not.</span> One instrument, one causal story. Choose.</span></div></div>
 </div>
 
 <!-- ROUND 8 -->
@@ -2244,8 +2451,8 @@ requestAnimationFrame(t=>{ last=t; loop(t); });
   <div class="rlabel">8 · "He changed his claim to V/c(n−1/n)"</div>
   <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">2:43 AM</span></div>
     <span class="quote">"He changed his claim to an even more absurd one, namely that Airy should have measured the V/c(n−1/n) angle... he has no idea what frames of reference are."</span></div></div>
-  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div>
-    V/c(n−1/n) = 11.88″ is not a retraction. It is the <b>moving-frame internal angle</b>, the Lorentz, Pauli and Rosser result, and the transverse drag Jones measured to 0.02%. It is <span class="kill">the same V(1−1/n²) term you wrote yourself at 2:33.</span> Calling it "absurd" and "no idea what frames are" is calling your own line absurd.</div></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    V/c(n−1/n) = 11.88″ is not a retraction. It is the <b>moving-frame internal angle</b>, the Lorentz, Pauli and Rosser result, and the transverse drag Jones measured to 0.02%. It is <span class="kill">the same V(1−1/n²) term you wrote yourself at 2:33.</span> Calling it "absurd" and "no idea what frames are" is calling your own line absurd.</span></div></div>
 </div>
 
 <!-- ROUND 9 -->
@@ -2253,8 +2460,8 @@ requestAnimationFrame(t=>{ last=t; loop(t); });
   <div class="rlabel">9 · The bowling ball / airport walkway test</div>
   <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">2:58 AM</span></div>
     <span class="quote">"The problem I gave him involved a bowling ball rolled toward a pin on a cruising ship... or two parallel walkways moving in opposite directions."</span></div></div>
-  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div>
-    Pure kinematics lets you relabel which body moves. Airy is not pure kinematics. Water is a <b>physical medium whose drag depends on its real motion</b> (Fizeau, Jones), so the effect is dynamical, not a matter of viewpoint. A walkway has no analog of "the medium selects a frame." <span class="kill">You said so yourself in Round 2:</span> water introduces a privileged frame. Your own analogy defeats your own point.</div></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    Pure kinematics lets you relabel which body moves. Airy is not pure kinematics. Water is a <b>physical medium whose drag depends on its real motion</b> (Fizeau, Jones), so the effect is dynamical, not a matter of viewpoint. A walkway has no analog of "the medium selects a frame." <span class="kill">You said so yourself in Round 2:</span> water introduces a privileged frame. Your own analogy defeats your own point.</span></div></div>
 </div>
 
 <!-- ROUND 10 -->
@@ -2264,9 +2471,9 @@ requestAnimationFrame(t=>{ last=t; loop(t); });
     <span class="quote">"Alice shoots a pea perpendicular to her walkway, through two loops... At what angle will Bob receive the pea? Does it have to be the same as Alice's?... he measures angles by arranging two parallel rows of dominos and sees which have been taken down. How would they depend on Bob's walkway speed?"</span></div></div>
   <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">3:27 AM</span></div>
     <span class="quote">"The telescope is the equivalent of the loops or dominos in Alice's (or Bob's) walkways."</span></div></div>
-  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div>
-    The dominos settle it, and they settle it for us. Alice and Bob can compute different angles, but they agree on one physical fact: <b>which dominos fell.</b> That record is invariant, and it is the only thing Airy measured, one set of micrometer wires struck. <span class="kill">You granted this on the Space:</span> every observer must agree on the wire that is hit. For Airy that invariant is 20.55″, the air value. The frame-dependent angle is a label you attach afterward; the fallen dominos are the physics, and they correspond to the stationary-Earth result.</div></div>
-  <div class="chip conc"><b>CONCESSION</b> <span class="src">Space <a class="yt" href="https://youtu.be/oLJsJS2u0ug?t=2711" target="_blank" rel="noopener">45:11</a> · "every observer in every frame must agree on... the wire that's being hit by the starlight."</span></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    The dominos settle it, and they settle it for us. Alice and Bob can compute different angles, but they agree on one physical fact: <b>which dominos fell.</b> That record is invariant, and it is the only thing Airy measured, one set of micrometer wires struck. <span class="kill">You granted this on the Space:</span> every observer must agree on the wire that is hit. For Airy that invariant is 20.55″, the air value. The frame-dependent angle is a label you attach afterward; the fallen dominos are the physics, and they correspond to the stationary-Earth result.</span></div></div>
+  <div class="chip conc"><span class="tt"><b>CONCESSION</b></span> <span class="src">Space <a class="yt" href="https://youtu.be/oLJsJS2u0ug?t=2711" target="_blank" rel="noopener">45:11</a> · "every observer in every frame must agree on... the wire that's being hit by the starlight."</span></div>
 </div>
 
 <!-- ROUND 11 -->
@@ -2274,15 +2481,15 @@ requestAnimationFrame(t=>{ last=t; loop(t); });
   <div class="rlabel">11 · The clay block</div>
   <div class="msg"><div class="ava f">F</div><div class="bub f"><div class="nm">Franco <span class="t">3:27 AM</span></div>
     <span class="quote">"To make the analogy closer to Airy's case, suppose Alice places a clay, or wax, block behind the second loop, so that the pea penetrates it before being stopped by friction. What do you think the path of the pea will be, in the block? How will it depend on Alice's and Bob's walkway velocity relative to the airport?"</span></div></div>
-  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div>
-    You have just built our argument in miniature. The block is the water, and you ask how the pea's path inside it depends on the walkway velocity <b>relative to the airport.</b> So the in-block path is fixed by real motion against a rest frame, the airport floor. That is a privileged frame and a dynamical effect, not a change of viewpoint. Map it: <span class="kill">airport = absolute rest, the stationary Earth; walkway = the moving frame; block = water.</span> The path in the block is solved in the frame where the block is at rest, which is the walkway it is fixed to. Airy's water is fixed to the telescope and the Earth, so that frame is the Earth frame. Finish your own analogy and it lands on the stationary-Earth calculation. The pea reaches the same fallen dominos only when the block, and the Earth, are at rest.</div></div>
-  <div class="chip contra"><b>CONTRADICTION</b> <span class="src">Space <a class="yt" href="https://youtu.be/oLJsJS2u0ug?t=3007" target="_blank" rel="noopener">50:07</a> · "no preferred frame... Yes."&nbsp;&rarr;&nbsp;DM 3:27 · the in-block path "depends on velocity relative to the airport," a preferred frame.</span></div>
+  <div class="msg right"><div class="ava a">AC</div><div class="bub a"><div class="nm">ACRG</div><span class="tt">
+    You have just built our argument in miniature. The block is the water, and you ask how the pea's path inside it depends on the walkway velocity <b>relative to the airport.</b> So the in-block path is fixed by real motion against a rest frame, the airport floor. That is a privileged frame and a dynamical effect, not a change of viewpoint. Map it: <span class="kill">airport = absolute rest, the stationary Earth; walkway = the moving frame; block = water.</span> The path in the block is solved in the frame where the block is at rest, which is the walkway it is fixed to. Airy's water is fixed to the telescope and the Earth, so that frame is the Earth frame. Finish your own analogy and it lands on the stationary-Earth calculation. The pea reaches the same fallen dominos only when the block, and the Earth, are at rest.</span></div></div>
+  <div class="chip contra"><span class="tt"><b>CONTRADICTION</b></span> <span class="src">Space <a class="yt" href="https://youtu.be/oLJsJS2u0ug?t=3007" target="_blank" rel="noopener">50:07</a> · "no preferred frame... Yes."&nbsp;&rarr;&nbsp;DM 3:27 · the in-block path "depends on velocity relative to the airport," a preferred frame.</span></div>
 </div>
 
 <div class="final">
-  <h2>The one thing every observer must agree on</h2>
+  <h2>The one thing every observer must agree on</h2><span class="tt">
   The micrometer wire the starlight strikes. That physical point corresponds to 20.55″, the air value. Every route Franco takes to it, "just Snell," "move to the medium's rest frame," "compute in S′," passes through the frame where the water, and therefore the Earth, is at rest. Relativity forbids a privileged frame; the water experiment forces him to adopt one; and the one he adopts is the stationary Earth. That is the whole argument, and he restated it for us in his own recap.
-</div>
+</span></div>
 
 <footer>ACRG · Space quotes and timestamps from the <a class="yt" href="https://youtu.be/oLJsJS2u0ug" target="_blank" rel="noopener">YouTube recording</a> of the Twitter Space; Franco's numbered claims are from the Discord DM recap that followed (26 Jul 2026).</footer>
 
@@ -2375,6 +2582,383 @@ requestAnimationFrame(t=>{ last=t; loop(t); });
   footer{margin-top:30px;color:var(--dim);font-size:12.5px;text-align:center}
 </script>
 
+<!-- language toggle: dictionary then engine (engine reads window.AIRY_TR) -->
+<script>/* Czech + Slovak translations for the Airy deck.
+ * Key = normalised English textContent of a prose element.
+ * Value = { cz, sk } translated innerHTML (emphasis markup preserved).
+ * Citations, numbers, symbols, formulae and proper names are left in English. */
+window.AIRY_TR = {
+
+/* ---- titles / section dividers / kicks ---- */
+"A Review of Airy's 'Failure'":{cz:"Přehled Airyho <span class=\"em\">„selhání\"</span>",sk:"Prehľad Airyho <span class=\"em\">„zlyhania\"</span>"},
+"An Aether Cosmology Research Group Presentation":{cz:"Prezentace skupiny Aether Cosmology Research Group",sk:"Prezentácia skupiny Aether Cosmology Research Group"},
+"Dedication":{cz:"Věnování",sk:"Venovanie"},
+"Civil engineer · Creationist author":{cz:"Stavební inženýr · kreacionistický autor",sk:"Stavebný inžinier · kreacionistický autor"},
+"Malcolm produced the earliest and longest-standing video presentation of Airy's experiment as a proof of geocentricity, sharing his work from 2010. This review stands on the trail he cut.":{cz:"Malcolm vytvořil <b>nejstarší a nejdéle existující</b> video prezentaci Airyho experimentu jako důkazu geocentrismu; svou práci sdílí od roku 2010. Tento přehled navazuje na cestu, kterou proklestil.",sk:"Malcolm vytvoril <b>najstaršiu a najdlhšie existujúcu</b> video prezentáciu Airyho experimentu ako dôkazu geocentrizmu; svoju prácu zdieľa od roku 2010. Tento prehľad nadväzuje na cestu, ktorú prekliesnil."},
+
+"Michelson & Morley, 1887 — the crucial experiment":{cz:"Michelson a Morley, 1887 · klíčový experiment",sk:"Michelson a Morley, 1887 · kľúčový experiment"},
+"Michelson's Historical Recap":{cz:"Michelsonovo historické shrnutí",sk:"Michelsonovo historické zhrnutie"},
+"A 155-year-old unsolved problem in heliocentric cosmology.":{cz:"155 let nevyřešený problém heliocentrické kosmologie.",sk:"155 rokov nevyriešený problém heliocentrickej kozmológie."},
+"Michelson recounts stellar aberration and Airy's water-telescope null, the very experiment we are examining.":{cz:"Michelson líčí hvězdnou aberaci a <b>Airyho nulový výsledek s vodním dalekohledem</b>, právě ten experiment, který zkoumáme.",sk:"Michelson opisuje hviezdnu aberáciu a <b>Airyho nulový výsledok s vodným ďalekohľadom</b>, práve ten experiment, ktorý skúmame."},
+"Michelson and Morley then built an interferometer to catch the Earth's motion through the ether directly, by the shift of its interference fringes.":{cz:"Michelson a Morley pak sestrojili interferometr, aby zachytili pohyb Země éterem <b>přímo</b>, podle posunu interferenčních proužků.",sk:"Michelson a Morley potom zostrojili interferometer, aby zachytili pohyb Zeme éterom <b>priamo</b>, podľa posunu interferenčných prúžkov."},
+"A fringe is one full light-and-dark band. The Earth's 30 km/s orbit should slide the pattern by 0.4 fringe, nearly half a band.":{cz:"<b>Proužek</b> je jeden úplný světlý a tmavý pruh. Oběžný pohyb Země 30 km/s by měl posunout obrazec o <b>0,4 proužku</b>, téměř o půl pruhu.",sk:"<b>Prúžok</b> je jeden úplný svetlý a tmavý pruh. Obežný pohyb Zeme 30 km/s by mal posunúť obrazec o <b>0,4 prúžku</b>, takmer o pol pruhu."},
+"The instrument could resolve about 0.004 fringe, a hundredth of the expected shift.":{cz:"Přístroj dokázal rozlišit asi <b>0,004 proužku</b>, setinu očekávaného posunu.",sk:"Prístroj dokázal rozlíšiť asi <b>0,004 prúžku</b>, stotinu očakávaného posunu."},
+
+"Michelson & Morley, 1887 — the measurement":{cz:"Michelson a Morley, 1887 · měření",sk:"Michelson a Morley, 1887 · meranie"},
+"A small signal, not a clean zero":{cz:"Malý signál, ne čistá nula",sk:"Malý signál, nie čistá nula"},
+"The observed shift was tiny, under 0.01 fringe, less than a fortieth of the 0.4 predicted.":{cz:"Naměřený posun byl nepatrný, pod <b>0,01 proužku</b>, méně než čtyřicetina předpovězených 0,4.",sk:"Nameraný posun bol nepatrný, pod <b>0,01 prúžku</b>, menej než štyridsatina predpovedaných 0,4."},
+"Because the shift grows as v², that puts the velocity at roughly a sixth to a quarter of the orbital speed, about 6 to 8 km/s, not the full 30, and not a clean zero.":{cz:"Protože posun roste jako <b>v²</b>, odpovídá to rychlosti zhruba šestině až čtvrtině oběžné rychlosti, asi <b>6 až 8 km/s</b>, ne plných 30 a ne čistá nula.",sk:"Keďže posun rastie ako <b>v²</b>, zodpovedá to rýchlosti zhruba šestine až štvrtine obežnej rýchlosti, asi <b>6 až 8 km/s</b>, nie plných 30 a nie čistá nula."},
+"The textbook \"null result\" overstates it: the data carried a small residual, right at the instrument's floor.":{cz:"Učebnicový „nulový výsledek\" to zveličuje: data nesla <b>malé reziduum</b>, přesně na hranici citlivosti přístroje.",sk:"Učebnicový „nulový výsledok\" to zveličuje: dáta niesli <b>malé reziduum</b>, presne na hranici citlivosti prístroja."},
+"Their own conclusion: the result is small enough \"entirely to refute Fresnel's explanation of aberration\", and if the ether is at rest at the Earth's surface, Lorentz's own theory \"also fails.\"":{cz:"Jejich vlastní závěr: výsledek je dost malý, aby <b>„zcela vyvrátil Fresnelovo vysvětlení aberace\"</b>, a je-li éter v klidu u povrchu Země, <b>Lorentzova vlastní teorie „také selhává\".</b>",sk:"Ich vlastný záver: výsledok je dosť malý, aby <b>„úplne vyvrátil Fresnelovo vysvetlenie aberácie\"</b>, a ak je éter v pokoji pri povrchu Zeme, <b>Lorentzova vlastná teória „takisto zlyháva\".</b>"},
+"Consoli and Pluchino (2023) reanalyze the ±0.004-fringe records and read the residual as a real signal.":{cz:"Consoli a Pluchino (2023) znovu analyzují záznamy s přesností <b>±0,004 proužku</b> a čtou reziduum jako skutečný signál.",sk:"Consoli a Pluchino (2023) znovu analyzujú záznamy s presnosťou <b>±0,004 prúžku</b> a čítajú reziduum ako skutočný signál."},
+
+"The option left off the table":{cz:"Možnost, která zůstala mimo úvahu",sk:"Možnosť, ktorá zostala mimo úvahy"},
+"One reading they would not take":{cz:"Jeden výklad, který nepřipustili",sk:"Jeden výklad, ktorý nepripustili"},
+"Every ether theory on offer had failed in their own words: Fresnel refuted, Stokes incompatible, Lorentz's own fix collapsed. Yet one reading was never entertained.":{cz:"Každá nabízená teorie éteru selhala jejich vlastními slovy: Fresnel vyvrácen, Stokes neslučitelný, Lorentzova vlastní záplata se zhroutila. Přesto jeden výklad nikdy nezvážili.",sk:"Každá ponúkaná teória éteru zlyhala ich vlastnými slovami: Fresnel vyvrátený, Stokes nezlučiteľný, Lorentzova vlastná záplata sa zrútila. Napriek tomu jeden výklad nikdy nezvážili."},
+"The near-null sat with the simplest reading of all: no relative motion — the Earth at rest.":{cz:"Téměř nulový výsledek odpovídal nejjednoduššímu výkladu ze všech: <b>žádný relativní pohyb</b>, Země v klidu.",sk:"Takmer nulový výsledok zodpovedal najjednoduchšiemu výkladu zo všetkých: <b>žiadny relatívny pohyb</b>, Zem v pokoji."},
+"The Royal Society and the Royal Astronomical Society hold the Copernican principle as a starting premise, not a result to be tested.":{cz:"Royal Society a Royal Astronomical Society berou <b>koperníkovský princip</b> jako výchozí předpoklad, ne jako výsledek, který se má ověřovat.",sk:"Royal Society a Royal Astronomical Society berú <b>koperníkovský princíp</b> ako východiskový predpoklad, nie ako výsledok, ktorý sa má overovať."},
+"So a stationary Earth was excluded before the experiment began. The search turned instead to ever more elaborate ways to hide a motion that would not appear.":{cz:"Nehybná Země tak byla vyloučena <b>ještě před začátkem experimentu</b>. Hledání se místo toho obrátilo ke stále složitějším způsobům, jak skrýt pohyb, který se nechtěl objevit.",sk:"Nehybná Zem tak bola vylúčená <b>ešte pred začiatkom experimentu</b>. Hľadanie sa namiesto toho obrátilo k čoraz zložitejším spôsobom, ako skryť pohyb, ktorý sa nechcel objaviť."},
+"\"It is evident that in the post-Copernican era of human history, no well-informed and rational person can imagine that the Earth occupies a unique position in the universe.\"":{cz:"„Je zřejmé, že v pokoperníkovské éře lidských dějin si <b>žádný dobře informovaný a rozumný člověk nemůže představit, že Země zaujímá jedinečné postavení</b> ve vesmíru.\"",sk:"„Je zrejmé, že v pokoperníkovskej ére ľudských dejín si <b>žiadny dobre informovaný a rozumný človek nemôže predstaviť, že Zem zaujíma jedinečné postavenie</b> vo vesmíre.\""},
+
+"Section One":{cz:"Část první",sk:"Časť prvá"},
+"Stellar Aberration":{cz:"Hvězdná aberace",sk:"Hviezdna aberácia"},
+"The history and significance of stellar aberration in heliocentric cosmology.":{cz:"Historie a význam hvězdné aberace v heliocentrické kosmologii.",sk:"História a význam hviezdnej aberácie v heliocentrickej kozmológii."},
+"Bradley, 1728":{cz:"Bradley, 1728",sk:"Bradley, 1728"},
+"Starlight Drift":{cz:"Posun hvězdného světla",sk:"Posun hviezdneho svetla"},
+"Bradley took zenith measurements of γ Draconis as it transited his telescope.":{cz:"Bradley měřil <b>γ Draconis</b> v zenitu, když procházela jeho dalekohledem.",sk:"Bradley meral <b>γ Draconis</b> v zenite, keď prechádzala jeho ďalekohľadom."},
+"Across the year the star drifted about 40″ north to south, farthest north in September and farthest south in March.":{cz:"Během roku se hvězda posunula asi o <b>40″ ze severu na jih</b>, nejseverněji v září a nejjižněji v březnu.",sk:"Počas roka sa hviezda posunula asi o <b>40″ zo severu na juh</b>, najsevernejšie v septembri a najjužnejšie v marci."},
+"Half of that swing, 20″.2, is the aberration constant.":{cz:"Polovina toho rozkyvu, <b>20″,2</b>, je aberační konstanta.",sk:"Polovica toho rozkyvu, <b>20″,2</b>, je aberačná konštanta."},
+"Aberration is a first-order effect: it scales with v/c, not v²/c².":{cz:"Aberace je efekt <b>prvního řádu</b>: škáluje s v/c, ne s v²/c².",sk:"Aberácia je efekt <b>prvého rádu</b>: škáluje s v/c, nie s v²/c²."},
+
+"The stakes":{cz:"Co je v sázce",sk:"Čo je v stávke"},
+"The only first-order measurement":{cz:"Jediné měření prvního řádu",sk:"Jediné meranie prvého rádu"},
+"Kepler's kinematics and Newton's dynamics derive from one another. The mathematics alone cannot decide the model.":{cz:"Keplerova kinematika a Newtonova dynamika se odvozují jedna z druhé. <b>Matematika sama model rozhodnout nemůže.</b>",sk:"Keplerova kinematika a Newtonova dynamika sa odvodzujú jedna z druhej. <b>Matematika sama model rozhodnúť nemôže.</b>"},
+"Aberration is the one measurement that returns a first-order v/c relationship giving 30 km/s.":{cz:"Aberace je jediné měření, které dává vztah prvního řádu v/c s hodnotou <b>30 km/s</b>.",sk:"Aberácia je jediné meranie, ktoré dáva vzťah prvého rádu v/c s hodnotou <b>30 km/s</b>."},
+"From 1812 (Arago) to 1887 (Michelson), every further attempt at a first-order measurement returned null.":{cz:"Od roku 1812 (Arago) do 1887 (Michelson) vrátil každý další pokus o měření prvního řádu <b>nulu</b>.",sk:"Od roku 1812 (Arago) do 1887 (Michelson) vrátil každý ďalší pokus o meranie prvého rádu <b>nulu</b>."},
+"The nulls were explained by ad-hoc aether constructions built to cancel exactly what was being looked for.":{cz:"Nuly se vysvětlovaly ad hoc konstrukcemi éteru sestrojenými tak, aby vyrušily přesně to, co se hledalo.",sk:"Nuly sa vysvetľovali ad hoc konštrukciami éteru zostrojenými tak, aby vyrušili presne to, čo sa hľadalo."},
+"The absence of a measurable velocity became the argument for the velocity.":{cz:"Nepřítomnost měřitelné rychlosti se stala argumentem <b>pro</b> tu rychlost.",sk:"Neprítomnosť merateľnej rýchlosti sa stala argumentom <b>pre</b> tú rýchlosť."},
+
+"Klinkerfues, 1867":{cz:"Klinkerfues, 1867",sk:"Klinkerfues, 1867"},
+"Dynamic Consequences of Earth's Motion":{cz:"Dynamické důsledky pohybu Země",sk:"Dynamické dôsledky pohybu Zeme"},
+"If aberration is the ratio of the observer's velocity to the velocity of light, then slowing the light inside the instrument must change the angle.":{cz:"Je-li aberace poměrem rychlosti pozorovatele k rychlosti světla, pak zpomalení světla uvnitř přístroje musí změnit úhel.",sk:"Ak je aberácia pomerom rýchlosti pozorovateľa k rýchlosti svetla, potom spomalenie svetla vnútri prístroja musí zmeniť uhol."},
+
+"Greenwich, 1871":{cz:"Greenwich, 1871",sk:"Greenwich, 1871"},
+"The instrument":{cz:"Přístroj",sk:"Prístroj"},
+
+"Instrumentation":{cz:"Přístrojové vybavení",sk:"Prístrojové vybavenie"},
+"Micrometer & Scale":{cz:"Mikrometr a stupnice",sk:"Mikrometer a stupnica"},
+"The water plate is calibrated n times finer. That scaling is why a smaller internal angle reads the same arc.":{cz:"Vodní deska je kalibrována <b>n-krát jemněji</b>. Toto škálování je důvod, proč menší vnitřní úhel dává tentýž oblouk.",sk:"Vodná doska je kalibrovaná <b>n-krát jemnejšie</b>. Toto škálovanie je dôvod, prečo menší vnútorný uhol dáva ten istý oblúk."},
+
+"The result":{cz:"Výsledek",sk:"Výsledok"},
+"Nothing changed":{cz:"Nic se nezměnilo",sk:"Nič sa nezmenilo"},
+
+"Section Two":{cz:"Část druhá",sk:"Časť druhá"},
+"The Predictions":{cz:"Předpovědi",sk:"Predpovede"},
+"Each theory's own math, worked to the single angle it lands on.":{cz:"Vlastní matematika každé teorie, dovedená k jedinému úhlu, na kterém skončí.",sk:"Vlastná matematika každej teórie, dovedená k jedinému uhlu, na ktorom skončí."},
+
+"Emission theory — the prediction":{cz:"Emisní teorie · předpověď",sk:"Emisná teória · predpoveď"},
+"Right angle, impossible speed":{cz:"Správný úhel, nemožná rychlost",sk:"Správny uhol, nemožná rýchlosť"},
+
+"Wave theory — the prediction":{cz:"Vlnová teorie · předpověď",sk:"Vlnová teória · predpoveď"},
+"Four routes, one wrong answer":{cz:"Čtyři cesty, jedna špatná odpověď",sk:"Štyri cesty, jedna nesprávna odpoveď"},
+"Slow the light to c/n while the tube keeps moving. Every wave-theory route lands on the same magnified angle.":{cz:"Zpomalte světlo na c/n, zatímco se trubice dál pohybuje. Každá cesta vlnové teorie skončí na témže zvětšeném úhlu.",sk:"Spomaľte svetlo na c/n, kým sa trubica ďalej pohybuje. Každá cesta vlnovej teórie skončí na tom istom zväčšenom uhle."},
+
+"Relativity — the prediction":{cz:"Relativita · předpověď",sk:"Relativita · predpoveď"},
+"The Lorentz transform, both frames":{cz:"Lorentzova transformace, obě soustavy",sk:"Lorentzova transformácia, obe sústavy"},
+"Transform to the frame where the water is at rest: Snell gives 15.45″, reads 20.55″. Matches.":{cz:"Přejděte do soustavy, kde je <b>voda v klidu</b>: Snell dá 15,45″, čte 20,55″. Souhlasí.",sk:"Prejdite do sústavy, kde je <b>voda v pokoji</b>: Snell dá 15,45″, číta 20,55″. Súhlasí."},
+"That rest frame is dynamically the stationary Earth.":{cz:"Tato klidová soustava je <b>dynamicky nehybná Země</b>.",sk:"Táto pokojová sústava je <b>dynamicky nehybná Zem</b>."},
+"Carry the same transform into the moving frame and it gives 11.88″ → 15.80″. Never matches.":{cz:"Proveďte tutéž transformaci do <b>pohybující se</b> soustavy a dá 11,88″ → 15,80″. Nikdy nesouhlasí.",sk:"Vykonajte tú istú transformáciu do <b>pohybujúcej sa</b> sústavy a dá 11,88″ → 15,80″. Nikdy nesúhlasí."},
+
+"Jones, 1972 — the experimental answer":{cz:"Jones, 1972 · experimentální odpověď",sk:"Jones, 1972 · experimentálna odpoveď"},
+"We know exactly how the ray behaves":{cz:"Přesně víme, jak se paprsek chová",sk:"Presne vieme, ako sa lúč správa"},
+"The transverse drag every explanation leans on is not an assumption. R. V. Jones measured it directly, in Airy's geometry, to 0.02%.":{cz:"Příčné strhávání, o které se každé vysvětlení opírá, není předpoklad. R. V. Jones je změřil přímo, v Airyho geometrii, s přesností <b>0,02 %</b>.",sk:"Priečne strhávanie, o ktoré sa každé vysvetlenie opiera, nie je predpoklad. R. V. Jones ho zmeral priamo, v Airyho geometrii, s presnosťou <b>0,02 %</b>."},
+"In a moving medium the ray drifts by exactly β(n − 1/n) = 11.88″, reading 15.80″, not Airy's 20.55″. Read as a speed, that moving frame demands 1.73c; Jones's measured drag needs only the real 0.75c.":{cz:"V pohybujícím se prostředí se paprsek posune přesně o <b>β(n − 1/n) = 11,88″</b>, čte <b>15,80″</b>, ne Airyho <b>20,55″</b>. Čteno jako rychlost, tato pohybující se soustava vyžaduje <b>1,73c</b>; Jonesovo naměřené strhávání potřebuje jen skutečných <b>0,75c</b>.",sk:"V pohybujúcom sa prostredí sa lúč posunie presne o <b>β(n − 1/n) = 11,88″</b>, číta <b>15,80″</b>, nie Airyho <b>20,55″</b>. Čítané ako rýchlosť, táto pohybujúca sa sústava vyžaduje <b>1,73c</b>; Jonesovo namerané strhávanie potrebuje len skutočných <b>0,75c</b>."},
+
+"Jones, 1972 — the last escape hatch":{cz:"Jones, 1972 · poslední úniková cesta",sk:"Jones, 1972 · posledná úniková cesta"},
+"It matched the phase velocity":{cz:"Souhlasilo s fázovou rychlostí",sk:"Súhlasilo s fázovou rýchlosťou"},
+
+"Section Three":{cz:"Část třetí",sk:"Časť tretia"},
+"The Transform":{cz:"Transformace",sk:"Transformácia"},
+"The relativistic account, the frame it requires, and the frame it never shows.":{cz:"Relativistický výklad, soustava, kterou vyžaduje, a soustava, kterou nikdy neukáže.",sk:"Relativistický výklad, sústava, ktorú vyžaduje, a sústava, ktorú nikdy neukáže."},
+
+"The resolution offered":{cz:"Nabízené řešení",sk:"Ponúkané riešenie"},
+"A frame where the water is at rest":{cz:"Soustava, kde je voda v klidu",sk:"Sústava, kde je voda v pokoji"},
+"The Lorentz transformation is applied in the frame where the water is stationary.":{cz:"Lorentzova transformace se aplikuje v soustavě, kde je <b>voda nehybná</b>.",sk:"Lorentzova transformácia sa aplikuje v sústave, kde je <b>voda nehybná</b>."},
+"In that frame the starlight arrives already aberrated, refracts by Snell, and reads 20.55″.":{cz:"V té soustavě přichází hvězdné světlo už aberované, láme se podle Snella a čte <b>20,55″</b>.",sk:"V tej sústave prichádza hviezdne svetlo už aberované, láme sa podľa Snella a číta <b>20,55″</b>."},
+"That frame is the one in which the Earth carrying the water is at rest.":{cz:"To je právě soustava, v níž je Země nesoucí vodu <b>v klidu</b>.",sk:"To je práve sústava, v ktorej je Zem nesúca vodu <b>v pokoji</b>."},
+"The transform's lineage runs Voigt (1887) → Lorentz → Einstein, built inside aether theory to make every experiment come out as if the Earth were at rest.":{cz:"Rodokmen transformace vede Voigt (1887) → Lorentz → Einstein, postavené uvnitř teorie éteru tak, aby každý experiment vyšel, <b>jako by Země byla v klidu</b>.",sk:"Rodokmeň transformácie vedie Voigt (1887) → Lorentz → Einstein, postavené vnútri teórie éteru tak, aby každý experiment vyšiel, <b>akoby Zem bola v pokoji</b>."},
+"A device engineered to produce nulls, later presented as the discovery that explains them.":{cz:"Nástroj zkonstruovaný tak, aby dával nuly, později prezentovaný jako objev, který je vysvětluje.",sk:"Nástroj skonštruovaný tak, aby dával nuly, neskôr prezentovaný ako objav, ktorý ich vysvetľuje."},
+
+"The omission":{cz:"Vynechání",sk:"Vynechanie"},
+"What the moving frame predicts":{cz:"Co předpovídá pohybující se soustava",sk:"Čo predpovedá pohybujúca sa sústava"},
+"For 155 years, published treatments stop at the water-at-rest frame.":{cz:"Už 155 let se publikovaná zpracování zastavují u soustavy s vodou v klidu.",sk:"Už 155 rokov sa publikované spracovania zastavujú pri sústave s vodou v pokoji."},
+"We are supposed to be the moving frame. Pauli shows only the rest frame — the one that matches.":{cz:"Máme přece <b>být</b> pohybující se soustavou. Pauli ukazuje jen klidovou soustavu, tu, která souhlasí.",sk:"Máme predsa <b>byť</b> pohybujúcou sa sústavou. Pauli ukazuje len pokojovú sústavu, tú, ktorá súhlasí."},
+
+"The trap":{cz:"Past",sk:"Pasca"},
+"Frames must agree":{cz:"Soustavy se musí shodovat",sk:"Sústavy sa musia zhodovať"},
+"Reciprocity between frames is the backbone of the theory. It is how invariance is validated.":{cz:"Reciprocita mezi soustavami je <b>páteří</b> teorie. Tak se ověřuje invariance.",sk:"Reciprocita medzi sústavami je <b>chrbticou</b> teórie. Tak sa overuje invariancia."},
+"Every frame must agree on what the instrument reads.":{cz:"Každá soustava se musí shodnout na tom, co přístroj <b>čte</b>.",sk:"Každá sústava sa musí zhodnúť na tom, čo prístroj <b>číta</b>."},
+"Two different answers means you can distinguish between frames.":{cz:"Dvě různé odpovědi znamenají, že mezi soustavami lze <b>rozlišit</b>.",sk:"Dve rozdielne odpovede znamenajú, že medzi sústavami možno <b>rozlíšiť</b>."},
+"Either the moving frame reproduces 20.55″, or the theory distinguishes frames. Pick one.":{cz:"Buď pohybující se soustava reprodukuje 20,55″, nebo teorie soustavy rozlišuje. <b>Vyberte si.</b>",sk:"Buď pohybujúca sa sústava reprodukuje 20,55″, alebo teória sústavy rozlišuje. <b>Vyberte si.</b>"},
+
+"Closing the escape hatch":{cz:"Uzavření únikové cesty",sk:"Uzavretie únikovej cesty"},
+"How fast is light in water?":{cz:"Jak rychlé je světlo ve vodě?",sk:"Aké rýchle je svetlo vo vode?"},
+
+"Section Four":{cz:"Část čtvrtá",sk:"Časť štvrtá"},
+"The Verdict":{cz:"Verdikt",sk:"Verdikt"},
+"Every model of light propagation, measured against one instrument reading.":{cz:"Každý model šíření světla, poměřený jediným údajem přístroje.",sk:"Každý model šírenia svetla, pomeraný jediným údajom prístroja."},
+"The verdict":{cz:"Verdikt",sk:"Verdikt"},
+"Heliocentric fails, Geocentric holds":{cz:"Heliocentrismus selhává, geocentrismus obstojí",sk:"Heliocentrizmus zlyháva, geocentrizmus obstojí"},
+
+"Conclusion":{cz:"Závěr",sk:"Záver"},
+"There is no model that gives 20.55″ twice for a moving Earth":{cz:"Neexistuje model, který dá 20,55″ dvakrát pro pohybující se Zemi",sk:"Neexistuje model, ktorý dá 20,55″ dvakrát pre pohybujúcu sa Zem"},
+"Relativity reaches the measured value only in the water-at-rest frame.":{cz:"Relativita dosáhne naměřené hodnoty jen v soustavě s <b>vodou v klidu</b>.",sk:"Relativita dosiahne nameranú hodnotu len v sústave s <b>vodou v pokoji</b>."},
+"That frame is dynamically the stationary Earth.":{cz:"Tato soustava je dynamicky <b>nehybná Země</b>.",sk:"Táto sústava je dynamicky <b>nehybná Zem</b>."},
+"Emission theory fails on speed. The wave theory fails on angle. The moving frame fails on both.":{cz:"Emisní teorie selhává na rychlosti. Vlnová teorie selhává na úhlu. Pohybující se soustava selhává na obojím.",sk:"Emisná teória zlyháva na rýchlosti. Vlnová teória zlyháva na uhle. Pohybujúca sa sústava zlyháva na oboch."},
+"If experiment is to match theory, the Earth must be dynamically at rest.":{cz:"Má-li experiment souhlasit s teorií, Země musí být <b>dynamicky v klidu</b>.",sk:"Ak má experiment súhlasiť s teóriou, Zem musí byť <b>dynamicky v pokoji</b>."},
+
+"Every moving-Earth account needs a superluminal speed or the wrong angle. Only the Earth at rest, at the real 0.75c, reproduces 20.55″.":{cz:"Každý výklad s pohybující se Zemí potřebuje <b>nadsvětelnou rychlost</b> nebo <b>špatný úhel</b>. Jen <b>Země v klidu</b>, při skutečných 0,75c, reprodukuje 20,55″.",sk:"Každý výklad s pohybujúcou sa Zemou potrebuje <b>nadsvetelnú rýchlosť</b> alebo <b>nesprávny uhol</b>. Len <b>Zem v pokoji</b>, pri skutočných 0,75c, reprodukuje 20,55″."},
+
+/* ---- rebuttals ---- */
+"Rebuttal — Franco's timing objection":{cz:"Vyvrácení · Francova námitka o časování",sk:"Vyvrátenie · Francova námietka o časovaní"},
+"We do know how light behaves in a moving medium":{cz:"Víme, jak se světlo chová v pohybujícím se prostředí",sk:"Vieme, ako sa svetlo správa v pohybujúcom sa prostredí"},
+"Franco's own derivation":{cz:"Francova vlastní derivace",sk:"Francova vlastná derivácia"},
+"He derived it, and so did the critics":{cz:"Odvodil to on, a stejně tak kritici",sk:"Odvodil to on, a rovnako aj kritici"},
+"Rebuttal — \"the Sun frame doesn't count\"":{cz:"Vyvrácení · „soustava Slunce se nepočítá\"",sk:"Vyvrátenie · „sústava Slnka sa nepočíta\""},
+"You cannot discard the Sun frame":{cz:"Soustavu Slunce nelze zahodit",sk:"Sústavu Slnka nemožno zahodiť"},
+"Throw out the Sun frame and you throw out heliocentrism's own bookkeeping.":{cz:"Zahoďte soustavu Slunce a zahodíte i vlastní účetnictví heliocentrismu.",sk:"Zahoďte sústavu Slnka a zahodíte aj vlastné účtovníctvo heliocentrizmu."},
+
+/* ---- sources / closing ---- */
+"Sources":{cz:"Zdroje",sk:"Zdroje"},
+"References":{cz:"Literatura",sk:"Literatúra"},
+"Primary papers":{cz:"Primární práce",sk:"Primárne práce"},
+"Analysis, video & data":{cz:"Analýza, video a data",sk:"Analýza, video a dáta"},
+"Thank you":{cz:"Děkujeme",sk:"Ďakujeme"},
+"Aether Cosmology Research Group":{cz:"Aether Cosmology Research Group",sk:"Aether Cosmology Research Group"},
+"Interactive simulation, full spreadsheet, and every derivation are open. Check the numbers yourself.":{cz:"Interaktivní simulace, celá tabulka a každá derivace jsou otevřené. Zkontrolujte si čísla sami.",sk:"Interaktívna simulácia, celá tabuľka a každá derivácia sú otvorené. Skontrolujte si čísla sami."},
+
+/* ---- card headings ---- */
+"Reading":{cz:"Údaj (čtení)",sk:"Údaj (čítanie)"},
+"Internal angle θ_int":{cz:"Vnitřní úhel θ_int",sk:"Vnútorný uhol θ_int"},
+"Plate scale":{cz:"Měřítko desky",sk:"Mierka dosky"},
+"The escape, and its cost":{cz:"Únik a jeho cena",sk:"Únik a jeho cena"},
+"Faster · n·c":{cz:"Rychlejší · n·c",sk:"Rýchlejšie · n·c"},
+"Slower · c/n":{cz:"Pomalejší · c/n",sk:"Pomalšie · c/n"},
+"\"Cannot be known\"":{cz:"„Nelze poznat\"",sk:"„Nedá sa poznať\""},
+"superluminal, refuted by Foucault 1850":{cz:"nadsvětelná, vyvráceno Foucaultem 1850",sk:"nadsvetelná, vyvrátené Foucaultom 1850"},
+"measured, still and moving water":{cz:"naměřeno, v klidné i pohybující se vodě",sk:"namerané, v pokojnej aj pohybujúcej sa vode"},
+"measured for 150 years":{cz:"měřeno už 150 let",sk:"merané už 150 rokov"},
+
+/* ---- arguments & refutations (iframe) ---- */
+"Earth is in motion; therefore the aberration angle in air will not be equal to the aberration angle in water.":{cz:"Země je v pohybu; proto aberační úhel ve vzduchu <b>nebude</b> roven aberačnímu úhlu ve vodě.",sk:"Zem je v pohybe; preto aberačný uhol vo vzduchu <b>nebude</b> rovný aberačnému uhlu vo vode."},
+"Earth is at absolute rest; therefore the aberration angle in air should be equal to the aberration angle in water.":{cz:"Země je v absolutním klidu; proto by aberační úhel ve vzduchu měl být <b>roven</b> aberačnímu úhlu ve vodě.",sk:"Zem je v absolútnom pokoji; preto by aberačný uhol vo vzduchu mal byť <b>rovný</b> aberačnému uhlu vo vode."},
+"Airy measured them equal. The exchange below is what happened when that was pressed.":{cz:"Airy je naměřil jako stejné. Níže je to, co se stalo, když se na to zatlačilo.",sk:"Airy ich nameral ako rovnaké. Nižšie je to, čo sa stalo, keď sa na to zatlačilo."},
+"The refutation as one chain":{cz:"Vyvrácení jako jeden řetězec",sk:"Vyvrátenie ako jeden reťazec"},
+"Every step is either something Franco states himself or something his own statements force. Read top to bottom.":{cz:"Každý krok je buď to, co Franco sám tvrdí, nebo to, co jeho vlastní tvrzení vynucují. Čtěte shora dolů.",sk:"Každý krok je buď to, čo Franco sám tvrdí, alebo to, čo jeho vlastné tvrdenia vynucujú. Čítajte zhora nadol."},
+
+/* ---- sim panel ---- */
+"Theory / prediction":{cz:"Teorie / předpověď",sk:"Teória / predpoveď"},
+"Animate":{cz:"Animovat",sk:"Animovať"},
+"True star / incoming":{cz:"Skutečná hvězda / příchozí",sk:"Skutočná hviezda / prichádzajúci"},
+"Apparent / refracted":{cz:"Zdánlivá / lomená",sk:"Zdanlivá / lomená"},
+"Star":{cz:"Hvězda",sk:"Hviezda"},
+"Math in use":{cz:"Použitá matematika",sk:"Použitá matematika"},
+
+/* ---- Klinkerfues ---- */
+"\"Whatever direction the motion of the earth may have, and in what proportion the Aether may take part in it, such an appearance as the direction of the ray will not be affected by it.\"":{cz:"„Ať už má pohyb Země jakýkoli směr a <b>v jakém poměru se na něm éter podílí</b>, takový jev, jako je směr paprsku, jím nebude ovlivněn.\"",sk:"„Nech už má pohyb Zeme akýkoľvek smer a <b>v akom pomere sa na ňom éter podieľa</b>, taký jav, ako je smer lúča, ním nebude ovplyvnený.\""},
+"The moving frame worked out frame by frame in Rosser's Figure 4.3 (right). See it live in our simulator — toggle Simulation above and pick a theory.":{cz:"Pohybující se soustava rozpracovaná soustava po soustavě v <b>Rosserově obrázku 4.3</b> (vpravo). Podívejte se na to živě v našem <b>simulátoru</b>, přepněte nahoře na <b>Simulaci</b> a vyberte teorii.",sk:"Pohybujúca sa sústava rozpracovaná sústava po sústave v <b>Rosserovom obrázku 4.3</b> (vpravo). Pozrite si to naživo v našom <b>simulátore</b>, prepnite hore na <b>Simuláciu</b> a vyberte teóriu."},
+
+/* ---- instrument (06) ---- */
+"A zenith sector: fixed vertical, double spirit-levelled, not pointable.":{cz:"<b>Zenitový sektor</b>: pevně svislý, <b>dvojitě</b> vyvážený vodováhou, nenatáčecí.",sk:"<b>Zenitový sektor</b>: pevne zvislý, <b>dvojito</b> vyvážený vodováhou, nenatáčateľný."},
+"Rotated 180° between readings: the star is measured from both sides and averaged, cancelling instrument error to about 0.8″.":{cz:"Otočený <b>o 180° mezi čteními</b>: hvězda se měří z obou stran a průměruje, čímž se chyba přístroje sníží asi na <b>0,8″</b>.",sk:"Otočený <b>o 180° medzi čítaniami</b>: hviezda sa meria z oboch strán a priemeruje, čím sa chyba prístroja zníži asi na <b>0,8″</b>."},
+"The micrometer reads the star's shift on the plate: about 3.5 µm per arcsecond of sky. He measures from both sides and averages.":{cz:"Mikrometr čte posun hvězdy na desce: asi <b>3,5 µm na obloukovou vteřinu</b> oblohy. Měří z obou stran a průměruje.",sk:"Mikrometer číta posun hviezdy na doske: asi <b>3,5 µm na oblúkovú sekundu</b> oblohy. Meria z oboch strán a priemeruje."},
+"Light path 37.0 in (0.9 glass + 35.3 water + 0.8 air); the micrometer is scaled to its 27.8 in air-equivalent (reduced) length by dividing each component by its refractive index.":{cz:"Dráha světla <b>37,0 in</b> (0,9 sklo + 35,3 voda + 0,8 vzduch); mikrometr je škálován na její <b>27,8 in</b> vzduchu odpovídající (redukovanou) délku dělením každé složky jejím indexem lomu.",sk:"Dráha svetla <b>37,0 in</b> (0,9 sklo + 35,3 voda + 0,8 vzduch); mikrometer je škálovaný na jej <b>27,8 in</b> vzduchu zodpovedajúcu (redukovanú) dĺžku delením každej zložky jej indexom lomu."},
+"Observed at 6-month intervals, sampling opposite points of Earth's assumed motion.":{cz:"Pozorováno v <b>6měsíčních intervalech</b>, se vzorky v protilehlých bodech předpokládaného pohybu Země.",sk:"Pozorované v <b>6-mesačných intervaloch</b>, so vzorkami v protiľahlých bodoch predpokladaného pohybu Zeme."},
+
+/* ---- micrometer cards (07) ---- */
+"The celestial arc the telescope reports: the star's sideways drift on the wire plate divided by that telescope's own scale. Airy's 20.55″ is a reading, not a direct angle.":{cz:"Nebeský oblouk, který dalekohled hlásí: boční posun hvězdy na drátkové desce dělený <b>vlastní stupnicí toho dalekohledu</b>. Airyho 20,55″ je údaj, ne přímý úhel.",sk:"Nebeský oblúk, ktorý ďalekohľad hlási: bočný posun hviezdy na drôtikovej doske delený <b>vlastnou stupnicou toho ďalekohľadu</b>. Airyho 20,55″ je údaj, nie priamy uhol."},
+"The physical tilt the ray takes inside the tube. Never measured directly. It is the angle required to produce the observed reading. In water, a 20.55″ reading needs 15.45″ inside.":{cz:"Fyzický náklon, který paprsek zaujme <b>uvnitř trubice</b>. Nikdy neměřen přímo. Je to úhel potřebný k tomu, aby vznikl pozorovaný údaj. Ve vodě údaj 20,55″ vyžaduje <b>15,45″</b> uvnitř.",sk:"Fyzický náklon, ktorý lúč zaujme <b>vnútri trubice</b>. Nikdy nemeraný priamo. Je to uhol potrebný na to, aby vznikol pozorovaný údaj. Vo vode údaj 20,55″ vyžaduje <b>15,45″</b> vnútri."},
+"1″ of sky = 3.45 µm on the plate. The micrometer reads the star's drift in µm; Airy's scale turns that displacement into celestial arc.":{cz:"<b>1″</b> oblohy = <b>3,45 µm</b> na desce. Mikrometr čte posun hvězdy v µm; Airyho stupnice mění tento posun na nebeský oblouk.",sk:"<b>1″</b> oblohy = <b>3,45 µm</b> na doske. Mikrometer číta posun hviezdy v µm; Airyho stupnica mení tento posun na nebeský oblúk."},
+"Later, the analysis gives a 15″ internal angle. That is correct: the micrometer recovers the measured 20.55″ by converting its plate displacement into sky arc.":{cz:"Později analýza dává vnitřní úhel <b>15″</b>. To je správně: mikrometr obnoví naměřených <b>20,55″</b> převodem svého posunu na desce na nebeský oblouk.",sk:"Neskôr analýza dáva vnútorný uhol <b>15″</b>. To je správne: mikrometer obnoví namerané <b>20,55″</b> prevodom svojho posunu na doske na nebeský oblúk."},
+
+/* ---- result (08) ---- */
+"Every theory's internal angle and the celestial arc it would read, against the measured 20.55″.":{cz:"Vnitřní úhel každé teorie a nebeský oblouk, který by četla, proti naměřeným <b>20,55″</b>.",sk:"Vnútorný uhol každej teórie a nebeský oblúk, ktorý by čítala, proti nameraným <b>20,55″</b>."},
+"Readings six months apart differed by 0.8″; the instrument resolves 2 to 3″ easily, and the predicted change was 15″. The wave prediction failed by a factor of n², far outside its resolution.":{cz:"Údaje s odstupem šesti měsíců se lišily o <b>0,8″</b>; přístroj snadno rozliší 2 až 3″ a předpovězená změna byla <b>15″</b>. Vlnová předpověď selhala o faktor <b>n²</b>, daleko za hranicí svého rozlišení.",sk:"Údaje s odstupom šiestich mesiacov sa líšili o <b>0,8″</b>; prístroj ľahko rozlíši 2 až 3″ a predpovedaná zmena bola <b>15″</b>. Vlnová predpoveď zlyhala o faktor <b>n²</b>, ďaleko za hranicou svojho rozlíšenia."},
+
+/* ---- emission (10) ---- */
+"Tangential velocity is conserved, so the angle lands right, 20.55″.":{cz:"Tečná rychlost se zachovává, takže úhel vyjde <b>správně</b>, 20,55″.",sk:"Dotyčnicová rýchlosť sa zachováva, takže uhol vyjde <b>správne</b>, 20,55″."},
+"But it demands light travel at n·c = 1.33c in the water. Foucault measured 0.75c.":{cz:"Vyžaduje ale, aby světlo ve vodě letělo rychlostí <b>n·c = 1,33c</b>. Foucault naměřil <b>0,75c</b>.",sk:"Vyžaduje však, aby svetlo vo vode letelo rýchlosťou <b>n·c = 1,33c</b>. Foucault nameral <b>0,75c</b>."},
+"Michelson: to rescue it you must assume \"the motion of the water carries the ray in the opposite direction\" — absurd, in print.":{cz:"Michelson: k jeho záchraně je nutné předpokládat, že „pohyb vody unáší paprsek opačným směrem\", <b>absurdní</b>, černé na bílém.",sk:"Michelson: na jeho záchranu treba predpokladať, že „pohyb vody unáša lúč opačným smerom\", <b>absurdné</b>, čierne na bielom."},
+
+/* ---- wave take (11) ---- */
+"Four different routes, one answer: 36.35″, off from the measured 20.55″ by a full factor of n². Michelson: it \"should be four-thirds of its true value.\"":{cz:"Čtyři různé cesty, jedna odpověď: <b>36,35″</b>, mimo naměřených 20,55″ o celý faktor <b>n²</b>. Michelson: mělo by to být „čtyři třetiny své pravé hodnoty\".",sk:"Štyri rôzne cesty, jedna odpoveď: <b>36,35″</b>, mimo nameraných 20,55″ o celý faktor <b>n²</b>. Michelson: malo by to byť „štyri tretiny svojej pravej hodnoty\"."},
+
+/* ---- relativity cmp labels (12,15) ---- */
+"water at rest":{cz:"voda v klidu",sk:"voda v pokoji"},
+"water moving":{cz:"voda v pohybu",sk:"voda v pohybe"},
+"Water at rest":{cz:"Voda v klidu",sk:"Voda v pokoji"},
+"Water in motion":{cz:"Voda v pohybu",sk:"Voda v pohybe"},
+"reads 20.55″ ✓":{cz:"čte 20,55″ ✓",sk:"číta 20,55″ ✓"},
+"reads 15.80″ ✗":{cz:"čte 15,80″ ✗",sk:"číta 15,80″ ✗"},
+
+/* ---- jones phase (12c) ---- */
+"The remaining objection is that the drag speed is ambiguous, phase velocity or group velocity — the distinction Ligabue leans on (right). Jones's numbers resolve it.":{cz:"Zbývající námitka je, že rychlost strhávání je nejednoznačná, <b>fázová nebo grupová rychlost</b>, rozlišení, o které se Ligabue opírá (vpravo). Jonesova čísla to rozhodují.",sk:"Zostávajúca námietka je, že rýchlosť strhávania je nejednoznačná, <b>fázová alebo grupová rýchlosť</b>, rozlíšenie, o ktoré sa Ligabue opiera (vpravo). Jonesove čísla to rozhodujú."},
+"Phase velocity predicts 6.175 nm; group velocity would be ~1.5% larger, 6.27 nm.":{cz:"Fázová rychlost předpovídá <b>6,175 nm</b>; grupová by byla asi o 1,5 % větší, <b>6,27 nm</b>.",sk:"Fázová rýchlosť predpovedá <b>6,175 nm</b>; grupová by bola asi o 1,5 % väčšia, <b>6,27 nm</b>."},
+"He measured 6.174 nm — squarely the phase-velocity value.":{cz:"Naměřil <b>6,174 nm</b>, přesně hodnotu <b>fázové rychlosti</b>.",sk:"Nameral <b>6,174 nm</b>, presne hodnotu <b>fázovej rýchlosti</b>."},
+"So the drag is fixed by the ordinary refractive index at the phase speed. The ambiguity the \"timing\" argument depends on is closed by direct measurement.":{cz:"Strhávání je tedy dáno běžným indexem lomu při fázové rychlosti. Nejednoznačnost, na které stojí argument „časování\", je <b>uzavřena přímým měřením</b>.",sk:"Strhávanie je teda dané bežným indexom lomu pri fázovej rýchlosti. Nejednoznačnosť, na ktorej stojí argument „časovania\", je <b>uzavretá priamym meraním</b>."},
+
+/* ---- frame never shown quote (15) ---- */
+"\"The law of refraction at moving boundary surfaces can also be obtained from the stationary case, by means of a Lorentz transformation, but it leads to complicated formulae … if it is observed from the rest system, Airy's result is self-evident.\"":{cz:"„Zákon lomu na pohybujících se rozhraních lze získat i ze statického případu pomocí Lorentzovy transformace, <b>ale vede to ke složitým vzorcům</b> … pozoruje-li se z klidové soustavy, je Airyho výsledek samozřejmý.\"",sk:"„Zákon lomu na pohybujúcich sa rozhraniach možno získať aj zo statického prípadu pomocou Lorentzovej transformácie, <b>ale vedie to k zložitým vzorcom</b> … ak sa pozoruje z pokojovej sústavy, je Airyho výsledok samozrejmý.\""},
+
+/* ---- speed question (17) ---- */
+"Feed the real 0.75c into the naive aberration formula and it returns 27.33″. To get 15″ you need 1.33c — not a speed, the refractive index in disguise.":{cz:"Dosaďte <b>skutečných</b> 0,75c do naivního vzorce pro aberaci a vyjde 27,33″. K získání 15″ potřebujete 1,33c, ne rychlost, ale <b>index lomu v přestrojení</b>.",sk:"Dosaďte <b>skutočných</b> 0,75c do naivného vzorca pre aberáciu a vyjde 27,33″. Na získanie 15″ potrebujete 1,33c, nie rýchlosť, ale <b>index lomu v prestrojení</b>."},
+"Ligabue's own moving-frame derivation (right) admits the speed \"will not be c/1.33\" — so not the real 0.75c either. The moving frame manufactures an unphysical speed.":{cz:"Ligabueho vlastní derivace v pohybující se soustavě (vpravo) připouští, že rychlost „<b>nebude</b> c/1,33\", tedy ani skutečných 0,75c. Pohybující se soustava vyrábí nefyzikální rychlost.",sk:"Ligabueho vlastná derivácia v pohybujúcej sa sústave (vpravo) pripúšťa, že rýchlosť „<b>nebude</b> c/1,33\", teda ani skutočných 0,75c. Pohybujúca sa sústava vyrába nefyzikálnu rýchlosť."},
+"The 15.45″ comes from refraction, not from a light speed. That is why the speed does not move it.":{cz:"Těch 15,45″ pochází z <b>lomu</b>, ne z rychlosti světla. Proto s tím rychlost nehne.",sk:"Tých 15,45″ pochádza z <b>lomu</b>, nie z rýchlosti svetla. Preto s tým rýchlosť nehne."},
+
+/* ---- verdict (20) ---- */
+"Heliocentric — the Earth is moving":{cz:"Heliocentrismus · Země se pohybuje",sk:"Heliocentrizmus · Zem sa pohybuje"},
+"Geocentric — the Earth is at rest":{cz:"Geocentrismus · Země je v klidu",sk:"Geocentrizmus · Zem je v pokoji"},
+"The Jones row is not a measurement of aberration in water — Airy made that, and got 20.55″. Jones measured the transverse drag itself, which forces the moving frame to 11.88″ / 15.80″. Those are the aberration values a moving Earth ought to produce, now backed by experiment, and they are not what Airy read.":{cz:"Řádek Jones <b>není</b> měření aberace ve vodě, to udělal Airy a dostal 20,55″. Jones změřil samotné <b>příčné strhávání</b>, které nutí pohybující se soustavu k 11,88″ / 15,80″. To jsou aberační hodnoty, které by pohybující se Země <b>měla</b> dávat, nyní podpořené experimentem, a nejsou tím, co Airy naměřil.",sk:"Riadok Jones <b>nie je</b> meranie aberácie vo vode, to urobil Airy a dostal 20,55″. Jones zmeral samotné <b>priečne strhávanie</b>, ktoré núti pohybujúcu sa sústavu k 11,88″ / 15,80″. To sú aberačné hodnoty, ktoré by pohybujúca sa Zem <b>mala</b> dávať, teraz podporené experimentom, a nie sú tým, čo Airy nameral."},
+
+/* ---- rebuttals (22a/b/c) ---- */
+"\"'Timing' reasonings are incorrect, since they unjustifiedly assume the direction and the value of speed of light in water in the sun's frame (where water is moving).\" — F. Ligabue":{cz:"„Úvahy o ‚časování' jsou nesprávné, protože neoprávněně předpokládají směr a hodnotu rychlosti světla ve vodě v soustavě Slunce (kde se voda pohybuje).\" — F. Ligabue",sk:"„Úvahy o ‚časovaní' sú nesprávne, pretože neoprávnene predpokladajú smer a hodnotu rýchlosti svetla vo vode v sústave Slnka (kde sa voda pohybuje).\" — F. Ligabue"},
+"Not assumed — measured. Snell (refraction), Fizeau and Fresnel (longitudinal drag), and Jones (transverse drag) all pin down light in the moving medium.":{cz:"Ne předpokládáno, <b>měřeno</b>. Snell (lom), Fizeau a Fresnel (podélné strhávání) i Jones (příčné strhávání), ti všichni určují světlo v pohybujícím se prostředí.",sk:"Nie predpokladané, <b>merané</b>. Snell (lom), Fizeau a Fresnel (pozdĺžne strhávanie) aj Jones (priečne strhávanie), tí všetci určujú svetlo v pohybujúcom sa prostredí."},
+"A time-of-flight measurement, a single-photon stopwatch, reads light taking longer through water. That is c/n = 0.75c by the clock, not a phase-velocity artifact.":{cz:"Měření doby letu, jednofotonové stopky, ukazuje, že světlu trvá průchod vodou <b>déle</b>. To je c/n = 0,75c podle hodin, ne artefakt fázové rychlosti.",sk:"Meranie času letu, jednofotónové stopky, ukazuje, že svetlu trvá prechod vodou <b>dlhšie</b>. To je c/n = 0,75c podľa hodín, nie artefakt fázovej rýchlosti."},
+"Which kills the \"c = c by emission / zig-zag\" red herring: slowed wave or longer zig-zag path, either picture gives the same real timing delay. Light is slower in the medium, full stop.":{cz:"Což zabíjí falešnou stopu „c = c emisí / cik-cak\": zpomalená vlna nebo delší cik-cak dráha, obě představy dávají <b>stejné skutečné časové zpoždění</b>. Světlo je v prostředí pomalejší, tečka.",sk:"Čo zabíja falošnú stopu „c = c emisiou / cik-cak\": spomalená vlna alebo dlhšia cik-cak dráha, obe predstavy dávajú <b>rovnaké skutočné časové oneskorenie</b>. Svetlo je v prostredí pomalšie, bodka."},
+"Ligabue's own moving-frame derivation gives θ′₂ ≈ θ₂ + βn = β(n − 1/n) = 11.88″, reading 15.80″ — and he notes the speed \"will not be c/1.33.\"":{cz:"Ligabueho vlastní derivace v pohybující se soustavě dává <b>θ′₂ ≈ θ₂ + βn = β(n − 1/n) = 11,88″</b>, čte <b>15,80″</b>, a poznamenává, že rychlost „nebude c/1,33\".",sk:"Ligabueho vlastná derivácia v pohybujúcej sa sústave dáva <b>θ′₂ ≈ θ₂ + βn = β(n − 1/n) = 11,88″</b>, číta <b>15,80″</b>, a poznamenáva, že rýchlosť „nebude c/1,33\"."},
+"On stream, Toon and Cody ran the same Lorentz transform and landed on the same θ₂ ≈ 12″ / 15.80″.":{cz:"V živém vysílání provedli <b>Toon a Cody</b> tutéž Lorentzovu transformaci a skončili na tomtéž <b>θ₂ ≈ 12″</b> / 15,80″.",sk:"V živom vysielaní vykonali <b>Toon a Cody</b> tú istú Lorentzovu transformáciu a skončili na tom istom <b>θ₂ ≈ 12″</b> / 15,80″."},
+"Everyone who does the moving-frame math, defender or critic, arrives at the same wrong answer for a moving Earth. The disagreement is only about whether to look.":{cz:"Každý, kdo spočítá pohybující se soustavu, obhájce i kritik, dospěje ke <b>stejné špatné odpovědi</b> pro pohybující se Zemi. Neshoda je jen v tom, zda se podívat.",sk:"Každý, kto spočíta pohybujúcu sa sústavu, obhajca aj kritik, dôjde k <b>rovnakej nesprávnej odpovedi</b> pre pohybujúcu sa Zem. Nezhoda je len v tom, či sa pozrieť."},
+"The objection: \"we don't live in the Sun frame, so its 15.80″ prediction doesn't count.\"":{cz:"Námitka: „nežijeme v soustavě Slunce, takže jeho předpověď 15,80″ se nepočítá\".",sk:"Námietka: „nežijeme v sústave Slnka, takže jeho predpoveď 15,80″ sa nepočíta\"."},
+"But the same figures apply to the Earth frame — Pauli states it outright and Rosser draws both frames in Figure 4.3. By covariance, all frames are indistinguishable and must agree on what the instrument reads.":{cz:"Tytéž hodnoty ale platí i pro soustavu Země, Pauli to říká přímo a Rosser kreslí obě soustavy v obrázku 4.3. Podle kovariance jsou <b>všechny soustavy nerozlišitelné</b> a musí se shodnout na tom, co přístroj čte.",sk:"Tie isté hodnoty však platia aj pre sústavu Zeme, Pauli to hovorí priamo a Rosser kreslí obe sústavy v obrázku 4.3. Podľa kovariancie sú <b>všetky sústavy nerozlíšiteľné</b> a musia sa zhodnúť na tom, čo prístroj číta."},
+"The Sun frame giving 15.80″ while the Earth frame reads 20.55″ is not a frame you can wave away — it is a reciprocity violation, the theory contradicting itself.":{cz:"To, že soustava Slunce dává 15,80″, zatímco soustava Země čte 20,55″, není soustava, kterou lze mávnutím ruky odbýt, je to <b>porušení reciprocity</b>, teorie si odporuje.",sk:"To, že sústava Slnka dáva 15,80″, kým sústava Zeme číta 20,55″, nie je sústava, ktorú možno mávnutím ruky odbaviť, je to <b>porušenie reciprocity</b>, teória si odporuje."},
+"And the double standard is fatal: if Sun-frame analysis is void because no one was there to measure it, then the entire heliocentric ephemeris — computed in that same unmeasured Sun frame — goes out with it.":{cz:"A dvojí metr je smrtelný: je-li analýza v soustavě Slunce neplatná, protože ji nikdo nebyl přítomen změřit, pak s ní padá i celá <b>heliocentrická efemerida</b>, počítaná v téže neměřené soustavě Slunce.",sk:"A dvojaký meter je smrteľný: ak je analýza v sústave Slnka neplatná, pretože ju nikto nebol prítomný zmerať, potom s ňou padá aj celá <b>heliocentrická efemerida</b>, počítaná v tej istej nemeranej sústave Slnka."},
+"Aether Cosmology Research Group · what he said on the Space vs. his DM recap vs. what the optics require":{"cz": "Aether Cosmology Research Group · co řekl v Space vs. jeho DM shrnutí vs. co vyžaduje optika", "sk": "Aether Cosmology Research Group · čo povedal v Space vs. jeho DM zhrnutie vs. čo vyžaduje optika"},
+"– Earth is in motion; therefore the aberration angle in air will not be equal to the aberration angle in water.":{"cz": "– Země je v pohybu; proto aberační úhel ve vzduchu <b>nebude</b> roven aberačnímu úhlu ve vodě.", "sk": "– Zem je v pohybe; preto aberačný uhol vo vzduchu <b>nebude</b> rovný aberačnému uhlu vo vode."},
+"– Earth is at absolute rest; therefore the aberration angle in air should be equal to the aberration angle in water.":{"cz": "– Země je v absolutním klidu; proto by aberační úhel ve vzduchu měl být <b>roven</b> aberačnímu úhlu ve vodě.", "sk": "– Zem je v absolútnom pokoji; preto by aberačný uhol vo vzduchu mal byť <b>rovný</b> aberačnému uhlu vo vode."},
+"No preferred frame. Relativity admits no privileged frame of reference.":{"cz": "<b>Žádná preferovaná soustava.</b> Relativita nepřipouští žádnou privilegovanou vztažnou soustavu.", "sk": "<b>Žiadna preferovaná sústava.</b> Relativita nepripúšťa žiadnu privilegovanú vzťažnú sústavu."},
+"A medium defines one. Adding a physical medium introduces a privileged frame: the one in which the medium is at rest.":{"cz": "<b>Prostředí ji definuje.</b> Přidání fyzického prostředí zavádí privilegovanou soustavu: tu, v níž je prostředí v klidu.", "sk": "<b>Prostredie ju definuje.</b> Pridanie fyzického prostredia zavádza privilegovanú sústavu: tú, v ktorej je prostredie v pokoji."},
+"Compute there. To predict a medium experiment you move to the medium's rest frame, solve, then transform back.":{"cz": "<b>Počítej tam.</b> K předpovědi experimentu s prostředím přejdeš do klidové soustavy prostředí, vyřešíš to a pak transformuješ zpět.", "sk": "<b>Počítaj tam.</b> Na predpoveď experimentu s prostredím prejdeš do pokojovej sústavy prostredia, vyriešiš to a potom transformuješ späť."},
+"Airy's water is bolted to the Earth. The water, the telescope and the Earth are one rigid body.":{"cz": "<b>Airyho voda je pevně spojena se Zemí.</b> Voda, dalekohled a Země jsou jedno tuhé těleso.", "sk": "<b>Airyho voda je pevne spojená so Zemou.</b> Voda, ďalekohľad a Zem sú jedno tuhé teleso."},
+"So the medium's rest frame is the Earth's rest frame, in which the Earth's velocity is zero.":{"cz": "<b>Klidová soustava prostředí je tedy klidovou soustavou Země,</b> v níž je rychlost Země nulová.", "sk": "<b>Pokojová sústava prostredia je teda pokojovou sústavou Zeme,</b> v ktorej je rýchlosť Zeme nulová."},
+"There it reduces to Snell's law, and Snell's law reproduces the measured 20.55″.":{"cz": "<b>Tam se to redukuje na Snellův zákon,</b> a Snellův zákon reprodukuje naměřených 20,55″.", "sk": "<b>Tam sa to redukuje na Snellov zákon,</b> a Snellov zákon reprodukuje nameraných 20,55″."},
+"The moving-Earth frame gives a different number. With the Earth at 30 km/s the drag term gives 11.88″ internal, reading 15.80″, the value Jones measured directly. It is not 20.55″.":{"cz": "<b>Soustava s pohybující se Zemí dává jiné číslo.</b> Při Zemi 30 km/s dává člen strhávání 11,88″ vnitřního úhlu, čte 15,80″, hodnotu, kterou Jones změřil přímo. Není to 20,55″.", "sk": "<b>Sústava s pohybujúcou sa Zemou dáva iné číslo.</b> Pri Zemi 30 km/s dáva člen strhávania 11,88″ vnútorného uhla, číta 15,80″, hodnotu, ktorú Jones zmeral priamo. Nie je to 20,55″."},
+"One instrument, one frame. Aberration in air is credited to the Earth's motion; the water result is obtained only by removing it. The same telescope cannot be moving for air and at rest for water.":{"cz": "<b>Jeden přístroj, jedna soustava.</b> Aberace ve vzduchu se připisuje pohybu Země; výsledek ve vodě se získá jen jeho odstraněním. Tentýž dalekohled nemůže být v pohybu pro vzduch a v klidu pro vodu.", "sk": "<b>Jeden prístroj, jedna sústava.</b> Aberácia vo vzduchu sa pripisuje pohybu Zeme; výsledok vo vode sa získa len jeho odstránením. Ten istý ďalekohľad nemôže byť v pohybe pre vzduch a v pokoji pre vodu."},
+"To falsify H0 the water angle had to differ from the air angle. It did not. Airy measured them equal, and Franco's own method reproduces that equality only in the stationary-Earth frame. We failed to falsify H0: the Earth is at absolute rest. H1 required the two angles to differ, and they do not, so H1 is not true. The dispute was never about the arithmetic. It is that the arithmetic closes only when the Earth is at rest.":{"cz": "K vyvrácení <b>H₀</b> by se úhel ve vodě musel lišit od úhlu ve vzduchu. Nelišil se. Airy je naměřil jako stejné a Francova vlastní metoda tuto rovnost reprodukuje jedině v soustavě s nehybnou Zemí. <b>H₀ jsme vyvrátit nedokázali: Země je v absolutním klidu.</b> H₁ vyžadovala, aby se oba úhly lišily, a ony se neliší, takže <b>H₁ není pravdivá.</b> Spor nikdy nebyl o aritmetice. Je o tom, že aritmetika vychází jedině tehdy, když je Země v klidu.", "sk": "Na vyvrátenie <b>H₀</b> by sa uhol vo vode musel líšiť od uhla vo vzduchu. Nelíšil sa. Airy ich nameral ako rovnaké a Francova vlastná metóda túto rovnosť reprodukuje jedine v sústave s nehybnou Zemou. <b>H₀ sa nám vyvrátiť nepodarilo: Zem je v absolútnom pokoji.</b> H₁ vyžadovala, aby sa oba uhly líšili, a ony sa nelíšia, takže <b>H₁ nie je pravdivá.</b> Spor nikdy nebol o aritmetike. Je o tom, že aritmetika vychádza jedine vtedy, keď je Zem v pokoji."},
+"CONCESSION":{"cz": "<b>PŘIZNÁNÍ</b>", "sk": "<b>PRIZNANIE</b>"},
+"CONTRADICTION":{"cz": "<b>ROZPOR</b>", "sk": "<b>ROZPOR</b>"},
+"SAME OBJECTION, LIVE":{"cz": "<b>TÁŽ NÁMITKA, ŽIVĚ</b>", "sk": "<b>TÁ ISTÁ NÁMIETKA, NAŽIVO</b>"},
+"The micrometer wire the starlight strikes. That physical point corresponds to 20.55″, the air value. Every route Franco takes to it, \"just Snell,\" \"move to the medium's rest frame,\" \"compute in S′,\" passes through the frame where the water, and therefore the Earth, is at rest. Relativity forbids a privileged frame; the water experiment forces him to adopt one; and the one he adopts is the stationary Earth. That is the whole argument, and he restated it for us in his own recap.":{"cz": "Vlákno mikrometru, které hvězdné světlo zasáhne. Tento fyzický bod odpovídá 20,55″, hodnotě ve vzduchu. Každá cesta, kterou k němu Franco jde, „prostě Snell”, „přejdi do klidové soustavy prostředí”, „počítej v S′”, prochází soustavou, kde je voda, a tedy i Země, v klidu. Relativita zakazuje privilegovanou soustavu; experiment s vodou ho nutí jednu přijmout; a ta, kterou přijme, je nehybná Země. To je celý argument, a on nám ho ve svém shrnutí zopakoval.", "sk": "Vlákno mikrometra, ktoré hviezdne svetlo zasiahne. Tento fyzický bod zodpovedá 20,55″, hodnote vo vzduchu. Každá cesta, ktorou k nemu Franco ide, „proste Snell”, „prejdi do pokojovej sústavy prostredia”, „počítaj v S′”, prechádza sústavou, kde je voda, a teda aj Zem, v pokoji. Relativita zakazuje privilegovanú sústavu; experiment s vodou ho núti jednu prijať; a tá, ktorú prijme, je nehybná Zem. To je celý argument, a on nám ho vo svojom zhrnutí zopakoval."},
+"1 · \"Water only refracts, full stop\"":{"cz": "1 · „Voda jen láme, tečka”", "sk": "1 · „Voda len láme, bodka”"},
+"2 · The privileged frame":{"cz": "2 · Privilegovaná soustava", "sk": "2 · Privilegovaná sústava"},
+"3 · \"Move to the medium's rest frame, compute, move back\"":{"cz": "3 · „Přejdi do klidové soustavy prostředí, spočítej, přejdi zpět”", "sk": "3 · „Prejdi do pokojovej sústavy prostredia, spočítaj, prejdi späť”"},
+"4 · Air vs water: the frame gets switched":{"cz": "4 · Vzduch vs. voda: soustava se přehodí", "sk": "4 · Vzduch vs. voda: sústava sa prehodí"},
+"5 · He writes the drag term, then refuses to finish it":{"cz": "5 · Napíše člen strhávání, pak ho odmítne dopočítat", "sk": "5 · Napíše člen strhávania, potom ho odmietne dopočítať"},
+"6 · \"This is how you derive Fresnel's formula\"":{"cz": "6 · „Takto se odvozuje Fresnelův vzorec”", "sk": "6 · „Takto sa odvodzuje Fresnelov vzorec”"},
+"7 · \"Light's direction is constant in air, not constant in water\"":{"cz": "7 · „Směr světla je ve vzduchu stálý, ve vodě ne”", "sk": "7 · „Smer svetla je vo vzduchu stály, vo vode nie”"},
+"8 · \"He changed his claim to V/c(n−1/n)\"":{"cz": "8 · „Změnil své tvrzení na V/c(n−1/n)”", "sk": "8 · „Zmenil svoje tvrdenie na V/c(n−1/n)”"},
+"9 · The bowling ball / airport walkway test":{"cz": "9 · Test s bowlingovou koulí / chodníkem na letišti", "sk": "9 · Test s bowlingovou guľou / chodníkom na letisku"},
+"10 · The peashooter and the dominos":{"cz": "10 · Foukačka na hrášek a domina", "sk": "10 · Fúkačka na hrášok a domína"},
+"11 · The clay block":{"cz": "11 · Hliněný blok", "sk": "11 · Hlinený blok"},
+"\"In a relativistic framework, adding water to the telescope has the ONLY effect of refracting light. This is what Pauli said in 1925.\"":{"cz": "„V relativistickém rámci má přidání vody do dalekohledu JEDINÝ účinek: lom světla. To řekl Pauli už v roce 1925.”", "sk": "„V relativistickom rámci má pridanie vody do ďalekohľadu JEDINÝ účinok: lom svetla. To povedal Pauli už v roku 1925.”"},
+"\"The moment you add a physical macroscopic medium such as water, you ARE introducing a 'privileged' frame, namely the one where water is stationary.\"":{"cz": "„Ve chvíli, kdy přidáš fyzické makroskopické prostředí jako voda, ZAVÁDÍŠ ‚privilegovanou’ soustavu, totiž tu, kde je voda nehybná.”", "sk": "„Vo chvíli, keď pridáš fyzické makroskopické prostredie ako voda, ZAVÁDZAŠ ‚privilegovanú’ sústavu, totiž tú, kde je voda nehybná.”"},
+"\"To predict what happens in ANY frame, the best way is move to the frame where the medium is stationary, compute what happens there and then move back... This is what has to be done to predict Fizeau's and Jones'.\"":{"cz": "„K předpovědi toho, co se děje v JAKÉKOLI soustavě, je nejlepší přejít do soustavy, kde je prostředí nehybné, spočítat to tam a pak přejít zpět... Přesně tak se musí postupovat u Fizeaua a Jonese.”", "sk": "„Na predpoveď toho, čo sa deje v AKEJKOĽVEK sústave, je najlepšie prejsť do sústavy, kde je prostredie nehybné, spočítať to tam a potom prejsť späť... Presne tak sa musí postupovať pri Fizeauovi a Jonesovi.”"},
+"Air (case A): light's direction is constant in S (sun's frame); the Earth frame S′ moves at V, so S′ sees the angle vary ±V/c. Water (case B): the water is stationary in S′, so you solve it there.":{"cz": "Vzduch (případ A): směr světla je v S (soustavě Slunce) stálý; soustava Země S′ se pohybuje rychlostí V, takže S′ vidí úhel měnit se o ±V/c. Voda (případ B): voda je v S′ nehybná, takže to řešíš tam.", "sk": "Vzduch (prípad A): smer svetla je v S (sústave Slnka) stály; sústava Zeme S′ sa pohybuje rýchlosťou V, takže S′ vidí uhol meniť sa o ±V/c. Voda (prípad B): voda je v S′ nehybná, takže to riešiš tam."},
+"\"In S light is partially dragged... it acquires a horizontal component u_x = V(1−1/n²)... computing what happens in S and then converting is totally unnecessary.\"":{"cz": "„V S je světlo částečně strháváno... získává vodorovnou složku u_x = V(1−1/n²)... počítat, co se děje v S, a pak to převádět, je zcela zbytečné.”", "sk": "„V S je svetlo čiastočne strhávané... získava vodorovnú zložku u_x = V(1−1/n²)... počítať, čo sa deje v S, a potom to prevádzať, je úplne zbytočné.”"},
+"\"In special relativity this is the way you DERIVE Fresnel's formula, which is a first-order expansion of velocity composition.\"":{"cz": "„Ve speciální relativitě takto ODVODÍŠ Fresnelův vzorec, což je rozvoj skládání rychlostí v prvním řádu.”", "sk": "„V špeciálnej relativite takto ODVODÍŠ Fresnelov vzorec, čo je rozvoj skladania rýchlostí v prvom ráde.”"},
+"\"In case A the light's direction is assumed to remain constant in S. In case B you introduce a moving medium so the light's direction in S is NOT constant.\"":{"cz": "„V případě A se předpokládá, že směr světla zůstává v S stálý. V případě B zavádíš pohybující se prostředí, takže směr světla v S stálý NENÍ.”", "sk": "„V prípade A sa predpokladá, že smer svetla zostáva v S stály. V prípade B zavádzaš pohybujúce sa prostredie, takže smer svetla v S stály NIE JE.”"},
+"\"He changed his claim to an even more absurd one, namely that Airy should have measured the V/c(n−1/n) angle... he has no idea what frames of reference are.\"":{"cz": "„Změnil své tvrzení na ještě absurdnější, totiž že Airy měl naměřit úhel V/c(n−1/n)... vůbec netuší, co jsou vztažné soustavy.”", "sk": "„Zmenil svoje tvrdenie na ešte absurdnejšie, totiž že Airy mal namerať uhol V/c(n−1/n)... vôbec netuší, čo sú vzťažné sústavy.”"},
+"\"The problem I gave him involved a bowling ball rolled toward a pin on a cruising ship... or two parallel walkways moving in opposite directions.\"":{"cz": "„Úloha, kterou jsem mu dal, se týkala bowlingové koule kutálené k figurce na plující lodi... nebo dvou rovnoběžných pohyblivých chodníků jedoucích opačnými směry.”", "sk": "„Úloha, ktorú som mu dal, sa týkala bowlingovej gule kotúľanej k figúrke na plaviacej sa lodi... alebo dvoch rovnobežných pohyblivých chodníkov idúcich opačnými smermi.”"},
+"\"Alice shoots a pea perpendicular to her walkway, through two loops... At what angle will Bob receive the pea? Does it have to be the same as Alice's?... he measures angles by arranging two parallel rows of dominos and sees which have been taken down. How would they depend on Bob's walkway speed?\"":{"cz": "„Alice vystřelí hrášek kolmo ke svému chodníku, skrz dvě smyčky... Pod jakým úhlem Bob hrášek přijme? Musí být stejný jako Alicin?... úhly měří tak, že postaví dvě rovnoběžné řady domin a vidí, které spadly. Jak by závisely na rychlosti Bobova chodníku?”", "sk": "„Alica vystrelí hrášok kolmo na svoj chodník, cez dve slučky... Pod akým uhlom Bob hrášok prijme? Musí byť rovnaký ako Alicin?... uhly meria tak, že postaví dva rovnobežné rady domína a vidí, ktoré spadli. Ako by záviseli od rýchlosti Bobovho chodníka?”"},
+"\"The telescope is the equivalent of the loops or dominos in Alice's (or Bob's) walkways.\"":{"cz": "„Dalekohled je ekvivalentem smyček nebo domin v Alicině (nebo Bobově) chodníku.”", "sk": "„Ďalekohľad je ekvivalentom slučiek alebo domína v Alicinom (alebo Bobovom) chodníku.”"},
+"\"To make the analogy closer to Airy's case, suppose Alice places a clay, or wax, block behind the second loop, so that the pea penetrates it before being stopped by friction. What do you think the path of the pea will be, in the block? How will it depend on Alice's and Bob's walkway velocity relative to the airport?\"":{"cz": "„Aby byla analogie blíž Airyho případu, dejme tomu, že Alice umístí za druhou smyčku blok z hlíny nebo vosku, takže hrášek do něj pronikne, než ho zastaví tření. Jaká podle tebe bude dráha hrášku v tom bloku? Jak bude záviset na rychlosti Alicina a Bobova chodníku vzhledem k letišti?”", "sk": "„Aby bola analógia bližšie Airyho prípadu, povedzme, že Alica umiestni za druhú slučku blok z hliny alebo vosku, takže hrášok doň prenikne, než ho zastaví trenie. Aká podľa teba bude dráha hrášku v tom bloku? Ako bude závisieť od rýchlosti Alicinho a Bobovho chodníka vzhľadom na letisko?”"},
+"Agreed on the arithmetic. Snell's law holds in the frame where the water is at rest. On the Space you told us what that frame is: there is no velocity of the telescope, of the water, and therefore the Earth. So \"just Snell's law\" is the stationary-Earth calculation. We never disputed the math. We dispute the frame it demands, which is ours.":{"cz": "Souhlas s aritmetikou. Snellův zákon platí <b>v soustavě, kde je voda v klidu</b>. V Space jsi nám řekl, co je to za soustavu: <span class='kill'>není tam žádná rychlost dalekohledu, vody, a tedy ani Země.</span> Takže „prostě Snellův zákon” je výpočet s nehybnou Zemí. Matematiku jsme nikdy nezpochybnili. Zpochybňujeme soustavu, kterou vyžaduje, a ta je naše.", "sk": "Súhlas s aritmetikou. Snellov zákon platí <b>v sústave, kde je voda v pokoji</b>. V Space si nám povedal, čo je to za sústavu: <span class='kill'>nie je tam žiadna rýchlosť ďalekohľadu, vody, a teda ani Zeme.</span> Takže „proste Snellov zákon” je výpočet s nehybnou Zemou. Matematiku sme nikdy nespochybnili. Spochybňujeme sústavu, ktorú vyžaduje, a tá je naša."},
+"On the Space you were asked, yes or no, is there a preferred frame in relativity. You said yes, there is none. Now the medium introduces one. And for Airy the water is bolted to the telescope and the Earth, so the \"privileged frame where water is stationary\" is the stationary Earth. You have named a preferred frame, and it is the geocentric one.":{"cz": "V Space ses byl dotázán, ano nebo ne, existuje v relativitě preferovaná soustava. Řekl jsi <b>ano, žádná není</b>. Teď ji prostředí zavádí. A u Airyho je voda pevně spojena s dalekohledem a Zemí, takže „privilegovaná soustava, kde je voda nehybná” <span class='kill'>je nehybná Země.</span> Pojmenoval jsi preferovanou soustavu, a je to ta geocentrická.", "sk": "V Space si bol opýtaný, áno alebo nie, existuje v relativite preferovaná sústava. Povedal si <b>áno, žiadna nie je</b>. Teraz ju prostredie zavádza. A u Airyho je voda pevne spojená s ďalekohľadom a Zemou, takže „privilegovaná sústava, kde je voda nehybná” <span class='kill'>je nehybná Zem.</span> Pomenoval si preferovanú sústavu, a je to tá geocentrická."},
+"For Fizeau and Jones the medium is dragged through the lab, so its rest frame is a genuinely different frame and the method earns its keep. Airy's water does not move through the lab. It is rigid with the instrument and the Earth. \"The frame where the medium is stationary\" is the Earth frame. Your general recipe, applied to Airy, reads: compute in the Earth-at-rest frame. That is geocentrism written as a procedure.":{"cz": "U Fizeaua a Jonese je prostředí strháváno <b>skrz laboratoř</b>, takže jeho klidová soustava je opravdu jiná a metoda má smysl. Airyho voda se laboratoří nepohybuje. Je pevně spojena s přístrojem a Zemí. „Soustava, kde je prostředí nehybné” <span class='kill'>je soustava Země.</span> Tvůj obecný postup, použitý na Airyho, zní: počítej v soustavě s nehybnou Zemí. To je geocentrismus zapsaný jako postup.", "sk": "U Fizeaua a Jonesa je prostredie strhávané <b>cez laboratórium</b>, takže jeho pokojová sústava je naozaj iná a metóda má zmysel. Airyho voda sa laboratóriom nepohybuje. Je pevne spojená s prístrojom a Zemou. „Sústava, kde je prostredie nehybné” <span class='kill'>je sústava Zeme.</span> Tvoj všeobecný postup, použitý na Airyho, znie: počítaj v sústave s nehybnou Zemou. To je geocentrizmus zapísaný ako postup."},
+"Same telescope, same night, same observer. For air you put the Earth in the moving frame, and the aberration comes from the Earth's V. For water you put the Earth in the rest frame and the V drops out. You changed which frame the Earth occupies the moment you poured in the water. That is two experiments with the control changed halfway through.":{"cz": "Tentýž dalekohled, tatáž noc, tentýž pozorovatel. Pro <b>vzduch</b> dáváš Zemi do pohybující se soustavy a aberace pochází z rychlosti Země V. Pro <b>vodu</b> dáváš Zemi do klidové soustavy a V vypadne. <span class='kill'>Změnil jsi, kterou soustavu Země zaujímá, ve chvíli, kdy jsi nalil vodu.</span> To jsou dva experimenty s kontrolou změněnou v půli cesty.", "sk": "Ten istý ďalekohľad, tá istá noc, ten istý pozorovateľ. Pre <b>vzduch</b> dávaš Zem do pohybujúcej sa sústavy a aberácia pochádza z rýchlosti Zeme V. Pre <b>vodu</b> dávaš Zem do pokojovej sústavy a V vypadne. <span class='kill'>Zmenil si, ktorú sústavu Zem zaujíma, vo chvíli, keď si nalial vodu.</span> To sú dva experimenty s kontrolou zmenenou v polovici cesty."},
+"That u_x = V(1−1/n²) is the transverse Fresnel-drag term. In S, the frame where the Earth and its water move at 30 km/s, the frame heliocentrism says we occupy, it makes the internal angle β(n−1/n) ≈ 11.88″, reading 15.80″. You wrote the ingredient and then called finishing it \"unnecessary.\" It is the only calculation that tests the Earth's motion, and it does not give 20.55″. Jones measured that exact drag to 0.02%, so the moving-frame number is pinned. It is not what Airy read.":{"cz": "To u_x = V(1−1/n²) je člen příčného Fresnelova strhávání. V S, soustavě, kde se Země a její voda pohybují 30 km/s, soustavě, o níž heliocentrismus tvrdí, že v ní jsme, dává vnitřní úhel β(n−1/n) ≈ <b>11,88″</b>, čte <b>15,80″</b>. Napsal jsi tu ingredienci a pak jsi dopočítání nazval „zbytečným”. Je to <span class='kill'>jediný výpočet, který testuje pohyb Země,</span> a nedává 20,55″. Jones toto přesné strhávání změřil s přesností 0,02 %, takže číslo pohybující se soustavy je dané. Není to, co Airy naměřil.", "sk": "To u_x = V(1−1/n²) je člen priečneho Fresnelovho strhávania. V S, sústave, kde sa Zem a jej voda pohybujú 30 km/s, sústave, o ktorej heliocentrizmus tvrdí, že v nej sme, dáva vnútorný uhol β(n−1/n) ≈ <b>11,88″</b>, číta <b>15,80″</b>. Napísal si tú ingredienciu a potom si dopočítanie nazval „zbytočným”. Je to <span class='kill'>jediný výpočet, ktorý testuje pohyb Zeme,</span> a nedáva 20,55″. Jones toto presné strhávanie zmeral s presnosťou 0,02 %, takže číslo pohybujúcej sa sústavy je dané. Nie je to, čo Airy nameral."},
+"Correct, and it cuts the other way. Solve for the drag coefficient that forces the water to read the air angle and you get 1 − 1/n² uniquely, for any index and any speed, with the velocity cancelling. Fresnel's coefficient is defined to be the number that cancels the medium's effect. A coefficient fitted to produce a null, producing a null, is not evidence of the Earth's motion. It is the absence of one.":{"cz": "Správně, a míří to opačným směrem. Vyřeš koeficient strhávání, který donutí vodu číst úhel vzduchu, a dostaneš <b>1 − 1/n²</b> jednoznačně, pro jakýkoli index a jakoukoli rychlost, přičemž rychlost se vykrátí. Fresnelův koeficient je <span class='kill'>definován jako číslo, které ruší účinek prostředí.</span> Koeficient nastavený tak, aby dával nulu, který dává nulu, není důkazem pohybu Země. Je jeho absencí.", "sk": "Správne, a mieri to opačným smerom. Vyrieš koeficient strhávania, ktorý donúti vodu čítať uhol vzduchu, a dostaneš <b>1 − 1/n²</b> jednoznačne, pre akýkoľvek index a akúkoľvek rýchlosť, pričom rýchlosť sa vykráti. Fresnelov koeficient je <span class='kill'>definovaný ako číslo, ktoré ruší účinok prostredia.</span> Koeficient nastavený tak, aby dával nulu, ktorý dáva nulu, nie je dôkazom pohybu Zeme. Je jeho absenciou."},
+"This is the causal split laid bare. In air, aberration exists in the Earth frame because the Earth moves. In water, you compute in the Earth-rest frame and the motion drops out. You cannot use aberration-in-air as proof the Earth moves and compute aberration-in-water as if it does not. One instrument, one causal story. Choose.":{"cz": "Toto je kauzální rozštěpení obnažené. Ve vzduchu aberace v soustavě Země existuje <b>protože se Země pohybuje</b>. Ve vodě počítáš v soustavě s nehybnou Zemí a pohyb vypadne. <span class='kill'>Nemůžeš použít aberaci ve vzduchu jako důkaz, že se Země pohybuje, a počítat aberaci ve vodě, jako by se nepohybovala.</span> Jeden přístroj, jeden kauzální příběh. Vyber si.", "sk": "Toto je kauzálne rozštiepenie obnažené. Vo vzduchu aberácia v sústave Zeme existuje <b>pretože sa Zem pohybuje</b>. Vo vode počítaš v sústave s nehybnou Zemou a pohyb vypadne. <span class='kill'>Nemôžeš použiť aberáciu vo vzduchu ako dôkaz, že sa Zem pohybuje, a počítať aberáciu vo vode, akoby sa nepohybovala.</span> Jeden prístroj, jeden kauzálny príbeh. Vyber si."},
+"V/c(n−1/n) = 11.88″ is not a retraction. It is the moving-frame internal angle, the Lorentz, Pauli and Rosser result, and the transverse drag Jones measured to 0.02%. It is the same V(1−1/n²) term you wrote yourself at 2:33. Calling it \"absurd\" and \"no idea what frames are\" is calling your own line absurd.":{"cz": "V/c(n−1/n) = 11,88″ není odvolání. Je to <b>vnitřní úhel pohybující se soustavy</b>, výsledek Lorentze, Pauliho a Rossera a příčné strhávání, které Jones změřil s přesností 0,02 %. Je to <span class='kill'>tentýž člen V(1−1/n²), který jsi sám napsal ve 2:33.</span> Nazvat to „absurdním” a „netuší, co jsou soustavy” znamená nazvat absurdní svou vlastní větu.", "sk": "V/c(n−1/n) = 11,88″ nie je odvolanie. Je to <b>vnútorný uhol pohybujúcej sa sústavy</b>, výsledok Lorentza, Pauliho a Rossera a priečne strhávanie, ktoré Jones zmeral s presnosťou 0,02 %. Je to <span class='kill'>ten istý člen V(1−1/n²), ktorý si sám napísal o 2:33.</span> Nazvať to „absurdným” a „netuší, čo sú sústavy” znamená nazvať absurdnou svoju vlastnú vetu."},
+"Pure kinematics lets you relabel which body moves. Airy is not pure kinematics. Water is a physical medium whose drag depends on its real motion (Fizeau, Jones), so the effect is dynamical, not a matter of viewpoint. A walkway has no analog of \"the medium selects a frame.\" You said so yourself in Round 2: water introduces a privileged frame. Your own analogy defeats your own point.":{"cz": "Čistá kinematika ti dovolí přeznačit, které těleso se pohybuje. Airy není čistá kinematika. Voda je <b>fyzické prostředí, jehož strhávání závisí na jeho skutečném pohybu</b> (Fizeau, Jones), takže efekt je dynamický, ne věc úhlu pohledu. Chodník nemá obdobu „prostředí volí soustavu”. <span class='kill'>Sám jsi to řekl v kole 2:</span> prostředí zavádí privilegovanou soustavu. Tvá vlastní analogie vyvrací tvůj vlastní bod.", "sk": "Čistá kinematika ti dovolí preznačiť, ktoré teleso sa pohybuje. Airy nie je čistá kinematika. Voda je <b>fyzické prostredie, ktorého strhávanie závisí od jeho skutočného pohybu</b> (Fizeau, Jones), takže efekt je dynamický, nie vec uhla pohľadu. Chodník nemá obdobu „prostredie volí sústavu”. <span class='kill'>Sám si to povedal v kole 2:</span> prostredie zavádza privilegovanú sústavu. Tvoja vlastná analógia vyvracia tvoj vlastný bod."},
+"The dominos settle it, and they settle it for us. Alice and Bob can compute different angles, but they agree on one physical fact: which dominos fell. That record is invariant, and it is the only thing Airy measured, one set of micrometer wires struck. You granted this on the Space: every observer must agree on the wire that is hit. For Airy that invariant is 20.55″, the air value. The frame-dependent angle is a label you attach afterward; the fallen dominos are the physics, and they correspond to the stationary-Earth result.":{"cz": "Domina to rozhodnou, a rozhodnou to v náš prospěch. Alice a Bob mohou spočítat různé úhly, ale shodnou se na jednom fyzickém faktu: <b>která domina spadla.</b> Ten záznam je invariantní a je to jediné, co Airy naměřil, jedna sada zasažených vláken mikrometru. <span class='kill'>Sám jsi to v Space připustil:</span> každý pozorovatel se musí shodnout na tom, které vlákno bylo zasaženo. Pro Airyho je tím invariantem 20,55″, hodnota ve vzduchu. Na soustavě závislý úhel je nálepka, kterou přilepíš dodatečně; spadlá domina jsou fyzika, a odpovídají výsledku s nehybnou Zemí.", "sk": "Domína to rozhodnú, a rozhodnú to v náš prospech. Alica a Bob môžu spočítať rôzne uhly, ale zhodnú sa na jednom fyzickom fakte: <b>ktoré domína spadli.</b> Ten záznam je invariantný a je to jediné, čo Airy nameral, jedna sada zasiahnutých vlákien mikrometra. <span class='kill'>Sám si to v Space priznal:</span> každý pozorovateľ sa musí zhodnúť na tom, ktoré vlákno bolo zasiahnuté. Pre Airyho je tým invariantom 20,55″, hodnota vo vzduchu. Od sústavy závislý uhol je nálepka, ktorú prilepíš dodatočne; spadnuté domína sú fyzika, a zodpovedajú výsledku s nehybnou Zemou."},
+"You have just built our argument in miniature. The block is the water, and you ask how the pea's path inside it depends on the walkway velocity relative to the airport. So the in-block path is fixed by real motion against a rest frame, the airport floor. That is a privileged frame and a dynamical effect, not a change of viewpoint. Map it: airport = absolute rest, the stationary Earth; walkway = the moving frame; block = water. The path in the block is solved in the frame where the block is at rest, which is the walkway it is fixed to. Airy's water is fixed to the telescope and the Earth, so that frame is the Earth frame. Finish your own analogy and it lands on the stationary-Earth calculation. The pea reaches the same fallen dominos only when the block, and the Earth, are at rest.":{"cz": "Právě jsi v malém sestavil náš argument. Blok je voda a ptáš se, jak dráha hrášku v něm závisí na rychlosti chodníku <b>vzhledem k letišti</b>. Takže dráha v bloku je dána skutečným pohybem vůči klidové soustavě, podlaze letiště. To je privilegovaná soustava a dynamický efekt, ne změna úhlu pohledu. Přelož si to: <span class='kill'>letiště = absolutní klid, nehybná Země; chodník = pohybující se soustava; blok = voda.</span> Dráha v bloku se řeší v soustavě, kde je blok v klidu, což je chodník, k němuž je připevněn. Airyho voda je připevněna k dalekohledu a Zemi, takže tou soustavou je soustava Země. Dokonči svou vlastní analogii a skončí na výpočtu s nehybnou Zemí. Hrášek dopadne na táž spadlá domina jedině tehdy, když jsou blok a Země v klidu.", "sk": "Práve si v malom zostavil náš argument. Blok je voda a pýtaš sa, ako dráha hrášku v ňom závisí od rýchlosti chodníka <b>vzhľadom na letisko</b>. Takže dráha v bloku je daná skutočným pohybom voči pokojovej sústave, podlahe letiska. To je privilegovaná sústava a dynamický efekt, nie zmena uhla pohľadu. Prelož si to: <span class='kill'>letisko = absolútny pokoj, nehybná Zem; chodník = pohybujúca sa sústava; blok = voda.</span> Dráha v bloku sa rieši v sústave, kde je blok v pokoji, čo je chodník, ku ktorému je pripevnený. Airyho voda je pripevnená k ďalekohľadu a Zemi, takže tou sústavou je sústava Zeme. Dokonči svoju vlastnú analógiu a skončí na výpočte s nehybnou Zemou. Hrášok dopadne na tie isté spadnuté domína jedine vtedy, keď sú blok a Zem v pokoji."},
+"Franco's claim":{"cz": "Francovo tvrzení", "sk": "Francovo tvrdenie"},
+"ACRG rebuttal":{"cz": "Vyvrácení ACRG", "sk": "Vyvrátenie ACRG"},
+"Contradicts his own Space words":{"cz": "Odporuje svým vlastním slovům ze Space", "sk": "Odporuje svojim vlastným slovám zo Space"},
+"Concedes our premise":{"cz": "Přiznává naši premisu", "sk": "Priznáva našu premisu"},
+"Space timestamps link into the YouTube recording of the Twitter Space. Franco's numbered DM claims are from the Discord exchange that followed it.":{"cz": "Časové značky Space odkazují do YouTube záznamu Twitter Space. Francova číslovaná DM tvrzení pocházejí z Discord konverzace, která následovala.", "sk": "Časové značky Space odkazujú do YouTube záznamu Twitter Space. Francove číslované DM tvrdenia pochádzajú z Discord konverzácie, ktorá nasledovala."},
+"▶ Watch the Space (YouTube)":{"cz": "▶ Sledovat Space (YouTube)", "sk": "▶ Pozrieť Space (YouTube)"},
+"ACRG · Space quotes and timestamps from the YouTube recording of the Twitter Space; Franco's numbered claims are from the Discord DM recap that followed (26 Jul 2026).":{"cz": "ACRG · Citace a časové značky ze Space pocházejí z <a class='yt' href='https://youtu.be/oLJsJS2u0ug' target='_blank' rel='noopener'>YouTube záznamu</a> Twitter Space; Francova číslovaná tvrzení jsou z Discord DM shrnutí, které následovalo (26. 7. 2026).", "sk": "ACRG · Citácie a časové značky zo Space pochádzajú z <a class='yt' href='https://youtu.be/oLJsJS2u0ug' target='_blank' rel='noopener'>YouTube záznamu</a> Twitter Space; Francove číslované tvrdenia sú z Discord DM zhrnutia, ktoré nasledovalo (26. 7. 2026)."}
+};</script>
+<script>/* EN | CZ | SK language toggle for the Airy deck.
+ * Runtime, DOM-level: on language change we walk every prose element (in the
+ * deck and inside the mounted sim / arguments iframes), key it by its original
+ * English text, and swap in the translation. Anything not in the dictionary
+ * stays English, so coverage degrades gracefully. Citations, numbers, formulae
+ * and proper names are deliberately left untranslated.
+ *
+ * TR[key] = { cz, sk }  where key is the normalised English textContent and the
+ * value is translated innerHTML (markup preserved).
+ */
+(function(){
+'use strict';
+const SEL = '.kick,.lead,.sub,.sec-num,h1,h2,.quote,.take,.ch,.ch2,.recover,'
+  + '.tribute-role,.tribute-text,.title-by,li,th,td,.l,.f,.hyp,.hnote,.axnote,'
+  + '.rlabel,.qed,.mnull,.srcnote,.axioms h2,.final h2,.bub,.tt,footer,.watch';
+const norm = s => (s||'').replace(/\s+/g,' ').trim();
+const hasWord = s => /[A-Za-z]/.test(s);
+
+const TR = window.AIRY_TR || {};   // filled below
+
+function translatable(el){
+  if(el.classList.contains('cite') || el.classList.contains('cite-take')) return false; // keep citations
+  if(el.classList.contains('n')) return false;                                            // numeric cells
+  if(el.classList.contains('refs')) return false;
+  if(el.closest && el.closest('.refs')) return false;                                     // reference lists
+  if(el.querySelector && el.querySelector(SEL)) return false;                             // only leaf prose
+  return true;
+}
+
+function apply(doc, lang){
+  if(!doc) return;
+  doc.querySelectorAll(SEL).forEach(el=>{
+    if(!translatable(el)) return;
+    if(el.dataset.en === undefined){                                      // capture English once
+      el.dataset.en = el.innerHTML;
+      el.dataset.enkey = norm(el.textContent);
+    }
+    const key = el.dataset.enkey;                                         // always key off English
+    if(!hasWord(key)) return;
+    if(lang === 'en'){ el.innerHTML = el.dataset.en; return; }
+    const t = TR[key];
+    el.innerHTML = (t && t[lang]) ? t[lang] : el.dataset.en;              // fallback: leave English
+  });
+}
+
+let LANG = 'en';
+
+window.airySetLang = function(lang){
+  LANG = lang;
+  document.documentElement.lang = lang;
+  apply(document, lang);
+  [...document.querySelectorAll('iframe')].forEach(f=>{
+    try {
+      const w = f.contentWindow;
+      if(w && w.AIY){ w.AIY.lang = lang; }                                  // sim: self-translates, do NOT touch its DOM
+      else if(f.contentDocument){ apply(f.contentDocument, lang); }         // arguments iframe: pure DOM
+    } catch(e){}
+  });
+  document.querySelectorAll('#langbar button').forEach(b=>b.classList.toggle('on', b.dataset.l===lang));
+};
+// re-apply to an iframe once it mounts (called by the deck after write)
+window.airyTranslateFrame = function(doc){
+  try { if(doc.defaultView && doc.defaultView.AIY){ doc.defaultView.AIY.lang = LANG; return; } } catch(e){}
+  apply(doc, LANG);                                                         // only the pure-DOM arguments iframe
+};
+window.airyLang = () => LANG;
+})();
+</script>
+
 <script>
 /* Airy deck — scaled stage + filmstrip transitions (shadowsets architecture),
    plus a mode toggle that mounts the sim into an isolated iframe. */
@@ -2457,11 +3041,12 @@ function mountSim(){
     '<style>'+document.getElementById('sim-css').textContent+'</style></head><body>'+
     document.getElementById('sim-html').textContent+'</body></html>');
   d.close();
-  ['util','theories','sky','tube','micro','main'].forEach(n=>{
+  ['i18n_sim','util','theories','sky','tube','micro','main'].forEach(n=>{
     const s=d.createElement('script');
     s.textContent=document.getElementById('sim-js-'+n).textContent;
     d.body.appendChild(s);
   });
+  if(window.airyTranslateFrame) window.airyTranslateFrame(d);
 }
 let argMounted=false;
 function mountArg(){
@@ -2474,6 +3059,7 @@ function mountArg(){
     '<style>'+document.getElementById('arg-css').textContent+'</style></head><body>'+
     document.getElementById('arg-html').textContent+'</body></html>');
   d.close();
+  if(window.airyTranslateFrame) window.airyTranslateFrame(d);
 }
 /* ---- source figures: click a preview to expand it ---- */
 const lb=document.getElementById('lightbox'), lbImg=lb.querySelector('img');
@@ -2498,6 +3084,7 @@ function setMode(mode){                                   // 'deck' | 'sim' | 'a
 bDeck.onclick=()=>setMode('deck');
 bSim.onclick=()=>setMode('sim');
 bArg.onclick=()=>setMode('arg');
+document.querySelectorAll('#langbar button').forEach(b=>b.onclick=()=>window.airySetLang&&window.airySetLang(b.dataset.l));
 const inOverlay=()=>document.body.classList.contains('simmode')||document.body.classList.contains('argmode');
 
 addEventListener('keydown',e=>{
@@ -2529,6 +3116,8 @@ hintTimer=setTimeout(hideHint,5200);
 stage.classList.add('notrans');
 buildChrome();scale();update();
 // deep links: #sim opens the simulation directly, #N jumps to a slide
+const _lp=new URLSearchParams(location.search).get('lang');
+if(_lp && window.airySetLang) window.airySetLang(_lp);
 if(location.hash==='#sim'){setMode('sim');}
 else if(location.hash==='#arg'){setMode('arg');}
 else if(location.hash){const n=parseInt(location.hash.slice(1),10);if(!isNaN(n))go(clamp(n-1,0,N-1));}

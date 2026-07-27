@@ -124,32 +124,32 @@ AIY.microPanelHTML = frame => {
   const fUm = (F_MM*1000).toFixed(0);                  // focal length in µm (for the division)
   const LUm = (d.Lmm*1000).toFixed(0);                 // tube length in µm
   return `
-  <h3>MICROMETER READING &rarr; CELESTIAL ARC</h3>
+  <h3>${AIY.L('MICROMETER READING → CELESTIAL ARC')}</h3>
 
   <div class="mstep measured">
-    <div class="lbl">1 &middot; measured on the plate</div>
+    <div class="lbl">${AIY.L('1 · measured on the plate')}</div>
     <div class="eq"><span class="v">x</span> = <span class="res">${xUm} µm</span></div>
-    <div class="lbl">the star's offset from the meridian wire at transit</div>
+    <div class="lbl">${AIY.L("the star's offset from the meridian wire at transit")}</div>
   </div>
 
   <div class="mstep reads">
-    <div class="lbl">2 &middot; convert to a sky angle &mdash; the reading</div>
+    <div class="lbl">${AIY.L('2 · convert to a sky angle — the reading')}</div>
     <div class="eq">arc = ( <span class="v">x</span> &divide; <span class="v">f</span> ) &times; <span class="v">k</span></div>
     <div class="eq sm">= ( ${xUm} &divide; ${fUm} ) &times; ${k}</div>
-    <div class="eq"><span class="res">= ${d.read.toFixed(2)}&Prime;</span> &nbsp;Airy's reading</div>
+    <div class="eq"><span class="res">= ${d.read.toFixed(2)}&Prime;</span> &nbsp;${AIY.L("Airy's reading")}</div>
   </div>
 
   <div class="mstep implied">
-    <div class="lbl">3 &middot; internal tilt &mdash; implied afterward (or via Snell)</div>
+    <div class="lbl">${AIY.L('3 · internal tilt — implied afterward (or via Snell)')}</div>
     <div class="eq">&theta;_int = ( <span class="v">x</span> &divide; <span class="v">L</span> ) &times; <span class="v">k</span></div>
     <div class="eq sm">= ( ${xUm} &divide; ${LUm} ) &times; ${k}</div>
     <div class="eq"><span class="res">= ${d.thInt.toFixed(2)}&Prime;</span></div>
   </div>
 
   <div class="mdefs">
-    <div class="d"><b>x</b><span>plate displacement, measured (µm)</span></div>
-    <div class="d"><b>f</b><span>focal length, air-equivalent = 706 mm</span></div>
-    <div class="d"><b>L</b><span>physical tube length — air 706 mm, water 940 mm</span></div>
+    <div class="d"><b>x</b><span>${AIY.L('plate displacement, measured (µm)')}</span></div>
+    <div class="d"><b>f</b><span>${AIY.L('focal length, air-equivalent = 706 mm')}</span></div>
+    <div class="d"><b>L</b><span>${AIY.L('physical tube length — air 706 mm, water 940 mm')}</span></div>
     <div class="d"><b>k</b><span>206265&Prime; per radian — the number of arcseconds in one radian (1 rad = 180/&pi; &times; 3600&Prime;)</span></div>
   </div>
 

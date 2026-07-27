@@ -90,13 +90,13 @@ function drawTube(ctx, xc, o, time){
   AIY.text(ctx, o.title, xc, topY-LIN-16, '#e9eef6', f(14,1), 'center');
   if(o.water){                                            // theory PREDICTION vs Airy's lab-frame value
     const col=o.matches?'#5fd07a':'#ff6a78';
-    AIY.text(ctx, (o.matches?'✓ ':'✗ ')+'predicted '+fmt(o.showVal,o.unit), xc, plateY+dy(24), col, f(14,1), 'center');
-    AIY.text(ctx, "Airy's lab frame value ("+o.tag+") "+fmt(o.labVal,o.unit), xc, plateY+dy(44), '#5fd07a', f(13), 'center');
+    AIY.text(ctx, (o.matches?'✓ ':'✗ ')+AIY.L('predicted')+' '+fmt(o.showVal,o.unit), xc, plateY+dy(24), col, f(14,1), 'center');
+    AIY.text(ctx, AIY.L("Airy's lab frame value")+' ('+AIY.L(o.tag)+') '+fmt(o.labVal,o.unit), xc, plateY+dy(44), '#5fd07a', f(13), 'center');
   } else {                                                // the measured baseline
     AIY.text(ctx, fmt(o.showVal,o.unit), xc, plateY+dy(24), '#cfe0f0', f(14,1), 'center');
     AIY.text(ctx, 'air reference', xc, plateY+dy(44), '#9fb0c6', f(13), 'center');
   }
-  AIY.text(ctx, o.aux.label+' '+fmt(o.aux.val,o.aux.unit), xc, plateY+dy(64), '#9fb0c6', f(13), 'center');
+  AIY.text(ctx, AIY.L(o.aux.label)+' '+fmt(o.aux.val,o.aux.unit), xc, plateY+dy(64), '#9fb0c6', f(13), 'center');
   AIY.text(ctx, o.mediumLabel, xc, plateY+dy(82), '#9fb0c6', f(13), 'center');
   if(o.speedNote) AIY.text(ctx, o.speedNote, xc, plateY+dy(100), '#ff9aa2', f(13), 'center');
 }

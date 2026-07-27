@@ -2,6 +2,7 @@
 /* ── Main: state, controls, scene dispatch, animation loop ─────────────────*/
 'use strict';
 const AIY = window.AIY;
+const L = s => (AIY.L ? AIY.L(s) : s);          // translate a UI string to AIY.lang
 
 const canvas = document.getElementById('scene'), ctx = canvas.getContext('2d');
 const $ = id => document.getElementById(id);
@@ -21,9 +22,14 @@ addEventListener('resize', ()=>{ resize(); if(typeof updateMicroPanel==='functio
 
 // ── Populate theory selector ───────────────────────────────────────────────
 for(const [key,t] of Object.entries(AIY.THEORIES)){
-  const o=document.createElement('option'); o.value=key; o.textContent=t.label; $('theory').appendChild(o);
+  const o=document.createElement('option'); o.value=key; o.textContent=L(t.label); $('theory').appendChild(o);
 }
 $('theory').value = state.theory;                       // keep the dropdown in sync with default state
+function retransViews(){
+  const vl={cali:'Reads — calibrated (θ_int × n)',raw:'Reads — raw (air scale)',thetaint:'θ_int — predicted internal angle',micro:'Micrometer — plate drift (µm)'};
+  [...$('view').options].forEach(o=>{ if(vl[o.value]) o.textContent=L(vl[o.value]); });
+}
+retransViews();
 
 // ── Contextual controls: which panel bits apply to the current theory ──────
 function syncControls(){
@@ -35,17 +41,19 @@ function syncControls(){
   $('frame-wrap').style.display = showFrame ? '' : 'none';
   $('row-view').style.display = t.scene==='tube' ? '' : 'none';   // tube scenes only
   if(sky){                                             // heliocentric / geocentric
-    $('btn-frameA').textContent='Heliocentric'; $('btn-frameA').dataset.v='helio';
-    $('btn-frameB').textContent='Geocentric';   $('btn-frameB').dataset.v='geo';
-    $('k-vel').textContent = state.frame==='geo' ? 'Sky velocity' : 'Earth velocity';
+    $('btn-frameA').textContent=L('Heliocentric'); $('btn-frameA').dataset.v='helio';
+    $('btn-frameB').textContent=L('Geocentric');   $('btn-frameB').dataset.v='geo';
+    $('k-vel').textContent = L(state.frame==='geo' ? 'Sky velocity' : 'Earth velocity');
   } else if(micro){                                     // air / water eyepiece
-    $('btn-frameA').textContent='Air'; $('btn-frameA').dataset.v='air';
-    $('btn-frameB').textContent='Water'; $('btn-frameB').dataset.v='water';
-    $('k-vel').textContent = 'Star';
+    $('btn-frameA').textContent=L('Air'); $('btn-frameA').dataset.v='air';
+    $('btn-frameB').textContent=L('Water'); $('btn-frameB').dataset.v='water';
+    $('k-vel').textContent = L('Star');
   } else if(t.frames){                                 // water at rest / in motion
-    $('btn-frameA').textContent='Water at rest'; $('btn-frameA').dataset.v='rest';
-    $('btn-frameB').textContent='Water in motion'; $('btn-frameB').dataset.v='moving';
-    $('k-vel').textContent = 'Velocity';
+    $('btn-frameA').textContent=L('Water at rest'); $('btn-frameA').dataset.v='rest';
+    $('btn-frameB').textContent=L('Water in motion'); $('btn-frameB').dataset.v='moving';
+    $('k-vel').textContent = L('Velocity');
+  } else {                                             // tube scenes with no frame toggle
+    $('k-vel').textContent = L('Earth velocity');
   }
   setFrameButtons();
   updateMicroPanel();
@@ -66,9 +74,9 @@ function setFrameButtons(){
 // ── Live math legend ───────────────────────────────────────────────────────
 function updateMath(){
   const t = AIY.THEORIES[state.theory];
-  $('m-title').textContent = t.label;
-  $('m-formula').textContent = t.formula;
-  $('m-note').textContent = t.blurb;
+  $('m-title').textContent = L(t.label);
+  $('m-formula').textContent = (AIY.Lf ? AIY.Lf(t.formula) : t.formula);
+  $('m-note').textContent = L(t.blurb);
   const rows = [];
   if(t.scene==='sky'){
     rows.push(['α = arctan(v/c)', AIY.ALPHA.toFixed(2)+'″']);
@@ -78,39 +86,39 @@ function updateMath(){
     $('m-scale').style.display = 'none';
   } else if(t.scene==='micro'){
     const air=AIY.microData('air'), wat=AIY.microData('water'), gd=AIY.microData(state.frame);
-    rows.push(['medium', gd.water ? 'water, n = 1.33' : 'air, n = 1']);
-    rows.push(['1 · displacement (measured)', (gd.xMm*1000).toFixed(1)+' µm']);
-    rows.push(['2 · celestial arc (reads)', gd.read.toFixed(2)+'″']);
-    rows.push(['3 · internal tilt (implied)', gd.thInt.toFixed(2)+'″']);
-    rows.push(['physical tube length', gd.Lmm.toFixed(0)+' mm']);
-    $('m-verdict').innerHTML = '<span class="ok">air 20.55″ = water 20.55″ (same displacement)</span>';
+    rows.push([L('medium'), gd.water ? L('water, n = 1.33') : L('air, n = 1')]);
+    rows.push([L('1 · displacement (measured)'), (gd.xMm*1000).toFixed(1)+' µm']);
+    rows.push([L('2 · celestial arc (reads)'), gd.read.toFixed(2)+'″']);
+    rows.push([L('3 · internal tilt (implied)'), gd.thInt.toFixed(2)+'″']);
+    rows.push([L('physical tube length'), gd.Lmm.toFixed(0)+' mm']);
+    $('m-verdict').innerHTML = '<span class="ok">air 20.55″ = water 20.55″</span>';
     $('m-scale').style.display = '';
     const r=(a,b,hit)=>`<div class="r${hit?' hit':''}"><span>${a}</span><b>${b}</b></div>`;
     $('m-scale').innerHTML =
-      '<div class="sh">SAME PLATE DISPLACEMENT</div>'
-      + r('air  (tube 706 mm)', (air.xMm*1000).toFixed(1)+' µm')
-      + r('water (tube 940 mm)', (wat.xMm*1000).toFixed(1)+' µm')
-      + r('both read', '20.55″', true);
+      '<div class="sh">'+L('SAME PLATE DISPLACEMENT')+'</div>'
+      + r(L('air  (tube 706 mm)'), (air.xMm*1000).toFixed(1)+' µm')
+      + r(L('water (tube 940 mm)'), (wat.xMm*1000).toFixed(1)+' µm')
+      + r(L('both read'), '20.55″', true);
   } else {
     const V = AIY.viewData(t, state.frame, state.view);
     const fmt=(v,u)=> u==='µm' ? v.toFixed(1)+' µm' : v.toFixed(2)+'″';
-    rows.push(['this theory predicts', fmt(V.wv,V.unit)]);
-    rows.push(['Airy '+V.labWord+' ('+V.tag+')', fmt(V.lab,V.unit)]);
-    rows.push(['θ_int (in water)', V.thInt.toFixed(2)+'″']);
-    rows.push(['plate drift', AIY.drift(V.thInt).toFixed(1)+' µm']);
-    rows.push(['speed in water', (t.speed/AIY.C).toFixed(2)+' c']);
+    rows.push([L('this theory predicts'), fmt(V.wv,V.unit)]);
+    rows.push([L('Airy')+' '+L(V.labWord)+' ('+L(V.tag)+')', fmt(V.lab,V.unit)]);
+    rows.push([L('θ_int (in water)'), V.thInt.toFixed(2)+'″']);
+    rows.push([L('plate drift'), AIY.drift(V.thInt).toFixed(1)+' µm']);
+    rows.push([L('speed in water'), (t.speed/AIY.C).toFixed(2)+' c']);
     const th = V.thInt, reading = th*AIY.N, match = V.match;
     $('m-verdict').innerHTML = match
-      ? '<span class="ok">✓ prediction matches Airy ('+fmt(V.lab,V.unit)+')</span>'
-      : '<span class="bad">✗ predicts '+fmt(V.wv,V.unit)+' — Airy '+V.labWord+' '+fmt(V.lab,V.unit)+'</span>';
+      ? '<span class="ok">✓ '+L('prediction matches Airy')+' ('+fmt(V.lab,V.unit)+')</span>'
+      : '<span class="bad">✗ '+L('predicts')+' '+fmt(V.wv,V.unit)+' — '+L('Airy')+' '+L(V.labWord)+' '+fmt(V.lab,V.unit)+'</span>';
     // micrometer-scale numerics: raw air-scale angle vs the ×n calibrated reading
     const r=(a,b,hit)=>`<div class="r${hit?' hit':''}"><span>${a}</span><b>${b}</b></div>`;
     $('m-scale').style.display = '';
     $('m-scale').innerHTML =
-      '<div class="sh">MICROMETER SCALE (Airy p.39)</div>'
-      + r('raw angle (air scale)', th.toFixed(2)+'″')
-      + r('water scale', '× '+AIY.N.toFixed(2)+'  (37.0 / 27.8 in)')
-      + r('calibrated reads', reading.toFixed(2)+'″', match);
+      '<div class="sh">'+L('MICROMETER SCALE (Airy p.39)')+'</div>'
+      + r(L('raw angle (air scale)'), th.toFixed(2)+'″')
+      + r(L('water scale'), '× '+AIY.N.toFixed(2)+'  (37.0 / 27.8 in)')
+      + r(L('calibrated reads'), reading.toFixed(2)+'″', match);
   }
   $('m-rows').innerHTML = rows.map(r =>
     `<div class="row"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('');
@@ -145,9 +153,16 @@ $('animate').addEventListener('change', e=>{ state.animate=e.target.checked; });
 $('view').addEventListener('change', e=>{ state.view=e.target.value; });
 
 // ── Animation loop ─────────────────────────────────────────────────────────
-let clock=0, last=0;
+let clock=0, last=0, _slang=AIY.lang;
 function loop(ts){
   const dt=(ts-last)/1000; last=ts;
+  if(AIY.lang!==_slang){                                 // deck toggled the language
+    _slang=AIY.lang;
+    [...$('theory').options].forEach(o=>{ o.textContent=L(AIY.THEORIES[o.value].label); });
+    retransViews();
+    syncControls();                                      // relabels frame buttons + micro panel
+    if(AIY.translateStatic) AIY.translateStatic();       // static panel labels
+  }
   if(state.animate){
     clock+=dt;
     if(AIY.THEORIES[state.theory].scene==='sky'){
@@ -158,5 +173,6 @@ function loop(ts){
   render(clock); requestAnimationFrame(loop);
 }
 syncControls();
+if(AIY.translateStatic) AIY.translateStatic();          // translate static labels at mount
 requestAnimationFrame(t=>{ last=t; loop(t); });
 })();

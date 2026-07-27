@@ -29,9 +29,10 @@ AIY.arrow = (ctx, from, to, color, w) => {
   ctx.closePath(); ctx.fill();
 };
 
-// text helper
+// text helper — every drawn string is routed through the sim translator
 AIY.text = (ctx, s, x, y, color, font, align='left') => {
+  const str = AIY.L ? AIY.L(s) : s;
   ctx.fillStyle=color; ctx.font=font; ctx.textAlign=align; ctx.textBaseline='middle';
-  ctx.fillText(s, x, y);
+  ctx.fillText(str, x, y);
 };
 })();
