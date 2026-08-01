@@ -49,8 +49,8 @@ function syncControls(){
     $('btn-frameB').textContent=L('Water'); $('btn-frameB').dataset.v='water';
     $('k-vel').textContent = L('Star');
   } else if(t.frames){                                 // water at rest / in motion
-    $('btn-frameA').textContent=L('Water at rest'); $('btn-frameA').dataset.v='rest';
-    $('btn-frameB').textContent=L('Water in motion'); $('btn-frameB').dataset.v='moving';
+    $('btn-frameA').textContent=L('Earth at rest'); $('btn-frameA').dataset.v='rest';
+    $('btn-frameB').textContent=L('Earth moving'); $('btn-frameB').dataset.v='moving';
     $('k-vel').textContent = L('Velocity');
   } else {                                             // tube scenes with no frame toggle
     $('k-vel').textContent = L('Earth velocity');

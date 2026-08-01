@@ -131,5 +131,9 @@ AIY.drawTube = (ctx, st, time) => {
     showVal:V.wv, labVal:V.lab, matches:V.match, unit:V.unit, tag:V.tag, aux:V.aux, speed:t.speed,
     speedNote: t.speed>AIY.C ? 'needs 1.33 c — Foucault measured 0.75 c' : null
   }, time);
+
+  const capY = topY + H + Math.round(120*fscale()), cf = Math.round(12.5*fscale())+'px system-ui';
+  AIY.text(ctx, 'Same aberrated incidence 20.55\u2033. Stationary Earth \u2192 Snell 15.45\u2033 (reads 20.55\u2033). Moving Earth \u2192 drag 11.88\u2033 (reads 15.80\u2033).', midX, capY, '#9fb0c6', cf, 'center');
+  AIY.text(ctx, '20.55\u2033 for a moving Earth is recovered only by transforming to the Earth-rest frame.', midX, capY+Math.round(18*fscale()), '#9fb0c6', cf, 'center');
 };
 })();

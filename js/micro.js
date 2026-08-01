@@ -88,7 +88,7 @@ AIY.drawMicrometer = (ctx, st, clock) => {
 
   // top bracket = the micrometer scale reading (measured displacement, counting);
   // bottom bracket = the celestial arc it converts to (Reads, green).
-  if(p>0.03){
+  if(held){
     bracket(ctx, starX, merX, starY-g(30), held?'#e9eef6':'#9fd4ff',
             'micrometer  '+(liveMm*1000).toFixed(1)+' µm', f(13.5,held), 'up', g);
     bracket(ctx, starX, merX, starY+g(30), held?'#5fd07a':'#3fe0d0',

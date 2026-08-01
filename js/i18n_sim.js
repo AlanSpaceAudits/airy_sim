@@ -26,7 +26,7 @@ cz:{
 "Animate":"Animovat","True star / incoming":"Skutečná hvězda / příchozí","Apparent / refracted":"Zdánlivá / lomená",
 "Earth velocity":"Rychlost Země","Sky velocity":"Rychlost oblohy","Star":"Hvězda","Velocity":"Rychlost",
 "Full data & derivations:":"Úplná data a odvození:","Math in use":"Použitá matematika",
-"Heliocentric":"Heliocentrický","Water at rest":"Voda v klidu","Water in motion":"Voda v pohybu","Air":"Vzduch","Water":"Voda",
+"Heliocentric":"Heliocentrický","Water at rest":"Voda v klidu","Water in motion":"Voda v pohybu","Earth at rest":"Země v klidu","Earth moving":"Země v pohybu","Same aberrated incidence 20.55″. Stationary Earth → Snell 15.45″ (reads 20.55″). Moving Earth → drag 11.88″ (reads 15.80″).":"Stejný aberovaný dopad 20,55″. Nehybná Země → Snell 15,45″ (čte 20,55″). Pohybující se Země → strhávání 11,88″ (čte 15,80″).","20.55″ for a moving Earth is recovered only by transforming to the Earth-rest frame.":"20,55″ pro pohybující se Zemi se získá jen transformací do klidové soustavy Země.","Air":"Vzduch","Water":"Voda",
 // math legend labels
 "this theory predicts":"tato teorie předpovídá","θ_int (in water)":"θ_int (ve vodě)","plate drift":"posun na desce",
 "speed in water":"rychlost ve vodě","medium":"prostředí","air, n = 1":"vzduch, n = 1","water, n = 1.33":"voda, n = 1,33",
@@ -89,7 +89,7 @@ sk:{
 "Animate":"Animovať","True star / incoming":"Skutočná hviezda / prichádzajúci","Apparent / refracted":"Zdanlivá / lomená",
 "Earth velocity":"Rýchlosť Zeme","Sky velocity":"Rýchlosť oblohy","Star":"Hviezda","Velocity":"Rýchlosť",
 "Full data & derivations:":"Úplné dáta a odvodenia:","Math in use":"Použitá matematika",
-"Heliocentric":"Heliocentrický","Water at rest":"Voda v pokoji","Water in motion":"Voda v pohybe","Air":"Vzduch","Water":"Voda",
+"Heliocentric":"Heliocentrický","Water at rest":"Voda v pokoji","Water in motion":"Voda v pohybe","Earth at rest":"Zem v pokoji","Earth moving":"Zem v pohybe","Same aberrated incidence 20.55″. Stationary Earth → Snell 15.45″ (reads 20.55″). Moving Earth → drag 11.88″ (reads 15.80″).":"Rovnaký aberovaný dopad 20,55″. Nehybná Zem → Snell 15,45″ (číta 20,55″). Pohybujúca sa Zem → strhávanie 11,88″ (číta 15,80″).","20.55″ for a moving Earth is recovered only by transforming to the Earth-rest frame.":"20,55″ pre pohybujúcu sa Zem sa získa len transformáciou do pokojovej sústavy Zeme.","Air":"Vzduch","Water":"Voda",
 "this theory predicts":"táto teória predpovedá","θ_int (in water)":"θ_int (vo vode)","plate drift":"posun na doske",
 "speed in water":"rýchlosť vo vode","medium":"prostredie","air, n = 1":"vzduch, n = 1","water, n = 1.33":"voda, n = 1,33",
 "1 · displacement (measured)":"1 · posun (namerané)","2 · celestial arc (reads)":"2 · nebeský oblúk (čítanie)",
